@@ -6,7 +6,6 @@
 
 ## 2025-01-14
 - ERD 설계 
-![image.png](./image.png)
 
 - API 문서 작성법에 대한 학습
 
