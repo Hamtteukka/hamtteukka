@@ -273,3 +273,165 @@ kubectl edit
 cat redis.yml
 vi redis.yml
 ```
+
+
+<hr>
+
+## 0114 TIL
+
+
+## 화상 회의를 구현하는 방법 ( 1 : 1 )
+
+[[WebRTC] 화상 회의를 구현하는 방법 (1:1)](https://hwanheejung.tistory.com/47)
+
+### 프롤로그
+
+채팅을 구현하기 위해서는 지속적인 연결을 유지하는 웹 소켓을 사용한다. 
+
+웹 소켓에서는 A가 B에게 채팅을 보낼 때 두 사용자가 직접 연결되어 있는 것이 아니라, 서버의 중개를 통해 대화를 나눈다.
+
+즉, A가 채팅을 보내면, 서버로 전송되고, 서버는 해당 채팅방을 구독하고 있는 사용자들에게 메시지를 보내주는 것이다. 이 방식은 클라이언트의 수가 늘어날 수록 서버에게 큰 부담이 된다. 간단한 텍스트를 보낼 때는 오버헤드가 작을 수도 있지만, 주고 받는 데이터가 영상이나 오디오처럼 용량이 크다면 서버의 부담이 엄청날 것이다. 
+
+Web RTC는 서버의 중개 없이 클라이언트끼리 직접 소통한다. 이로 인해 서버는 데이터를 처리할 필요가 없어지고, 클라이언트끼리 직접 소통하다 보니 빠르게 소통할 수 있게된다. 
+
+### WebRTC 동작 원리
+
+1. **Signaling**
+    1. 두 피어가 서로 통신을 시작하기 전에 서로의 정보를 교환할 필요가 있다. 서버가 이를 중계해주는데, 이를 signaling server라고 한다. 
+    2. 즉, 브라우저는 서로가 무엇으로 어떻게 소통할 수 있는지 signaling server를 통해 정보를 교환한다. 
+    3. signaling 자체는 WebRTC의 일부가 아니기 때문에 웹소켓이나 HTTP 등 외부 protocol을 사용해서 구현해야 한다. 
+2. **ICE**
+    1. 네트워크 경로를 설정하기 위해 사용되는 protocol
+    2. 여러 종류의 candidate를 사용해서 연결을 시도한다. 각 ICE  Candidate에는 클라이언트들이 각각 소통에 사용할 수 있는 네트워크 경로들의 정보가 담겨 있다. 
+    3. **Host Candidate**
+        1. 같은 로컬 네트워크에 속한 경우이며, 각 기기의 네트워크 내부용 주소인 private IP 주소와 포트 번호를 교환한다. 
+    4. **Server Reflexive Candidate**
+        1. NAT 뒤에 있는 경우이며, STUN 서버를 사용하여 public IP 주소와 포트 번호를 알아내어 ICE Candidate으로 등록한다. 
+        - **NAT**
+            
+            내부 네트워크의 private IP 주소를 public IP 주소로 변환하는 방법으로, NAT를 통해 외부 네트워크와 통신할 수 있게 된다. 
+            
+        - **STUN (Session Traversal Utilities for NAT)**
+            
+            상대방에게 알려줄 나의 주소를 알아내기 위해 STUN 서버를 사용한다. NAT 뒤에 있는 기기가 STUN 서버에 요청을 보내면, 응답으로 public IP 주소와 포트 번호를 알려준다. 
+            
+    5. **Relay Candidate**
+        1. 네트워크 환경이 복잡하거나 방화벽 등에 의해 P2P 통신이 제한된 경우 TURN 서버를 사용한다. 이때 추가적인 경로를 거치므로 지연 시간 증가와 비용이 발생한다. 
+        - **TURN 서버**
+            
+            만약 STUN 서버를 통해서도 직접 연결이 불가능하면, 클라이언트는 TURN 서버에 자신을 등록하고, 데이터 전송 시 TURN 서버가 각 클라이언트로 데이터를 중계한다. 
+            
+        
+3. **SDP**
+    1. Peer 간의 연결 설정을 위해 사용하는 protocol로, ICE Candidate 정보를 SDP에 포함 시켜서 상대방에게 전달한다. 
+
+
+
+## 다대다 화상회의: OpenVidu를 도입하기까지의 자료조사
+
+[[WebRTC] 다대다 화상회의: OpenVidu를 도입하기까지의 자료조사](https://hwanheejung.tistory.com/48)
+
+
+
+### 연결이 수립되기까지의 Flow
+
+
+
+크게 **SDP Offer/Answer 과정**과 **ICE Candidate 교환 과정**으로 나눌 수 있다. 이 두 과정은 독립적, 병렬 적으로 일어난다.  그러니까 SDP offer/answer 과정이 진행되는 동안에도 ICE Candidate 정보를 교환해서 빠르게 P2P 연결이 수립된다. 
+
+**SDP Offer / Answer 과정 (미디어 정보 교환하자!)**
+
+1. Peer A는 카메라, 마이크 상태와 같은 **Media 정보를 등록**
+2. 이 media 정보를 SDP에 담아 signaling server를 통해 Peer B에게 전달 - **Offer**
+3. offer를 받은 Peer B는 마찬가지로 자신의 Media 정보를 **Answer**로 응답 
+
+
+**ICE Candidate 교환 과정 ( 너 누구야 ? )**
+
+1. Peer A는 STUN 서버 또는 TURN 서버를 통해 자신의 IP 주소와 포트 정보를 알아낸 후, ICE candidate 객체를 포함시켜 signaling server을 통해 Peer B에게 전달한다.
+2. Peer B도 마찬가지로 자신의 ICE candidate 정보를 signaling server를 통해 Peer A에게 전달한다.
+3. Peer A와 Peer B는 각각 받은 ICE candidate 정보를 이용하여 직접 연결을 시도한다. 
+4. 연결 성공
+
+
+**Signaling Server의 역할**
+
+브라우저끼리 통신을 하려면 서로 누군지 알아야 하는데, 그 과정을 signaling server가 중계해주는 것이다. 즉, Signaling server는 단순히 offer, answer, 그리고 ICE candidate **정보를 교환하는 중계 역할만 하고 이 과정이 끝나면 더 이상 관여하지 않고 브라우저끼리 소통하게 된다.** 
+
+
+## 다대다 화상회의는 ?
+
+**Mesh**
+
+모든 참가자가 서로 직접 연결된다면 (Mesh 방식) 몇십 명, 몇백 명 정도를 감당하기에는 무리가 있어 보인다. 간단하게 생각해 봐도, 4명이 화상회의를 한다고 했을 때, A-B, A-C, A-D, B-C, C-D 즉 6번의 연결 수립이 이루어져야 한다. 참여자가 늘어날수록 연결의 수는 기하급수적으로 늘어나게 된다. 
+
+즉, 다대다 통신을 P2P 통신으로 구현할 경우 클라이언트에 큰 부담이 될 것이다. 그래서 나온 것이 SFU, MCU 방식의 **media server** 이다. 
+
+**SFU (Selective forwarding Unit)**
+
+5명의 참가자가 있다고 했을 때, A는 자신의 영상 데이터를 B,C,D,E 에게 모두 전송하는 것이 아니라 MEDIA 서버에만 전송한다. Media 서버는 A의 데이터를 B,C,D,E에게 뿌린다. 즉 1명당 1개의 uplink (클라 → 서버) , 4개의 downlink (서버 → 클라) 를 가지게 된다. 
+
+즉, 브라우저끼리의 P2P가 아니라 서버-클라이언트 간의 peer 연결이다. Mesh 방식과 비교하면 downlink의 수는 N-1로 같지만, uplink의 값은 1개로 줄었다. 
+
+일부 참가자는 uplink가 필요 없을 수도 있다. 라이브 방송과 같이 publisher가 1명, subscriber가 N명인 1:N 통신인 경우, publisher는 영상 데이터를 media server에 한 번만 업로드하고 N명의 subscriber는 서버로부터 수신하는 경우 SFU를 사용하면 연결 수가 확실히 줄어든다. 
+
+또는 회의에서 발표하는 그룹과 듣는 그룹이 정해져 있는 경우와 같이 데이터를 송출하는 그룹(N명)과 수신하는 그룹(M명)이 명확하게 분리되어 있는 경우도 SFU 방식이 적합하다. 
+
+**MCU (Multipoint Control Unit)**
+
+MCU에서는 Media 서버가 모든 영상 데이터를 받아서 하나로 합치고, 이를 모든 클라이언트로 전송한다. 예를 들어 5명의 화상회의에서 중앙 서버는 A를 제외한 4명의 영상, 음성 데이터를 하나로 합쳐서 A에게 보낸다. 
+
+나머지 참가자들에게도 동일하게 적용되어 1명당 1개의 uplink, 1개의 downlink를 가지게 된다. 이 방식은 서버에 더 많은 부하를 주지만 클라이언트는 하나의 스트림만 전송, 수신하므로 부하가 확실히 줄어든다. 
+
+> **하지만 애초에 WebRTC가 나온 이유가 서버의 부하를 줄이고 실시간성을 높이기 위함인데, MCU 방식은 일반적인 서버 기반 통신과 다를 것이 없는게 아닐까?**
+> 
+
+아니다. WebRTC의 MCU 방식에서도 서버에 부하가 걸리지만, 프로토콜 최적화와 QoS 관리, 그리고 보안 측면 덕분에 더 효율적으로 관리할 수 있다. 서버에 부하가 크긴 하지만, 그래도 WebRTC를 안 쓰는 것보단 쓰는게 훨씬 더 효율적이다. 
+
+**Media Server가 하는 일** 
+
+1. **Group Communications**
+    1. 위에서 설명한 것처럼 한 peer가 생성한 미디어 스트림을 여러 subscriber들에게 전달한다. SFU, MCU 역할을 하는 것이다. 
+2. **Mixing**
+    1. 여러 개로 들어오는 미디어 스트림을 하나의 화면에 합성해서 각 참가자가 N개 비디오 화면을 동시에 볼 수 있게 하고, 여러 참가자의 목소리를 하나의 오디오 스트림으로 mixing 해서 동시에 들을 수 있게 하는 것을 말한다. 
+3. **Transcoding**
+    1. 클라이언트 간에 호환이 되지 않을 때, codec과 format을 실시간으로 변환하는 작업을 말한다. 예를 들어 한 클라이언트가 H.264 비디오 codec을 사용하고 다른 클라이언트가 VP8 비디오 codec을 사용한다면, 서버는 H.264 스트림을 VP8로 변환하여 호환성을 유지한다. 
+4. **Recording**
+    1. 클라이언트 간에 교환되는 미디어를 저장한다. 예를 들어 회의를 녹화해서 나중에 또 볼 수 있게 한다. 
+
+---
+
+
+## Kurento
+
+media server의 일종. 무료이다. docs가 정말 자세하다. MCU, SFU를 모두 지원하며, 클라이언트 API를 제공한다. 
+
+[Introduction to Kurento — Kurento 7.1 documentation](https://doc-kurento.readthedocs.io/en/latest/user/intro.html#why-a-webrtc-media-server)
+
+**Distribution of Media and Application Services**
+
+Kurento Media Server(KMS)는 여러 기기에서 배포, 확장, 분산될 수 있다. 하나의 애플리케이션이 여러 KMS를 호출할 수 있고, 반대로 하나의 KMS도 여러 애플리케이션의 요청을 처리할 수 있다.
+
+**Application development**
+
+개발자는 복잡한 KMS 내부를 신경 쓰지 않아도 된다. 모든 프레임워크에서 배포 가능하다.
+
+**End-to-End Communication Capability**
+
+Kurento는 미디어의 전송, encoding/decoding 및 클라이언트 장치에서의 렌더링 복잡성을 처리하지 않아도 되는 end-to-end 통신을 제공한다.
+
+그러니까 개발자들이 WebRTC 기반의 SFU, MCU를 low level에서 개발하지 않아도 kurento를 사용해서 어느 정도 쉽게 구현할 수 있고, 추가적으로 다양한 기능들도 많이 지원한다.
+
+그런데 kurento docs에 눈에 띄는 경고문이 있다.
+
+!https://blog.kakaocdn.net/dn/GA1RI/btsIGl2wXTi/5iHri7xK5GFfWebDxRm3J0/img.png
+
+초짜면 Openvidu를 써라는 것이다. 
+
+## OpenVidu
+
+Kurento 기반의 프레임워크이다. WebRTC를 사용하는 경우는 보통 화상 회의를 구현해야 하는 경우일텐데, 간단한 화상 회의를 구현해야 하는데 굳이 Kurento의 low level 코드를 만지지 않아도 된다. 
+
+복잡한 기능을 개발해야 한다면 kurento를 써도 되는데, openvidu로도 충분히 많은 기능을 구현할 수 있기 때문에 kurento 공식 페이지에서도 openvidu를 추천한다. 
+
+OpenVidu 페이지로 가봤더니 v3.0.0에 엄청난 변화가 생겼다. 내부 media server로 kurento를 버리고 mediasoup를 선택했고, livekit가 도입됐다. 하지만 문제는 Mediasoup는 node.js 환경에서 사용되도록 설계되었는데 우리는 spring을 사용하고 있다. 통합을 시도해 봤지만 쉽지 않았고, 그래서 kurento 기반의 v2.30.0 버전을 쓰기로 했다.
