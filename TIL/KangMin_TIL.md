@@ -5,6 +5,7 @@
 - 프롬프트 엔지니어링에 대해 더 깊이 파보는 중...
 
 ### 2025-01-14
+#### python으로 영어 -> 한글 번역
 
 ```
 pip install googletrans==4.0.0-rc1
@@ -19,4 +20,4 @@ def translate_text():
 
 translate_text()
 ```
-python으로 영어 -> 한글 번역
+
