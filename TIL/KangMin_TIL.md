@@ -90,7 +90,7 @@ output = remove(input) # remove background
 output.save("결과 이미지 경로") # save image
 ```
 - 코드 실행 시 이미지 배경 제거와 같은 작업에 사용되는 딥러닝 기반 세그멘테이션 모델인 u2net이 자동 다운로드
-![u2net](/uploads/3645b7918795ce20c911b057f476970e/u2net.png)
+
 
 - 배경 있는 이미지 배경 제거 후 32bit로 생성하기
 ```
