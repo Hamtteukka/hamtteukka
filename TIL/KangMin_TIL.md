@@ -75,8 +75,6 @@ output_image_path = "결과 이미지 경로로"
 rgb_output_image.save(output_image_path)
 output_image_path
 ```
-![dog](/uploads/a6c2dfc7438c7a85c658e18a406a28bd/dog.jpg)
-![dog_grid](/uploads/5a7a273bd4aabc698b1e9b5d75231e3e/dog_grid.jpg)
 
 #### 이미지 배경 제거
 - 이미지 배경 제거를 위한 rembg 라이브러리 설치
@@ -146,6 +144,5 @@ output_image_path = "결과 이미지 경로로"
 rgb_output_image.save(output_image_path)
 output_image_path
 ```
-![dogdog](/uploads/3c1be898ad4be48733514b84dfa5c998/dogdog.jpg)
-![dogdog_grid](/uploads/cad66816a87e7701322020d321089f78/dogdog_grid.jpg)
+
 
