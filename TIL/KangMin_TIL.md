@@ -43,8 +43,10 @@ translate_text()
 </div>
 </details>
 
+<details>
+<summary>토글 접기/펼치기</summary>
+<div markdown="1">
 
-### 2025-01-15
 #### 이미지를 32bit로 생성하기
 - 파이썬 이미지 처리 라이브러리 PIL 설치
 ```
@@ -167,5 +169,10 @@ output_image_path = "결과 이미지 경로로"
 rgb_output_image.save(output_image_path)
 output_image_path
 ```
+
+</div>
+</details>
+
+
 
 
