@@ -10,18 +10,20 @@
 ## 강민 TIL
 
 <details>
-<summary>토글 접기/펼치기</summary>
+<summary>2025-01-13</summary>
 <div markdown="1">
 
-
+                        
 - Jira의 사용법에 대해 배웠다.
 - 프롬프트 엔지니어링에 대해 더 깊이 파보는 중...
 
 </div>
 </details>
 
+<details>
+<summary>2025-01-14</summary>
+<div markdown="1">
 
-### 2025-01-14
 #### python으로 영어 -> 한글 번역
 
 ```
@@ -37,6 +39,10 @@ def translate_text():
 
 translate_text()
 ```
+
+</div>
+</details>
+
 
 ### 2025-01-15
 #### 이미지를 32bit로 생성하기
