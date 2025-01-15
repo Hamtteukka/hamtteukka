@@ -44,7 +44,7 @@ translate_text()
 </details>
 
 <details>
-<summary>토글 접기/펼치기</summary>
+<summary>2025-01-15</summary>
 <div markdown="1">
 
 #### 이미지를 32bit로 생성하기
