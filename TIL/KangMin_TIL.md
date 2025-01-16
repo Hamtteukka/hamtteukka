@@ -164,6 +164,17 @@ output_image_path
 </div>
 </details>
 
+<details>
+<summary>2025-01-16</summary>
+## RGB vs RGBA
+### RGB
+- Red Green Blue의 약어
+- (255,255,255) 이런 형식으로 나타남
+### RGBA
+- RGB에 투명도 개념인 alpha를 추가한 것
+- (255,0,0,0.5) 이면 투명도가 0.5인 빨간색
+</details>
+
 
 
 
