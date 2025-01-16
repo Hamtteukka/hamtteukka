@@ -228,9 +228,12 @@ ax.set_title('RGB Color Distribution')
 
 plt.show()
 ```
-![graph](/uploads/6dcae4e081ca4c9696c4f4e3797d52a0/graph.png)
+![graph](/uploads/6dcae4e081ca4c9696c4f4e3797d52a0/graph.png){: width="300" height="300"}
 
 ### KMeans 클러스터링
+- 클러스터의 개수를 미리 정하여 반복적으로 클러스터의 평균을 업데이트하며 가장 가까운 점들을 군집화하는 방법
+- 색상에 KMeans 클러스터링을 도입하여 각 군집의 중심심 색상으로 변경하는 전략으로 다가감
+
 ```
 # K-means 클러스터링
 
@@ -248,7 +251,7 @@ new_pixels = new_pixels.reshape(original_shape)
 # 배열을 image로 변환
 Image.fromarray(np.uint8(new_pixels))
 ```
-- **.cluster_centers_**는 각 클러스터의 중앙값 좌표
+- **.cluster_centers_** 는 각 클러스터의 중앙값 좌표
 
 ### 전체 코드
 ```
@@ -319,17 +322,14 @@ for y in range(grid_size):
             outline=(200, 200, 200, 255),  # 회색 격자선
         )
 
-# 결과 이미지를 RGB로 변환
-rgb_output_image = output_image.convert("RGB")
 
 # 결과 이미지 저장 경로
-output_image_path = "C:/Users/SSAFY/Desktop/dogdog_grid.jpg"
+output_image_path = "C:/Users/SSAFY/Desktop/dogdog_grid.png" # png로 저장해야 RGBA 형태로 저장 가능능
 # 이미지 저장
-rgb_output_image.save(output_image_path)
-output_image_path
+output_image.save(output_image_path)
 ```
 ### 결과물
-![dogdog_grid_reduced](/uploads/ebb375c9e6de538bd2defe7cfa17ac2c/dogdog_grid_reduced.jpg)
+![dogdog_grid_reduced](/uploads/79fc81b49abc43fd5c5b850804299011/dogdog_grid_reduced.png){: width="300" height="300"}
 </div>
 </details>
 
