@@ -180,6 +180,52 @@ output_image_path
 </div>
 </details>
 
+## 도트 도안 비슷한 색상 합쳐서 색상 수 줄이기 (KMeans 클러스터링 활용)
+
+### image to 2D Array
+```
+from PIL import Image, ImageDraw
+from rembg import remove
+import numpy as np
+from sklearn.cluster import KMeans
+
+# 이미지 파일 경로
+image_path = "C:/Users/SSAFY/Desktop/dogdog.jpg"
+
+# 이미지 로드 및 32x32 픽셀화
+grid_size = 32 
+input = Image.open(image_path) 
+output = remove(input)
+original_image = output.convert("RGBA")
+small_image = original_image.resize((grid_size, grid_size), Image.Resampling.NEAREST)
+pixels = np.array(small_image) # -> (높이, 너비, 채널수(RGBA))의 3차원 배열
+# 픽셀을 2D 배열로 재구성
+pixels_2d = pixels.reshape(-1, 4) # -> RGBA이기 떄문에 4로 바꿔야함 왜냐하면 RGBA는 4개의 숫자로 구성됨 / 만약 RGB면 3으로
+```
+#### -> 2차원 배열로 변경
+
+### 컬러값만 뽑은 pixels_2d를 시각화
+```
+import matplotlib.pyplot as plt
+
+# RGBA 2D 배열을 시각화하기 위해 RGB만 추출
+rgb_pixels = pixels_2d[:, :3]
+
+# RGB 값의 3D 공간 시각화
+fig = plt.figure(figsize=(8, 8))
+ax = fig.add_subplot(111, projection='3d')
+
+# X, Y, Z 축에 RGB 값 배치
+ax.scatter(rgb_pixels[:, 0], rgb_pixels[:, 1], rgb_pixels[:, 2], c=rgb_pixels / 255, s=10)
+
+ax.set_xlabel('Red')
+ax.set_ylabel('Green')
+ax.set_zlabel('Blue')
+ax.set_title('RGB Color Distribution')
+
+plt.show()
+```
+![graph](/uploads/6dcae4e081ca4c9696c4f4e3797d52a0/graph.png)
 
 
 
