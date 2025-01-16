@@ -177,10 +177,11 @@ output_image_path
 
 - RGB에 투명도 개념인 alpha를 추가한 것
 - (255,0,0,0.5) 이면 투명도가 0.5인 빨간색
-</div>
-</details>
 
 ## 도트 도안 비슷한 색상 합쳐서 색상 수 줄이기 (KMeans 클러스터링 활용)
+
+- 사용 이미지
+![dogdog](/uploads/cdf51fed75efd41543a6c4a4775fe335/dogdog.jpg)
 
 ### image to 2D Array
 ```
@@ -199,6 +200,7 @@ output = remove(input)
 original_image = output.convert("RGBA")
 small_image = original_image.resize((grid_size, grid_size), Image.Resampling.NEAREST)
 pixels = np.array(small_image) # -> (높이, 너비, 채널수(RGBA))의 3차원 배열
+original_shape = pixels.shape
 # 픽셀을 2D 배열로 재구성
 pixels_2d = pixels.reshape(-1, 4) # -> RGBA이기 떄문에 4로 바꿔야함 왜냐하면 RGBA는 4개의 숫자로 구성됨 / 만약 RGB면 3으로
 ```
@@ -226,6 +228,109 @@ ax.set_title('RGB Color Distribution')
 plt.show()
 ```
 ![graph](/uploads/6dcae4e081ca4c9696c4f4e3797d52a0/graph.png)
+
+### KMeans 클러스터링
+```
+# K-means 클러스터링
+
+n_colors = 4 # 원하는 색상 수 4개
+
+kmeans = KMeans(n_clusters=n_colors, random_state=42) # KMeans 모델 정의
+labels = kmeans.fit_predict(pixels_2d) # 2D 배열을 예측
+
+# 각 픽셀을 가장 가까운 중심점의 색상으로 대체
+new_pixels = kmeans.cluster_centers_[labels]  #  .cluster_centers_는 각 클러스터의 중앙값 좌표 
+    
+# 이미지 형태로 다시 재구성
+new_pixels = new_pixels.reshape(original_shape)
+
+# 배열을 image로 변환
+Image.fromarray(np.uint8(new_pixels))
+```
+- **.cluster_centers_**는 각 클러스터의 중앙값 좌표
+
+### 전체 코드
+```
+from PIL import Image, ImageDraw
+from rembg import remove
+import numpy as np
+from sklearn.cluster import KMeans
+
+# 이미지 파일 경로
+image_path = "C:/Users/SSAFY/Desktop/dogdog.jpg"
+
+def reduce_colors(image, n_colors): # 이미지, 원하는 색상의 수
+    
+    pixels = np.array(image)
+    original_shape = pixels.shape
+    
+    # 3차원 pixel을 2차원으로 변경
+    pixels_2d = pixels.reshape(-1, 4) # -> RGBA이기 떄문에 4로 바꿔야함 왜냐하면 RGBA는 4개의 숫자로 구성됨 / 만약 RGB면 3으로
+    
+    # KMeans 클러스터링
+    kmeans = KMeans(n_clusters=n_colors, random_state=42)
+    labels = kmeans.fit_predict(pixels_2d)
+    
+    # 각 픽셀을 가장 가까운 중심점의 색상으로 대체
+    new_pixels = kmeans.cluster_centers_[labels]
+    
+    # 이미지 형태로 다시 재구성
+    new_pixels = new_pixels.reshape(original_shape)
+    
+    # 배열을 image로 변환
+    return Image.fromarray(np.uint8(new_pixels))
+
+# 이미지 로드 및 32x32 픽셀화
+grid_size = 32 
+input = Image.open(image_path) 
+output = remove(input)
+original_image = output.convert("RGBA")
+small_image = original_image.resize((grid_size, grid_size), Image.Resampling.NEAREST)
+
+# 색상 수 줄이기
+n_colors = 4  # 원하는 색상 수
+reduced_image = reduce_colors(small_image, n_colors)
+
+# 결과 이미지 크기 계산
+cell_size = 70  # 각 격자의 크기 
+output_size = grid_size * cell_size
+output_image = Image.new("RGBA", (output_size, output_size), (255, 255, 255, 255))
+draw = ImageDraw.Draw(output_image)
+
+# 격자와 픽셀 색상 그리기
+for y in range(grid_size):
+    for x in range(grid_size):
+        color = tuple(reduced_image.getpixel((x, y)))  # 픽셀 색상 추출 (RGBA)
+        # 격자 셀에 색상 채우기
+        draw.rectangle(
+            [
+                (x * cell_size, y * cell_size),
+                ((x + 1) * cell_size - 1, (y + 1) * cell_size - 1),
+            ],
+            fill=color,
+        )
+        # 격자선 그리기
+        draw.rectangle(
+            [
+                (x * cell_size, y * cell_size),
+                ((x + 1) * cell_size - 1, (y + 1) * cell_size - 1),
+            ],
+            outline=(200, 200, 200, 255),  # 회색 격자선
+        )
+
+# 결과 이미지를 RGB로 변환
+rgb_output_image = output_image.convert("RGB")
+
+# 결과 이미지 저장 경로
+output_image_path = "C:/Users/SSAFY/Desktop/dogdog_grid.jpg"
+# 이미지 저장
+rgb_output_image.save(output_image_path)
+output_image_path
+```
+### 결과물
+![dogdog_grid_reduced](/uploads/ebb375c9e6de538bd2defe7cfa17ac2c/dogdog_grid_reduced.jpg)
+</div>
+</details>
 
 
 
