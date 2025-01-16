@@ -43,7 +43,52 @@
 
 
 
+<br>
+
+## 🧵 그라운드 룰
+🪡 **매일 오전 스크럼 10분 - 15분 진행** <br>
+🪡 **컨벤션 지키기** <br>
+🪡 **이슈 생기면 즉시 공유하기** <br>
+🪡 **매일 오전은 코드 리뷰 시간** <br>
+    🪡 **한명 이상은 리뷰해야 PR 가능**
+
+<br>
+
+
+## 🧵Tech Stack
+
+### FE
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=flat&logo=typescript&logoColor=white)
+![Next JS](https://img.shields.io/badge/Next-black?style=flat&logo=next.js&logoColor=white)
+![Yarn](https://img.shields.io/badge/yarn-%232C8EBB.svg?style=flat&logo=yarn&logoColor=white)
+![Storybook](https://img.shields.io/badge/-Storybook-FF4785?style=flat&logo=storybook&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=flat&logo=tailwind-css&logoColor=white)
+
+
+### BE
+![](https://img.shields.io/badge/Java-007396?style=flat&logo=Java&logoColor=white)
+![](https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=SpringBoot&logoColor=white)
+![](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=MySQL&logoColor=white)
+![](https://img.shields.io/badge/Amazon_AWS-232F3E?style=flat&logo=amazonaws)
+![Amazon S3](https://img.shields.io/badge/Amazon%20S3-FF9900?style=flat&logo=amazons3&logoColor=white)
+![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=flat&logo=redis&logoColor=white)
 
 
 
-## 🏕️ 그라운드 룰
+### AI
+![Python](https://img.shields.io/badge/python-3670A0?style=flat&logo=python&logoColor=ffdd54)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=flat&logo=scikit-learn&logoColor=white)
+![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=flat&logo=numpy&logoColor=white)
+
+**LLM**
+- Open AI
+
+**Text To Image**
+- comfyUI
+- FLUX.1
+
+### Cooperation
+![Jira](https://img.shields.io/badge/jira-%230A0FFF.svg?style=flat&logo=jira&logoColor=white)
+![GitLab](https://img.shields.io/badge/gitlab-%23181717.svg?style=flat&logo=gitlab&logoColor=white)
+![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=flat&logo=figma&logoColor=white)
+![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=flat&logo=notion&logoColor=white)
