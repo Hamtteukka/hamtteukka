@@ -33,6 +33,11 @@
 
 <br>
 
+## 🧵ERD
+![image__8_](/uploads/9d9b27b9fdea63c5a45f6815595dbe26/image__8_.png)
+
+<br>
+
 ## 🧵Our Team
 
 
@@ -92,3 +97,5 @@
 ![GitLab](https://img.shields.io/badge/gitlab-%23181717.svg?style=flat&logo=gitlab&logoColor=white)
 ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=flat&logo=figma&logoColor=white)
 ![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=flat&logo=notion&logoColor=white)
+
+
