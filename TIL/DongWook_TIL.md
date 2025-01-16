@@ -59,6 +59,11 @@
 | **성능**                       | 성능 우수 (시퀀스가 미리 값 생성)            | 데이터베이스 방언에 따라 달라짐                |
 | **사용 사례**                  | 시퀀스를 명시적으로 관리하거나 PostgreSQL 등 | 데이터베이스 간 이식성을 고려하는 경우         |
 
-- API 명세서 작성
+- Cursor-based-Pagination?
+    - 페이지네이션
+    <div>
+        1. Offset-based Pagination => offSet쿼리를 사용 <br>
+        2. Cursor-based Pagination => 클라이언트가 가져간 마지막 row의 순서상 다음 row들을 n개 요청/응답하게 구현현
+    </div>
 
 </details>
