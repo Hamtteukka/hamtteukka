@@ -166,6 +166,7 @@ output_image_path
 
 <details>
 <summary>2025-01-16</summary>
+<div markdown="1">
 ## RGB vs RGBA
 ### RGB
 - Red Green Blue의 약어
@@ -173,6 +174,7 @@ output_image_path
 ### RGBA
 - RGB에 투명도 개념인 alpha를 추가한 것
 - (255,0,0,0.5) 이면 투명도가 0.5인 빨간색
+</div>
 </details>
 
 
