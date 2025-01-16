@@ -1,6 +1,5 @@
-# 25.01.13
-
----
+<details>
+<summary><h2>📖 2025-01-13 학습</h2></summary>
 
 # React Hooks란?
 
@@ -187,11 +186,12 @@ useScrollHook();
 > 2. 간결한 코드로 생명주기를 다룰 수 있다.
 > 3. Custom Hooks를 만들어서 중복되는 생명주기 관련 로직을 HOC보다 직관적이고 간결하게처리할 수 있다.
 
----
+</details>
 
-# 25.01.14
+<hr />
 
----
+<details>
+<summary><h2>📖 2025-01-14 학습</h2></summary>
 
 # UI를 어떻게 변경할 수 있을까?
 
@@ -386,11 +386,12 @@ useState, useReducer 둘 중 무엇을 선택할지는 개발자의 자유다.
 > https://react.dev/blog/2022/03/08/react-18-upgrade-guide#automatic-batching
 > https://d-cron.tistory.com/77
 
----
+</details>
 
-# 25.01.15
+<hr />
 
----
+<details>
+<summary><h2>📖 2025-01-15 학습</h2></summary>
 
 # Side Effect를 처리해야 한다
 
@@ -493,7 +494,10 @@ const sum = a + b;
 > https://velog.io/@okxooxoo/React-useEffect%EB%8A%94-%EC%99%9C-%EC%82%AC%EC%9A%A9%ED%95%A0%EA%B9%8C
 > https://velog.io/@yeonjin1357/React-Side-Effect-%EA%B7%B8%EB%A6%AC%EA%B3%A0-useEffect
 
-# 25.01.16
+</details>
+
+<details>
+<summary><h2>📖 2025-01-16 학습</h2></summary>
 
 # props
 
@@ -613,3 +617,5 @@ props를 사용함으로써 컴포넌트 사이의 **데이터 흐름**을 명�
 
 컴포넌트 분리가 충분히 이루어지지 않는다면 props를 전달하는 층이 증가할 수도 있다.
 `<Layout posts={posts} />`를 `<Layout><Posts posts={posts} /></Layout>`으로 컴포넌트를 분리하고 children 형태를 활용하면 컴포넌트 층이 줄어들게 된다.
+
+</details>
