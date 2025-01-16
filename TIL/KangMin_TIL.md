@@ -167,6 +167,7 @@ output_image_path
 <details>
 <summary>2025-01-16</summary>
 <div markdown="1">
+
 ## RGB vs RGBA
 
 ### RGB
@@ -180,7 +181,7 @@ output_image_path
 
 ## 도트 도안 비슷한 색상 합쳐서 색상 수 줄이기 (KMeans 클러스터링 활용)
 
-- 사용 이미지
+### 사용이미지지 
 ![dogdog](/uploads/cdf51fed75efd41543a6c4a4775fe335/dogdog.jpg)
 
 ### image to 2D Array
