@@ -188,8 +188,6 @@ useScrollHook();
 
 </details>
 
-<hr />
-
 <details>
 <summary><h2>📖 2025-01-14 학습</h2></summary>
 
@@ -362,7 +360,7 @@ function reducer(state, action) {
       };
     }
   }
-  throw Error('Unknown action: ' + action.type);
+  t1ow Error('Unknown action: ' + action.type);
 }
 ```
 
@@ -387,8 +385,6 @@ useState, useReducer 둘 중 무엇을 선택할지는 개발자의 자유다.
 > https://d-cron.tistory.com/77
 
 </details>
-
-<hr />
 
 <details>
 <summary><h2>📖 2025-01-15 학습</h2></summary>
