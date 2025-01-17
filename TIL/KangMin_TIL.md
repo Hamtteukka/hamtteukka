@@ -333,5 +333,29 @@ output_image.save(output_image_path)
 </div>
 </details>
 
+<details>
+<summary>2025-01-17</summary>
+<div markdown="1">
+## ngrok으로 로컬에서 서버 실행
+- https://ngrok.com/ 로그인
+- os에 맞는 installer 다운로드 후 실행
+- config 설정
+```
+ngrok config add-authtoken 토큰
+```
+- FastAPI 실행
+```
+cd 프로젝트 경로 
+
+uvicorn main:app --reload
+```
+- ngrok 실행
+```
+ngrok http --url=[할당받은 스태틱 도메인 이름] [실행 포트번호]
+```                
+
+</div>
+</details>
+
 
 
