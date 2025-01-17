@@ -43,7 +43,7 @@
 
 | **프론트엔드**                          | **프론트엔드**                          | **백엔드**                            | **백엔드**                            | **백엔드**                            | **AI**                                  |
 | :------------------------------------: | :------------------------------------: | :----------------------------------: | :----------------------------------: | :----------------------------------: | :------------------------------------: |
-| <img src="/uploads/51dc2b9bf449a74fefdd5fca35a95691/IMG_4153.jpg" alt="IMG_4153" height="300px" width="400px"> | <img src="/uploads/fd01bd8937c16f3f0c3842134457c8b1/77CFDF79-D085-485A-B246-D8B81091ACB5.jpg" alt="77CFDF79-D085-485A-B246-D8B81091ACB5" height="300px" width="400px"> | <img src="/uploads/5246e616c124bda680b44bbe4bd8bd0f/5F66C2CA-CE28-49A0-8BBB-95DEC3E931D0.jpg" alt="5F66C2CA-CE28-49A0-8BBB-95DEC3E931D0" height="300px" width="400px"> | <img src="/uploads/42e201f88aeb284d8ed0c4aaca2fc2f6/1639887486993.jpg" alt="1639887486993" height="300px" width="400px"> | <img src="/uploads/a26e17279c0cb4cfd2bba151763e585a/김동욱_프로필.jpg" alt="김동욱 프로필" height="300px" width="400px"> | <img src="/uploads/846932487fd23c7345a96f3df6de47bc/6CA4ACA6-8B71-4B9B-B3CB-D8C395154250.jpg" alt="6CA4ACA6-8B71-4B9B-B3CB-D8C395154250" height="300px" width="400px"> |
+|![준하](/uploads/65dd01f395acc0a88b6242edc714abdb/준하.png) | ![서로](/uploads/d3b08839d4602203e1662df9e40a3ea6/서로.png) | ![준서](/uploads/69aee52deab46ba12600164253fc5d28/준서.png) | ![성문](/uploads/abf997f26de11365ad624d9e0485b25b/성문.png) | ![동욱](/uploads/664017ab66027b4582312f60975da61c/동욱.png) | ![강민](/uploads/bc2f4e1f3685ad9753632f680e466e90/강민.png) |
 | [**김준하**](https://github.com/junhakjh) | [**김서로**](https://github.com/okxooxoo) | [**박준서**](https://github.com/Junseo-tech) | [**우성문**](https://github.com/tjdansw) | [**김동욱**](https://github.com/DW8K) | [**조강민**](https://github.com/KMsLog) |
 
 
@@ -84,6 +84,8 @@
 ![Python](https://img.shields.io/badge/python-3670A0?style=flat&logo=python&logoColor=ffdd54)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=flat&logo=scikit-learn&logoColor=white)
 ![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=flat&logo=numpy&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)
+![nVIDIA](https://img.shields.io/badge/cuda-000000.svg?style=flat&logo=nVIDIA&logoColor=green)
 
 **LLM**
 - Open AI
