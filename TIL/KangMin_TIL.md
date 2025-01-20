@@ -336,26 +336,87 @@ output_image.save(output_image_path)
 <details>
 <summary>2025-01-17</summary>
 <div markdown="1">
+
 ## ngrok으로 로컬에서 서버 실행
+
 - https://ngrok.com/ 로그인
 - os에 맞는 installer 다운로드 후 실행
 - config 설정
+
 ```
 ngrok config add-authtoken 토큰
 ```
+
 - FastAPI 실행
 ```
 cd 프로젝트 경로 
 
 uvicorn main:app --reload
 ```
+
 - ngrok 실행
+
 ```
 ngrok http --url=[할당받은 스태틱 도메인 이름] [실행 포트번호]
 ```                
 
 </div>
 </details>
+
+<details>
+<summary>2025-01-20</summary>
+<div markdown="1">
+
+## FastAPI
+- python web framework
+- API를 만들 수 있고, python 3.6 버전 이상에서 적용 가능함
+- 인공지능 분야에서 널리 사용하고 있는 백엔드 프레임워크
+- 설치
+
+```
+pip install fastapi
+```
+
+### FastAPI 특징
+- API 문서 자동 생성 (Swagger -> localhost:8000/docs)
+- 비동기 동작으로 빠른 성능 보장 (uvicorn 사용용)
+- Pydantic을 사용한 Validation 체크
+
+## uvicorn
+- lightweight(매우 가벼운) ASGI 서버
+- fastapi framework만으로는 웹 개발을 할 수 없고, ASGI와 호환되는 웹 서버가 필요함
+- 비동기 방식이 가능한 python web server framework(Fastapi가 대표적)와 application 간의 표준 interface를 제공함
+- 배포에 별도의 준비가 필요 없음
+- 설치
+
+```
+pip install uvicorn
+```
+
+### FastAPI와 uvicorn 사용하는 간단한 예제 코드 (main.py)
+
+```
+from fastapi import FastAPI
+
+app = FastAPI() # 인스턴스 생성
+
+@app.get("/") # get method로 '/'에 해당하는  생성
+def root():
+    return {'Hello':'World!'} 
+```
+
+### 실행
+
+```
+uvicorn main:app --reload
+```
+
+localhost:8000에서 확인 가능
+
+</div>
+</details>
+
+
 
 
 
