@@ -259,8 +259,191 @@ LIMIT 10;
 ---
 </details>
 
+<details>
+<summary><h2>📖 2025-01-17 학습</h2></summary>
+
+# OAuth(Open Authorization)
+
+- 사용자가 비밀번호를 공유하지 않고 제 3의 application 또는 웹 사이트가 자신의 정보에 접근할 수 있도록 허용하는 인증 프로토콜
+- 인증(Authentication)과 권한(Authorization)의 기능을 지원
+
+## OAuth 주요 개념
+
+1. Resource Owner
+    - 사용자로 자신의 자원에 접근 권한을 가지고 있음
+2. Client
+    - 사용자의 자원에 접근하고자 하는 제 3자 application
+    - ex) 타 서비스의 소셜 로그인이나 데이터를 사용하는 앱
+3. Authorization Server(인증 서버)
+    - 자원 소유자에게 인증을 받고 접근 토큰(Access Token)을 발급하는 서버
+    - google, kakao, github 등 서비스의 인증 서버
+4. Resource Server
+    - 사용자 자원이 저장된 서버
+    - 접근 토큰을 확인하고 요청을 처리
+5. Access Token
+    - client가 자원에 접근할 수 있는 권한을 부여받는 증명서
+    - 토큰을 사용해 자원 서버에 요청을 보낼 수 있음
+
+## OAuth 작동 방식
+
+1. 사용자가 클라이언트를 통해 인증 요청
+    - 사용자는 application(클라이언트)에 로그인하거나 인증 권한을 부여
+    - 클라이언트는 인증 서버로 사용자 인증 요청을 전송
+2. 사용자가 인증 서버에 로그인
+    - 사용자가 인증 서버에서 자신의 자격 증명(아이디, 비밀번호 등)을 입력해 인증
+3. 인증 코드 발급
+    - 인증 서버는 사용자 인증이 성공하면 클라이언트에게 인증 코드 전달
+4. 클라이언트가 인증 코드를 사용해 Access Token 요청
+5. Access Token 발급
+6. 클라이언트가 지원 서버에 요청
+    - 발급받은 Access Token을 사용해 자원 서버에 데이터 요청
+7. 자원 서버에서 Access Token 유효성 체크하고 데이터 제공
+</details>
+
+<details>
+<summary><h2>📖 2025-01-18 학습</h2></summary>
+
+# JWT(JSON Web Token)
+
+- JSON 형식으로 정보를 안전하게 전송하기 위한 토큰 기반 인증 기술
+- 인증과 권한 부여에 사용
+- 서버와 클라이언트 간의 신뢰성 있는 데이터 교환을 목적으로 설계됨
+
+## JWT 주요 구성요소
+
+- 형태 : [Header].[Payload].[Signature]
+
+### 1. Header
+
+- JWT의 메타데이터를 포함
+    - alg: 서명에 사용된 알고리즘(HS256, RS256 등)
+    - typ: 토큰 타입
+    
+    ```json
+    {
+      "alg": "HS256",
+      "typ": "JWT"
+    }
+    ```
+    
+
+### 2. Payload
+
+- 토큰에 포함된 Claim 데이터를 저장하는 부분
+- Claim: 사용자 정보나 토큰에 담을 기타 데이터를 표현, Base64Url로 인코딩
+- Claim 유형
+    1. 등록된(Registered) 클레임: 표준 클레임 (ex: iss, exp, sub, aud 등)
+    2. 공개(Public) 클레임: 사용자 정의 데이터
+    3. 비공개(Private) 클레임: 서버 간 공유를 위해 설정된 데이터
+    
+    ```json
+    {
+      "sub": "1234567890",
+      "name": "John Doe",
+      "admin": true,
+      "iat": 1516239022
+    }
+    ```
+    
+
+### 3. Signature
+
+- 토큰 위변조 방지를 위한 서명(Signature)
+- 서명은 Header와 Payload를 합친 후, 비밀키와 함께 암호화하여 생성
+    
+    ```
+    HMACSHA256(
+      base64UrlEncode(header) + "." + base64UrlEncode(payload),
+      secret
+    )
+    ```
+    
+
+## **JWT의 장점**
+
+1. **무상태성 (Stateless)**
+    - 서버에 사용자 상태(Session)를 저장하지 않아도 됨
+    - JWT 자체에 모든 정보가 담겨 있기 때문에 서버 확장이 용이
+2. **효율성**
+    - 인증 정보와 추가 데이터를 한 번의 요청으로 전달 가능
+    - Header, Payload, Signature로 구성되어 비교적 가벼움
+3. **보안성**
+    - 서명을 통해 데이터 위변조를 방지
+    - 비공개 데이터를 공유하지 않고도 인증 가능
+
+## **JWT의 단점**
+
+1. **토큰 크기**
+    - 클라이언트가 요청마다 토큰을 전달해야 하므로 토큰이 클수록 네트워크 사용량이 증가
+2. **비가역성**
+    - 발급 이후 수정할 수 없음
+3. **노출 위험**
+    - 노출되면 탈취된 토큰으로 인증이 가능
+        - 해결법: HTTPS를 사용
+
+## **JWT의 보안 강화 방법**
+
+1. **HTTPS 사용**
+    - 토큰 전송 과정에서 데이터 탈취를 방지
+2. **짧은 만료 시간 설정**
+    - 토큰이 오래 사용되지 않도록 제한
+3. **토큰 갱신**
+    - Refresh Token을 사용하여 만료된 토큰을 갱신
+4. **서명 알고리즘 선택**
+    - HMAC(Symmetric Key) 또는 RSA(Asymmetric Key) 사용
+5. **IP 및 User-Agent 검증**
+    - 요청 시 추가적인 검증을 통해 보안 강화
+
+## JWT 토큰의 보안 문제와 유효 기간 설정의 딜레마
+
+### 문제점
+
+- JWT 토큰은 사용자 인증 정보를 담고 있어 탈취될 경우 악용될 수 있음
+- 이를 방지하기 위해 토큰의 유효 기간을 설정
+- 유효 기간이 짧으면 사용자가 자주 로그인을 해야 하는 불편함이 있고 길면 보안 위험이 증가
+
+### 해결방안
+
+- Access Token과 Refresh Token 두 가지 토큰을 사용
+    - **Access Token**
+        - 짧은 유효 기간
+        - API 통신 시 사용
+    - **Refresh Token**
+        - 긴 유효 기간
+        - Access Token이 만료되었을 때 새로운 Access Token을 발급받는 데 사용
+
+### 두 토큰의 사용 흐름
+
+1. 로그인 인증에 성공한 클라이언트는 `Refresh Token`과 `Access Token`  서버로부터 받음
+2. 클라이언트는 `Refresh Token`과 `Access Token`을 local storage에 저장
+3. 클라이언트는 **헤더**에 Access Token을 넣고 API 통신
+4. `Access Token`의 **유효기간이 만료**
+    - Access Token은 이제 유효하지 않으므로 **권한이 없는 사용자**가 됨
+    - 클라이언트로부터 유효기간이 지난 Access Token을 받은 서버는 401에러 코드로 응답
+    - `401`를 통해 클라이언트는 `invalid_token` 즉, 유효기간이 만료되었음을 알 수 있음
+5. **헤더**에 Access Token 대신 `Refresh Token`을 넣어 **API를 재요청**
+6. Refresh Token으로 사용자의 권한을 확인한 서버는 **응답쿼리 헤더**에 **새로운 Access Token**을 넣어 응답
+7. 만약 `Refresh Token`도 **만료**되었다면 서버는 동일하게 **401 error code**를 보내고 클라이언트는 **재로그인**할 수 있게 페이지 이동
+
+### **Refresh Token의 보안 고려사항**
+
+- Refresh Token은 통신 빈도가 적지만 탈취 위험이 존재
+- 이를 방지하기 위해 **Refresh Token Rotation** 기법이 사용됨
+
+**Refresh Token Rotation** 이란?
+
+- 클라이언트가 Access Token을 재요청할 때마다 새로운 Refresh Token을 발급받는 방식
+- Refresh Token Rotation을 통해 탈취된 Refresh Token의 유효성을 최소화할 수 있음
+
+[🧐 Access Token과 Refresh Token이란 무엇이고 왜 필요할까?](https://velog.io/@chuu1019/Access-Token%EA%B3%BC-Refresh-Token%EC%9D%B4%EB%9E%80-%EB%AC%B4%EC%97%87%EC%9D%B4%EA%B3%A0-%EC%99%9C-%ED%95%84%EC%9A%94%ED%95%A0%EA%B9%8C)
+
+[[JS] 📚 LocalStorage / SessionStorage (vs 쿠키와 비교)](https://inpa.tistory.com/entry/JS-%F0%9F%93%9A-localStorage-sessionStorage)
+</details>
+
+
 
 <details>
 <summary><h2>📖 2025-01- 학습</h2></summary>
+
 
 </details>
