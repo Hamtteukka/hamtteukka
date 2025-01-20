@@ -440,6 +440,177 @@ LIMIT 10;
 [[JS] 📚 LocalStorage / SessionStorage (vs 쿠키와 비교)](https://inpa.tistory.com/entry/JS-%F0%9F%93%9A-localStorage-sessionStorage)
 </details>
 
+<details>
+<summary><h2>📖 2025-01-20 학습</h2></summary>
+
+# SOLID Principles
+
+- SOLID는 다섯 가지 핵심 원칙
+- 소프트웨어 설계 시 유지보수성과 확장성을 높이기 위해 중요한 기준
+
+## 1. SRP (Single Responsibility Principle) - **단일 책임 원칙**
+
+- 클래스는 하나의 책임만 가져야 합니다.
+- **설명**: 각 클래스는 한 가지 기능만 담당, 이 책임은 변경의 이유가 되어야 함
+- **예시**
+    
+    ```java
+    class UserService {
+        void registerUser(User user) {
+            // 사용자 등록 로직
+        }
+    
+        void sendWelcomeEmail(User user) {
+            // 환영 이메일 발송 로직
+        }
+    }
+    ```
+    
+    - **개선**: 이메일 관련 로직은 별도의 클래스로 분리
+        
+        ```java
+        class UserService {
+            void registerUser(User user) {
+                // 사용자 등록 로직
+            }
+        }
+        
+        class EmailService {
+            void sendWelcomeEmail(User user) {
+                // 이메일 발송 로직
+            }
+        }
+        ```
+        
+
+## 2. OCP (Open/Closed Principle) - **개방-폐쇄 원칙**
+
+- 확장에는 열려 있고, 변경에는 닫혀 있어야 함
+- **설명**: 기존 코드를 수정하지 않고 기능을 확장할 수 있어야 함
+- **예시**
+    
+    ```java
+    class Shape {
+        void draw() {
+            // 기본 그리기 로직
+        }
+    }
+    
+    class Circle extends Shape {
+        void draw() {
+            // 원 그리기 로직
+        }
+    }
+    ```
+    
+
+## 3. LSP (Liskov Substitution Principle) - **리스코프 치환 원칙**
+
+- 서브 타입은 언제나 기반 타입으로 교체할 수 있어야 함
+- **설명**: 부모 클래스 타입의 객체를 자식 클래스 타입으로 대체해도 프로그램이 정상적으로 동작해야 함
+- **예시**
+    
+    ```java
+    class Bird {
+        void fly() {
+            // 날기 기능
+        }
+    }
+    
+    class Penguin extends Bird {
+        void fly() {
+            throw new UnsupportedOperationException("펭귄은 날 수 없습니다.");
+        }
+    }
+    
+    ```
+    
+    - **개선**: 펭귄은 `Bird`를 상속받지 않고 별도의 인터페이스로 분리해야 함
+
+## 4. ISP (Interface Segregation Principle) - **인터페이스 분리 원칙**
+
+- 클라이언트는 자신이 사용하지 않는 메서드에 의존하지 않아야 함
+- **설명**: 인터페이스는 구체적이고 작은 단위로 나누어야 함
+- **예시**
+    
+    ```java
+    interface Animal {
+        void eat();
+        void fly();
+    }
+    
+    class Dog implements Animal {
+        public void eat() {
+            // 먹기 기능
+        }
+        public void fly() {
+            throw new UnsupportedOperationException("강아지는 날 수 없습니다.");
+        }
+    }
+    ```
+    
+    - **개선**: 인터페이스를 분리
+    
+    ```java
+    interface Eater {
+        void eat();
+    }
+    
+    interface Flyer {
+        void fly();
+    }
+    
+    class Dog implements Eater {
+        public void eat() {
+            // 먹기 기능
+        }
+    }
+    ```
+    
+
+## 5. DIP (Dependency Inversion Principle) - **의존성 역전 원칙**
+
+- 고수준 모듈은 저수준 모듈에 의존해서는 안 됨, 둘 다 추상화에 의존해야 함
+- **설명**: 구체 클래스가 아닌 인터페이스에 의존해야 함
+- **예시**
+    
+    ```java
+    class Keyboard {}
+    
+    class Computer {
+        private Keyboard keyboard;
+    
+        Computer() {
+            this.keyboard = new Keyboard();
+        }
+    }
+    ```
+    
+    - **개선**: 의존성을 인터페이스로 역전
+    
+    ```java
+    interface InputDevice {}
+    
+    class Keyboard implements InputDevice {}
+    
+    class Computer {
+        private InputDevice inputDevice;
+    
+        Computer(InputDevice inputDevice) {
+            this.inputDevice = inputDevice;
+        }
+    }
+    
+    ```
+    
+
+---
+
+**참고 자료**
+
+- [SOLID Principles - Wikipedia](https://en.wikipedia.org/wiki/SOLID)
+- [Spring Documentation](https://spring.io/)
+</details>
 
 
 <details>
