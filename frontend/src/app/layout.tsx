@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Nanum_Gothic } from 'next/font/google';
 import './globals.css';
+import Navbar from '@/components/layout/Navbar';
 
 export const metadata: Metadata = {
   title: '함뜨까',
@@ -16,7 +17,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='kr'>
-      <body className={`${nanumGothic.className} antialiased`}>{children}</body>
+      <body className={`${nanumGothic.className} flex antialiased`}>
+        <Navbar />
+        <main className='grow'>{children}</main>
+      </body>
     </html>
   );
 }
