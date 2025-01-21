@@ -744,3 +744,287 @@ const memoizedFn = useCallback(fn, dependencies);
 > https://ko.react.dev/reference/react/memo
 
 </details>
+
+<details>
+<summary><h2>📖 2025-01-20 학습</h2></summary>
+
+
+
+## 데이터 타입의 종류
+
+### 기본형(primitive type)
+
+- number
+- string
+- boolean
+- null
+- undefined
+- Symbol(ES6부터)
+
+### 참조형(reference type)
+
+- object
+  - Array
+  - Function
+  - Date
+  - RegExp(정규표현식)
+  - Map, WeakMap(ES6)
+  - Set, WeakSet(ES6)
+
+### 데이터 타입을 구분하는 기준은?
+
+할당이나 현산 시, 기본형은 값이 담긴 주솟값을 복제하고 불변성을 띄며, 참조형은 값이 담긴 주솟값들로 이루어진 묶음을 가리키는 주솟값을 복제.
+
+## 데이터 타입에 관한 배경지식
+
+### 메모리와 데이터
+
+컴퓨터는 모든 데이터를 `0`과 `1`로 바꿔 기억하고, 이를 `비트(bit)`라고 한다. 그리고 8개의 `비트`를 하나로 묶은 `바이트(byte)`라는 단위가 존재한다. `1 bit`가 나타낼 수 있는 값이 2개이기 때문에 `1 byte`가 나타낼 수 있는 값은 256(2^8^)개이다.
+자바스크립트에서는 숫자를 저장하기 위해 `8byte(64bit)`를 확보한다.
+그리고, 모든 데이터는 바이트 단위의 식별자인, **메모리 주솟값(memory address)** 을 통해 서로 구분하고 연결한다.
+
+### 식별자와 변수
+
+변수는 변할 수 있는 무언가, 즉 변할 수 있는 `데이터`이다. 식별자는 이러한 데이터를 식별하는 데 사용되는 이름, 즉 `변수명`이다.
+
+## 변수 선언과 데이터 할당
+
+### 변수 선언
+
+```javascript
+var a;
+```
+
+위 코드를 말로 풀어쓰면
+
+> 변할 수 있는 데이터를 만든다. 이 데이터의 식별자는 a로한다
+
+이다. 선언할 때는 `undefined`이지만 나중에 다른 값으로 바뀔 수 있다. 즉, 변수는 **변경 가능한 데이터가 담길 수 있는 공간 또는 그릇** 이라고 생각할 수 있다.
+
+### 데이터 할당
+
+```javascript
+var a;              // 변수 a 선언
+a = 'abc';          // 변수 a에 데이터 할당
+
+var a = 'abc';      // 변수 선언과 할당을 한 문장으로 표현
+```
+
+변수를 선언하고 할당하는 과정은 다음과 같다.
+
+1. 메모리에서 비어있는 공간을 확보하고 그 공간의 이름을 설정(선언)한다.
+2. 데이터를 저장하기 위한 별도의 메모리 공간을 확보해서 문자열 'abc'를 저장한다.
+3. 문자열의 주소를 변수 영역에 저장한다.
+
+> 왜 변수 영역에 값을 직접 대입하지 않고 별도의 메모리 공간을 확보해서 저장한 후 이 주조슬 대입할까?
+
+문자열은 숫자형 데이터와 달리 특별히 정해진 규격이 없다. 즉 필요한 메모리 용량이 가변적인데, 문자열을 추가한다면 추가적인 메모리 공간 확보가 필요하고, 그렇다면 뒤에 있는 데이터들이 이동하고 재할당 되면서 컴퓨터의 연산이 커지게 된다. 따라서 별도의 공간에 문자열을 저장하고, 문자열이 바뀐다면 원래 저장되어있던 공간이 아니라 새로운 공간에 새로운 문자열을 저장한 후 변수에 할당한다.
+
+💡 기존 데이터는 자신의 주소를 저장하는 변수가 하나도 없게 되면 `가비지 컬렉터(garbage collector)`의 수거 대상이 된다.
+
+## 기본형 데이터와 참조형 데이터
+
+### 불변값
+
+> 상수와 불변값은 다른 개념이다.
+
+변수와 상수를 구분짓는 변경 가능성의 대상은 **변수 영역** 메모리이다. 하지만, 불변성 여부를 구분할 때의 변경 가능성의 대상은 **데이터 영역** 메모리이다.
+즉, 상수는 변수에 새로운 값을 할당할 수 없고, 불변값은 데이터 영역에서 값을 변경할 수 없다.
+기본형 데이터는 모두 불변값이다.
+
+```javascript
+var b = 5;
+var c = 5;
+b = 7;
+```
+
+위 코드에서 `b`에 `5`를 대입할 때, 먼저 데이터 영역에서 `5`를 찾고 없으면 새로 만든다.
+`c`에 `5`를 대입할 때는 데이터 영역에서 `5`를 찾고 그 주소를 재활용한다.
+`b`에 다시 `7`을 대입하려고 할 때는 메모리 영역에 있는 `5`를 `7`로 바꾸는 것이 아니고, 메모리 영역에서 `7`을 찾고 없으면 새로 만든다.
+이와 같은 성질을 **불변성** 이라고 한다. 한 번 만들어진 값은 **가비지 컬렉팅** 을 당하지 않는 한 **영원히 변하지 않는다** .
+
+### 가변값
+
+먼저, 참조형 데이터의 할당 과정을 살펴보자.
+
+```javascript
+var obj1 = {
+    a: 1,
+    b: 'bbb'
+};
+```
+
+1. 변수 영역에 obj1에 대한 빈 공간을 확보한다.
+2. 별도의 변수 영역을 마련하고, 메모리 영역에 이 변수 영역의 주소를 저장한다.
+3. 별도의 변수 영역에는 a와 b에 대한 공간이 확보되고, 각각의 값을 저장하는 메모리 영역이 할당된다.
+
+이 상황에서 `obj1.a = 2;`라는 코드가 추가된다면, 데이터 영역에서 숫자 `2`를 검색하고 검색 결과가 없다면 메모리 영역에 `2`를 새로 저장하고 이 주소를 `obj1.a`에 저장한다. 숫자에 대한 불변성은 여전하지만, **새로운 객체** 가 만들어진 것이 아니라 기존 객체 내부의 값만 바뀌게 되었다. 이러한 성질을 가변성이라고 한다.
+
+### 변수 복사 비교
+
+```javascript
+var a = 100;
+var b = a;
+
+var obj1 = { c: 10, d: 'ddd' };
+var obj2 = obj1;
+```
+
+변수를 복사할 때 `a`와 `b`가 같은 주소를 바라보게 되고, `obj1`과 `obj2`가 같은 주소를 바라보게 된다는 점은 동일하다. 복사 과정은 동일하지만, 데이터 할당 과정에서 이미 차이가 있으므로 변수 복사 이후 동작에도 큰 차이가 존재한다.
+위 코드에서 두 가지 코드를 추가하고 살펴보자.
+
+```javascript
+b = 15;
+obj2.c = 20;
+```
+
+앞서 공부한 것을 바탕으로 분석해보면, `b = 15;`에서는 먼저 메모리 영역에서 `15`를 찾고 없기 때문에 `15`를 새로 만든 후 `b`에 할당한다. 마찬가지로 `obj2.c = 20;`에서도 메모리 영역세어 `20`을 찾고 없으므로 `20`을 새로 만든 후 `obj2.c`에 할당한다.
+
+이후에 `a`와 `b`, `obj1`과 `obj2`의 관계는 어떻게 될까?
+
+```javascript
+a !== b
+obj1 === obj2
+```
+
+코드로 표현하면 위와 같은 결과가 된다.
+
+> 왜??
+
+기본형과 참조형 데이터의 가장 큰 차이점이다. 생각해보면, `b`에는 `15`에 해당하는 새로운 메모리 영역을 만든 후 이 주소를 바라보고 있다. 그렇기 때문에 `a`와 `b`는 다른 주소를 바라보게 된다.
+`obj2.c`도 같은 방식으로 새로운 주소를 바라보게 된다. 하지만 `obj2`가 바라보는 주소는 어떤가?
+**똑같다.**
+`obj2`의 주소를 바꾼 적은 없다. `obj2`가 바라보고 있는 주소는 `obj1`이 바라보고 있는 주소와 여전히 똑같고, 해당 주소에 대입되어있는 값을 바꿔버렸다고 할 수 있다. 그렇기 때문에 `obj2.c`에 다른 값을 할당하는 순간 `obj1.c`의 값도 동일한 값으로 할당되는 것이다. 즉, `obj1.c === obj2.c`가 되기도 한다.
+
+```javascript
+obj2 = { c: 10, d: 'ddd' };
+```
+
+위 코드를 실행한 이후에는 `obj1 !== obj2`가 된다. 값은 완전히 동일할지라도, 새로운 객체를 만들어서 `obj2`에 할당한 것이기 때문에 `obj1`과 `obj2`는 서로 다른 주소를 바라보게 된다.
+
+## 불변 객체(immutable object)
+
+### 불변 객체를 만드는 간단한 방법
+
+```javascript
+var user = {
+    name: 'Jaenam',
+    gender: 'male'
+};
+
+var changeName = function(user, newName) {
+    var newUser = user;
+    newUser.name = newName;
+    return newUser;
+};
+
+var user2 = changeName(user, 'Jung');
+
+if(user !== user2) {
+    console.log('유저 정보가 변경되었습니다.');
+}
+console.log(user.name, user2.name);     // Jung Jung
+console.log(user === user2);            // true
+```
+
+위와 같은 코드에서는 `if`문을 지나치고 `user === user2`의 결과가 `true`가 된다. 이러한 상황에서는 불변 객체가 필요하다.
+
+이를 위해서는
+
+```javascript
+var changeName = function(user, newName) {
+    return {
+        name: newName,
+        gender: user.gender
+    }
+}
+```
+
+```javascript
+var copyObject = function (target) {
+    var result = {};
+    for (var prop in target) {
+        result[prop] = target[prop];
+    }
+    return result;
+};
+```
+
+위 두 코드를 통해 새로운 객체를 생성해서 반환할 수 있다. 하지만 첫 번째 코드는 하드코딩이고, 두 번째 코드는 얕은 복사를 수행한다는 부분이 여전히 아쉽다.
+
+### 얕은 복사와 깊은 복사
+
+**얕은 복사(shallow copy)** 는 바로 아래 단계의 값만 복사하는 방법이고, **깊은 복사(deep copy)** 는 내부의 모든 값들을 하나하나 찾아서 전부 복사하는 방법이다.
+얕은 복사의 경우 불변값인 기본형 데이터를 복사할 때는 문제가 되지 않지만, 가변값을 복사한다면 문제가 발생한다.
+
+```javascript
+var user1 = {
+    name: 'Jaenam',
+    urls: {
+        portfolio: 'http://github.com/abc',
+        blog: 'http://blog.com',
+    }
+};
+
+var user2 = copyObject(user);
+
+user2.name = 'Jung';
+user2.urls.portfolio = 'http://portfolio.com';
+```
+
+위 코드를 실행 후 `user1.name !== user2.name`이 된다. 여기까지는 문제가 없다. 하지만 `user1.urls.portfolio === user2.urls.portfolio`가 된다. 왜일까?
+얕은 복사를 할 때, `name`의 주소와 `urls`의 주소를 복사한다. 그런데 `urls`에 할당된 값은 가변성을 띈다. 결국 `user1.urls`와 `user2.urls`는 서로 다르지만 같은 주소를 바라보고 있기 때문에, `user2.urls.portfolio`를 바꾸면 `user1.urls.portfolio`의 값도 똑같이 바뀌게 된다.
+
+따라서 모든 값을 불변 객체로 만들고 복사하기 위해서는 내부 프로퍼티들을 순회하며 `copyObject` 함수를 재귀적으로 호출해야 된다.
+
+```javascript
+var copyObject = function (target) {
+    var result = {};
+    if (typeof target === 'object' && target !== null) {        // 자바스크립트에서 typeof 명령어가 null에 대해 'object'를 반환한다.(자바스크립트 자체의 버그)
+        for (var prop in target) {
+            result[prop] = copyObject(target[prop]);
+        }
+    } else {
+        result = target;
+    }
+    return result;
+};
+```
+
+다른 간단한 방법으로는 객체를 `JSON` 형식의 문자열로 전환했다가 다시 `JSON` 객체로 바꾸는 것이다. 하지만 메서드(함수)나 숨겨진 프로퍼티인 `__proto__`나 `getter/setter`등과 같이 `JSON`으로 변경할 수 없는 프로퍼티들은 모두 무시한다. `httpRequest`로 받은 데이터를 저장한 객체를 복사할 때 등 순수한 정보만 다룰 때 활용하기 좋다.
+
+```javascript
+var copyObjectViaJSON = function (target) {
+    return JSON.parse(JSON.stringify(target));
+}
+```
+
+## undefined와 null
+
+`undefined`와 `null`은 둘 다 '없음'을 나타내지만 의미가 미세하게 다르고 사용하는 목적도 다르다.
+
+`undefined`는 다음 세 경우에 부여된다.
+
+1. 값을 대입하지 않은 변수, 즉 데이터 영역의 메모리 주소를 지정하지 않은 식별자에 접근할 때
+2. 객체 내부의 존재하지 않는 프로퍼티에 접근하려고 할 때
+3. `return` 문이 없거나 호출되지 않는 함수의 실행 결과
+
+> var로 변수를 선언하면 변수가 인스턴스화될 때 undefined로 초기화되지만, ES6에서 등장한 let, const에는 undefined를 할당하지 않은 채로 초기화를 마치며, 이후 실제 변수가 평가되기 전까지 해당 변수에 접근할 수 없다.
+
+단, 자바스크립트 엔진이 반환해주는 `undefined`와 직접 할당하는 `undefined`에는 차이가 존재한다. 자바스크립트 엔진이 반환해주는 `undefined`는 문자 그대로 값이 없음을 나타내고, 직접 할당하는 `undefined`는 '비어있음'을 의미하긴 하지만 하나의 값으로 동작하기 때문에 실존한다.
+이러한 혼란을 막기 위해 '비어있음'을 명시적으로 나타내는 `null`을 사용하는 것이 좋다.
+
+```javascript
+var n = null;
+console.log(typeof n); // object
+
+console.log(n == undefined); // true
+console.log(n == null); // true
+
+console.log(n === undefined); // false
+console.log(n === null); // true
+```
+
+위 코드는 `undefined`와 `null`을 사용할 때 주의사항이다. `typeof null`은 `object`를 반환한다. 또한 `동등 연산자(==)(equality operator)`로 비교할 경우 `null`과 `undefined`는 서로 같다고 판단한다. `일치 연산자(===)(identity operator)`를 써야 정확히 판별 가능하다.
+
+</details>
