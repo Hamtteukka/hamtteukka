@@ -6,7 +6,7 @@ import NavItem from './NavItem';
 
 const Navbar = () => {
   return (
-    <nav className='relative min-h-screen w-64 border-r bg-white'>
+    <nav className='min-h-screen w-64 border-r bg-white'>
       <div className='fixed flex h-screen w-64 flex-col gap-8 px-4 py-10'>
         <header className='flex items-center justify-between'>
           <Image width={40} height={40} src={logo} alt='함뜨까 로고' />
