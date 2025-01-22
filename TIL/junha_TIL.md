@@ -1028,3 +1028,170 @@ console.log(n === null); // true
 위 코드는 `undefined`와 `null`을 사용할 때 주의사항이다. `typeof null`은 `object`를 반환한다. 또한 `동등 연산자(==)(equality operator)`로 비교할 경우 `null`과 `undefined`는 서로 같다고 판단한다. `일치 연산자(===)(identity operator)`를 써야 정확히 판별 가능하다.
 
 </details>
+
+<details>
+<summary><h2>📖 2025-01-13 학습</h2></summary>
+
+# 실행 컨텍스트란?
+
+> 실행할 코드에 제공할 환경 정보들을 모아놓은 객체
+
+실행 컨텍스트들은 콜 스택(call stack)에 쌓아 올렸다가, 가장 위에 쌓여있는 컨텍스트와 관련 있는 코드들을 실행하면서 전체 코드의 환경과 순서를 보장한다.
+
+실행 컨텍스트는 전역공간, eval() 함수, 함수 등이 있고, 일반적으로 실행 컨텍스트를 구성하는 방법은 함수를 실행하는 것이다.
+
+다음은 예제 코드이다.
+
+<!-- prettier-ignore -->
+```javascript
+// -----------------------------(1)
+var a = 1;
+function outer() {
+  function inner() {
+    console.log(a);   // undefined
+    var a = 3;
+  }
+  inner(); // ------------------(2)
+  console.log(a);     // 1
+}
+outer(); // --------------------(3)
+console.log(a);       // 1
+```
+
+1. 자바스크립트 코드를 실행하는 순간(1) 전역 컨텍스트가 콜 스택에 담긴다.
+2. (3)에서 `outer` 함수를 호출하면 `outer에` 대한 환경 정보를 수집해서 `outer` 실행 컨텍스트를 생성하고 콜 스택에 담는다. -> 콜 택의 맨 위가 `outer` 실행 컨텍스트가 되므로 전역 컨텍스트와 관련된 코드의 실행을 일시중단하고 `outer` 함수 내부의 코드를 순차로 실행한다.
+3. (2)에서 `inner` 함수의 실행 컨텍스트가 콜 스택의 가장 위에 담긴다.
+
+스택 구조에 컨텍스트들이 쌓이기 때문에 한 실행 컨텍스트가 콜 스택의 맨 위에 쌓이는 순간이 현재 실행할 코드에 관여하게 되는 시점이다. 이 때 자바스크립트 엔진은 해당 컨텍스트에 관련된 코드들을 실행하는 데 필요한 환경 정보들을 수집해서 실행 컨텍스트 객체에 저장한다.
+여기에 담기는 정보들은 다음과 같다.
+
+- `VariableEnvironment`: 현재 컨텍스트 내의 식별자들에 대한 정보 + 외부 환경 정보. 선언 시점의 `LexicalEnvironment`의 `스냅샷(snapshot)`으로, 변경 사항은 반영되지 않음.
+- `LexicalEnvironment`: 처음에는 `VariableEnvironment`와 같지만 변경 사항이 실시간으로 반영됨.
+- `ThisBinding`: `this` 식별자가 바라봐야 할 대상 객체.
+
+# Variable Environment
+
+`VariableEnvironment`에 담기는 내용은 `LexicalEnvironment`와 같지만 최초 실행 시의 스냅샷을 유지한다는 점이 다르다. 주로 실행 컨텍스트를 생성할 때 `VariableEnvironment`에 정보를 먼저 담은 다음, 이를 그대로 복사해서 `LexicalEnvironment`를 만들고, 이후에는 `LexicalEnvironment`를 주로 활용한다.
+
+# LexicalEnvironment
+
+## environmentRecord와 호이스팅
+
+`environmentRecord`에는 현재 컨텍스트와 관련된 코드의 식별자 정보들이 저장된다. 함수의 매개변수 식별자, 함수, 변수의 식별자 등이 식별자에 해당하고, 컨텍스트 내부 전체를 처음부터 끝까지 쭉 훑어나가며 **순서대로** 수집한다. 이 과정에서 **호이스팅(hoisting)** 이라는 개념이 등장한다.
+
+> 전역 실행 컨텍스트는 변수 객체를 생성하는 대신 자바스크립트 구동 환경이 별도로 제공하는 개체, 즉 전역 객체(global object)를 활용한다. 전역 객체에는 브라우저의 `window`, Node.js의 `global` 객체 등이 있다. 이들은 자바스크립트 내장 객체(native object)가 아닌 호스트 객체(host object)로 분류된다.
+
+### 호이스팅 규칙
+
+```javascript
+function a(x) {
+  console.log(x); // (1), 1
+  var x;
+  console.log(x); // (2), 1
+  var x = 2;
+  console.log(x); // (3), 2
+}
+a(1);
+```
+
+호이스팅에 의해 위와 같은 결과가 나오게 된다. 과정은 다음과 같다.
+
+1. 함수 `a`의 인자로 1이 전달된다.
+2. `a(x)`에 대한 실행 컨텍스트가 생성된다.
+3. `a(x)` 내부에서 호이스팅이 발생하기 때문에 `var x`가 선언된 상태가 된다.
+4. `a(1)`에 의해 함수 `a`의 인자로 1이 전달되었기 때문에 `var x`는 1로 초기화 된다.
+5. (1)과 (2)에서 바라보는 `x` 값은 1이 된다.
+6. `var x = 2`, 즉 `x = 2` 를 통해 x에 2가 할당되기 때문에 (3)에서 바라보는 `x` 값은 2가 된다.
+
+이와 같은 과정으로, 호이스팅 개념이 적용되어 (2)에서는 `undefined`가 아닌 1이 출력된다.
+
+다른 예제에서는 코드가 어떤 식으로 동작하는지 코드의 변형을 통해 알아보겠다. _실제 자바스크립트 엔진에서는 이러한 변환 과정을 거치지 않는다._
+
+```javascript
+function a() {
+  console.log(b);
+  var b = 'bbb';
+  console.log(b);
+  function b() {}
+  console.log(b);
+}
+a();
+```
+
+<!-- prettier-ignore -->
+```javascript
+function a() {
+  var b;          // 수집 대상 1. 변수는 선언부만 끌어올린다.
+  function b() {} // 수집 대상 2. 함수 선언은 전체를 끌어올린다.
+
+  console.log(b);
+  b = 'bbb';      // 변수의 할당부는 원래 자리에 남겨둔다.
+  console.log(b);
+  console.log(b);
+}
+a();
+```
+
+```javascript
+function a() {
+  var b;
+  var b = function b() {}; // 함수 선언문을 함수 표현식으로 바꾼 코드
+
+  console.log(b);
+  b = 'bbb';
+  console.log(b);
+  console.log(b);
+}
+a();
+```
+
+이러한 과정 때문에 `b 함수`, `'bbb'`, `'bbb'`라는 결과가 나오게 된다.
+
+### 함수 선언문과 함수 표현식
+
+함수 선언문은 function 정의부만 존재하고 별도의 할당 명령이 없는 것을 의미하고, 반대로 함수 표현식은 정의한 function을 별도의 변수에 할당하는 것을 의미한다. 이 둘 사이에는 호이스팅 과정에서 차이가 발생한다.
+
+<!-- prettier-ignore -->
+```javascript
+console.log(sum(1, 2));
+console.log(multiply(3, 4));
+
+function sum(a, b) {              // 함수 선언문 sum
+  return a + b;
+}
+
+var multiply = function (a, b) {  // 함수 표현식 multiply
+  return a * b;
+};
+```
+
+이 때는 함수 선언문 `sum`은 함수 전체를 호이스팅 하기 때문에 `sum(1, 2)`가 잘 동작하지만, 함수 표현식 `multiply`는 변수 선언부만 호이스팅 하기 때문에 `multiply(3, 4)`를 호출하는 코드에서 `multiply is not a function`이라는 에러가 발생하게 된다.
+
+## 스코프, 스코프 체인, outerEnvironmentReference
+
+스코프(scope)란 식별자에 대한 유효범위이다. 어떤 경계 A의 외부에서 선언한 변수는 A의 외부뿐 아니라 A의 내부에서도 접근이 가능하지만, A의 내부에서 선언한 변수는 오직 A의 내부에서만 접근할 수 있다. 단, ES5까지의 자바스크립트는 전역공간을 제외하면 **오직 함수에 의해서만** 스코프가 생성된다.
+이렇게 **식별자의 유효범위**를 안에서부터 바깥으로 차례로 검색해나가는 것을 **스코프 체인(scope chain)**이라고 한다. 그리고 이를 가능하게 하는 것이 `LexicalEnvironment`의 두 번째 수집 자료인 `outerEnvironmentReference`이다.
+
+### 스코프 체인
+
+여러 스코프에서 동일한 식별자를 선언한 경우에는 항상 스코프 체인 상에서 가장 먼저 발견된 식별자에만 접근 가능하게 된다.
+
+<!-- prettier-ignore -->
+```javascript
+var a = 1;
+var outer = function () {
+  var inner = function () {
+    console.log(a); // undefined
+    var a = 3;
+  };
+  inner();
+  console.log(a);   // 1
+};
+outer();
+console.log(a);     // 1
+```
+
+위와 같은 실행 결과가 나오는 것은 스코프에 의해 결정된다. `inner` 함수가 실행될 때는 바깥에 있는 `a`에 접근하기 전에 `inner` 함수에서 호이스팅된 `a`에 접근한다. 하지만 이 때는 `a`가 초기화되지 않은 상태이기 때문에 `undefined`가 출력된다. `outer` 함수에서 `a`를 출력할 때는 자신, 또는 자신의 바깥 스코프에서 `a`를 찾는다. 자신보다 더 깊은 스코프로 들어가서 확인할 수 없기 때문에 `inner` 함수의 `a`를 출력하는 것이 아니라 바깥의 `a` 값이 1이 출력된다. 마찬가지로 마지막 코드에서도 동인한 스코프에 있는 `a`인 1이 출력된다.
+이렇게 `outer` 함수에서 `inner` 함수 내부의 변수에 접근할 수 없는 것을 `변수 은닉화(variable shadowing)`이라고 한다.
+
+</details>
