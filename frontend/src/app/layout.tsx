@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang='kr'>
       <body className={`${nanumGothic.className} flex antialiased`}>
         <Navbar />
-        <main className='grow'>{children}</main>
+        <main className='flex-1'>{children}</main>
       </body>
     </html>
   );
