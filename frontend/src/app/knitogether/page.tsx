@@ -1,7 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/button/Button';
-import VideoRoomCard from '@/components/ui/VideoRoomCard';
+import VideoRoomCard from '@/components/video/VideoRoomCard';
 import { MVideoRoomList } from '@/mocks/data/video';
 
 const handleCreateRoom = () => {
