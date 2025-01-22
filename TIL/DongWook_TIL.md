@@ -87,3 +87,15 @@ API의 형태, 구조에 대한 정의. 어떤 메서드를 사용하고, 요청
 => 안하기로 함<br><br>2. 카테고리는 캐싱 안하기로 함. 
 </div>
 </details>
+
+<details>
+<summary><h2>2025-01-21 학습</h2></summary>
+<div markdown = "1">
+<h1>API 명세서 작성 완료</h1><br>
+<h2>presigned Url 이미지 업로드</h2><br>
+기존방법: 버킷 생성 => 프론트에서 백엔드에 presigned url 생성 POST 요청을 함 => AWS에서 presigned url 백엔드에 전달(백엔드는 프론트로 전달) =>받아온 presigned url에 이미지 업로드 PUT 요청 보냄냄 <br>
+수정방법: 프론트엔드에서 백엔드를 거치지 않고 프론트엔드에서 바로 S3에 이미지 업로드
+<h1>BE 개발환경 세팅</h1><br>
+폴더 구조(도메인 모델 패턴), yaml 설정, customException 작성 완료료
+</div>
+</details>
