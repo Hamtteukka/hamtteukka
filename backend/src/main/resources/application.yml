@@ -1,0 +1,24 @@
+#spring.application.name=hamtteukka
+spring:
+  datasource:
+    # MySql
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url:
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: create # 로컬 개발환경시
+    properties:
+      hibernate:
+        format_sql: true
+#        show_sql: true
+
+  config:
+    import: application-secret.yml
+
+logging:
+  level:
+    org.hibernate.SQL: debug
