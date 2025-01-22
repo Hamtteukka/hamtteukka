@@ -12,6 +12,7 @@ const config: Config = {
         primary: {
           DEFAULT: 'var(--primary)',
           light: 'var(--primary-light)',
+          dark: 'var(--primary-dark)',
         },
         warning: 'var(--action-warning)',
       },
@@ -47,6 +48,7 @@ const config: Config = {
       borderColor: {
         DEFAULT: 'var(--border)',
         input: 'var(--border-input)',
+        activative: 'var(--border-activative)',
       },
       outlineColor: {
         activative: 'var(--border-activative)',
