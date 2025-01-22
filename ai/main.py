@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import dot_router
+from routers import dot_router, description_router
 
 import uvicorn
 
@@ -7,6 +7,7 @@ import uvicorn
 app = FastAPI()
 
 app.include_router(dot_router.router)
+app.include_router(description_router.router)
 
 # ----- 메인 실행부 -----
 if __name__ == "__main__":
