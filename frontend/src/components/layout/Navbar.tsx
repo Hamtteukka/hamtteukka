@@ -4,7 +4,7 @@ import logo from '/public/logo/logo.png';
 import { navigationList } from '@/lib/navigation';
 import NavItem from './NavItem';
 
-const Navbar = () => {
+const Navbar: React.FC = () => {
   return (
     <nav className='min-h-screen w-64 border-r bg-white'>
       <div className='fixed flex h-screen w-64 flex-col gap-8 px-4 py-10'>
