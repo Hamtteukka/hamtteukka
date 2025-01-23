@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import SelectCard from './SelectCard';
-import TextPatternForm from '@/components/pattern/TextPatternForm';
-import DotPatternForm from '@/components/pattern/DotPatternForm';
+import TextPatternFormContainer from '@/components/pattern/new/text/TextPatternFormContainer';
+import DotPatternFormContainer from '@/components/pattern/new/dot/DotPatternFormContainer';
 
 const NewPatternForm = () => {
   const [patternType, setPatterType] = useState<'text' | 'dot'>();
@@ -18,9 +18,9 @@ const NewPatternForm = () => {
       </button>
     </section>
   ) : patternType === 'text' ? (
-    <TextPatternForm />
+    <TextPatternFormContainer />
   ) : (
-    <DotPatternForm />
+    <DotPatternFormContainer />
   );
 };
 

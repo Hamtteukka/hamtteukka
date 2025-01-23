@@ -1,5 +1,5 @@
 import { patternOptions } from '@/lib/pattern';
-import { H2 } from '../typography/Heading';
+import { H2 } from '@/components/typography/Heading';
 
 interface PSelectCard {
   type: 'text' | 'dot';
