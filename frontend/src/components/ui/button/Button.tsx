@@ -14,7 +14,7 @@ const Button: React.FC<PButton> = ({ children, onClick, type = 'filled', classNa
   return (
     <button
       className={cn(
-        `cursor-pointer rounded-sm border px-3 py-2 text-body1 font-bold ${borderColor} ${bgColor} ${textColor} hover:opacity-90`,
+        `flex cursor-pointer justify-center rounded-sm border px-3 py-2 font-bold ${borderColor} ${bgColor} ${textColor} hover:opacity-90`,
         className,
       )}
       onClick={onClick}
