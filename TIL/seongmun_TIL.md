@@ -737,6 +737,70 @@ LIMIT 10;
 </details>
 
 <details>
+<summary><h2>📖 2025-01-22 학습</h2></summary>
+
+# CORS (Cross-Origin Resource Sharing)
+
+- **교차 출처 리소스 공유**를 위한 프로토콜로, 2009년 HTML5 표준으로 채택됨
+- **SOP**(Same Origin Policy)에 의해 제한된 교차 출처 리소스 요청을 허용하는 방법
+- 서버에서 **CORS 헤더**를 설정하여 다른 출처에서의 리소스 접근을 제어 가능
+
+
+# SOP (Same Origin Policy)
+
+- **동일 출처 정책**으로 동일한 출처의 리소스만 접근을 허용하는 보안 정책
+- **동일 출처**는 도메인, 프로토콜, 포트 번호가 모두 일치해야 함
+    - 예: `https://www.naver.com:443`
+    - 프로토콜//www.도메인.com:포트번호
+
+### SOP가 없는 경우 발생 가능한 문제
+
+- 세션 ID 등 민감한 정보가 탈취되어 **XSS**, **CSRF** 같은 공격에 악용될 수 있음
+- SOP는 교차 출처 리소스 접근을 제한하여 보안 위협을 완화함
+
+
+# CORS 프로토콜의 작동 원리
+
+1. 서버가 응답에 **CORS 관련 헤더**를 설정
+    - 허용할 도메인, HTTP 메서드, 요청 헤더 종류를 지정
+2. 브라우저가 요청을 보내기 전 CORS 헤더 정보와 비교
+    - 조건이 맞지 않으면 **CORS 에러** 발생
+3. 요청이 보안적으로 민감하지 않으면(단순 요청 시) 바로 처리
+4. 보안적으로 민감한 요청은 **Preflight 요청**을 통해 허가 여부 확인 후 처리
+
+
+# Preflight 요청
+
+- **보안적으로 민감한 요청**에 대해 사전 확인을 위한 요청
+- 브라우저가 자동으로 실행하며, **OPTIONS 메서드** 사용
+- 서버의 **CORS 설정**(도메인, 메서드, 헤더 등)을 확인
+- 허용되지 않는 요청은 처리하지 않아 서버 부하를 줄임
+
+
+# Preflight 요청의 조건
+
+- 모든 CORS 요청에 Preflight 요청이 발생하지는 않음
+    1. **단순 요청**인 경우 생략.
+    2. 이전 Preflight 요청의 응답이 **캐싱**되어 있는 경우 생략
+        - 캐싱은 `Access-Control-Max-Age` 헤더로 설정 가능
+
+
+# 단순 요청 (Simple Request)
+
+- **Preflight 요청 없이** 바로 처리 가능한 요청
+- 다음 조건을 모두 만족해야 함
+    1. HTTP 메서드가 **GET**, **HEAD**, **POST** 중 하나
+    2. 요청 헤더가 CORS에서 허용된 값(`Content-Type`, `Accept`, 등)만 포함
+
+### 단순 요청의 예
+
+- JSON 데이터를 포함하지 않은 기본적인 GET 요청
+- HTML 폼 데이터를 전송하는 POST 요청
+
+[웹 개발자 면접 단골 질문 1 | CORS와 Preflight의 개념](https://www.youtube.com/watch?v=BQykNALA2WA&t=88s)
+</details>
+
+<details>
 <summary><h2>📖 2025-01- 학습</h2></summary>
 
 
