@@ -737,6 +737,191 @@ LIMIT 10;
 </details>
 
 <details>
+<summary><h2>📖 2025-01-22 학습</h2></summary>
+
+# CORS (Cross-Origin Resource Sharing)
+
+- **교차 출처 리소스 공유**를 위한 프로토콜로, 2009년 HTML5 표준으로 채택됨
+- **SOP**(Same Origin Policy)에 의해 제한된 교차 출처 리소스 요청을 허용하는 방법
+- 서버에서 **CORS 헤더**를 설정하여 다른 출처에서의 리소스 접근을 제어 가능
+
+
+# SOP (Same Origin Policy)
+
+- **동일 출처 정책**으로 동일한 출처의 리소스만 접근을 허용하는 보안 정책
+- **동일 출처**는 도메인, 프로토콜, 포트 번호가 모두 일치해야 함
+    - 예: `https://www.naver.com:443`
+    - 프로토콜//www.도메인.com:포트번호
+
+### SOP가 없는 경우 발생 가능한 문제
+
+- 세션 ID 등 민감한 정보가 탈취되어 **XSS**, **CSRF** 같은 공격에 악용될 수 있음
+- SOP는 교차 출처 리소스 접근을 제한하여 보안 위협을 완화함
+
+
+# CORS 프로토콜의 작동 원리
+
+1. 서버가 응답에 **CORS 관련 헤더**를 설정
+    - 허용할 도메인, HTTP 메서드, 요청 헤더 종류를 지정
+2. 브라우저가 요청을 보내기 전 CORS 헤더 정보와 비교
+    - 조건이 맞지 않으면 **CORS 에러** 발생
+3. 요청이 보안적으로 민감하지 않으면(단순 요청 시) 바로 처리
+4. 보안적으로 민감한 요청은 **Preflight 요청**을 통해 허가 여부 확인 후 처리
+
+
+# Preflight 요청
+
+- **보안적으로 민감한 요청**에 대해 사전 확인을 위한 요청
+- 브라우저가 자동으로 실행하며, **OPTIONS 메서드** 사용
+- 서버의 **CORS 설정**(도메인, 메서드, 헤더 등)을 확인
+- 허용되지 않는 요청은 처리하지 않아 서버 부하를 줄임
+
+
+# Preflight 요청의 조건
+
+- 모든 CORS 요청에 Preflight 요청이 발생하지는 않음
+    1. **단순 요청**인 경우 생략.
+    2. 이전 Preflight 요청의 응답이 **캐싱**되어 있는 경우 생략
+        - 캐싱은 `Access-Control-Max-Age` 헤더로 설정 가능
+
+
+# 단순 요청 (Simple Request)
+
+- **Preflight 요청 없이** 바로 처리 가능한 요청
+- 다음 조건을 모두 만족해야 함
+    1. HTTP 메서드가 **GET**, **HEAD**, **POST** 중 하나
+    2. 요청 헤더가 CORS에서 허용된 값(`Content-Type`, `Accept`, 등)만 포함
+
+### 단순 요청의 예
+
+- JSON 데이터를 포함하지 않은 기본적인 GET 요청
+- HTML 폼 데이터를 전송하는 POST 요청
+
+[웹 개발자 면접 단골 질문 1 | CORS와 Preflight의 개념](https://www.youtube.com/watch?v=BQykNALA2WA&t=88s)
+</details>
+
+<details>
+<summary><h2>📖 2025-01-23 학습</h2></summary>
+
+# DTO vs Entity, 불변 DTO, Jackson 매핑 방식
+
+## 1. Entity와 DTO의 차이
+
+- **Entity**
+    - DB 테이블과 직접적으로 매핑되는 도메인 모델 객체
+    - JPA 환경에서 `@Entity`로 선언
+    - DB 스키마와 일대일 대응하며, 비즈니스 로직을 포함하기도 함
+        - 비즈니스 로직이 어떤게 들어갈지는 추후 공부
+- **DTO(Data Transfer Object)**
+    - Controller ↔ Service ↔ View(또는 Frontend) 계층 간 **데이터 교환**에 특화된 객체
+    - 필요에 따라 Entity와 분리된 형태(필드 추가/삭제 가능)로 설계
+    - **외부 request/response,**  **계층 간 데이터 이동**에 사용
+
+## 2. DTO의 불변(Immutable) 설계와 생성자 주입
+
+- **불변 객체(Immutable Object)**
+    - 한 번 생성되면 내부 값이 변경되지 않음
+    - 동시성(Concurrency) 문제 최소화, 예측 가능한 코드 작성
+    - DTO가 외부에서 받은 값이 중간에 바뀌지 않아야 하는 경우 특히 유용
+- **생성자 주입 vs Setter 주입**
+    - setter가 존재하면 생성 후에도 값이 바뀔 수 있는 여지가 생김
+    - 객체 생성 시 모든 필드를 주입하고 이후 수정 불가하도록 하는 방식을 선호
+    - example
+        
+        ```java
+        public class UserDTO {
+            private final String name;
+            private final int age;
+        
+            public UserDTO(String name, int age) {
+                this.name = name;
+                this.age = age;
+            }
+        
+            // Getter만 존재, Setter는 없음
+        }
+        
+        ```
+        
+
+## 3. @RequestBody와 JSON 매핑: Jackson의 동작 원리
+
+- **요청 흐름(CSR, JSON)**
+    1. 클라이언트(프론트엔드) → 서버: JSON 형태로 HTTP 요청 바디 전송
+        
+        ```json
+        {
+          "name": "홍길동",
+          "age": 20
+        }
+        
+        ```
+        
+    2. 서버(스프링): `@RequestBody`를 통해 DTO 매핑
+        
+        ```java
+        @PostMapping("/user")
+        public String createUser(@RequestBody UserDTO userDTO) {
+            // userDTO: name=홍길동, age=20
+            return "Created user: " + userDTO.getName();
+        }
+        
+        ```
+        
+- **Jackson 매핑 과정**
+    - 스프링 MVC의 HttpMessageConverter가 요청 바디(JSON)를 읽어 **Jackson 라이브러리**를 통해 DTO 객체로 변환
+    - **기본 방식**: 기본 생성자 + Setter/필드 접근
+    - **다른 방식**: 특정 생성자(전 필드를 인자로 받는) 호출
+        - @JsonCreator와 @JsonProperty를 사용하면 Jackson이 필드마다 리플렉션으로 주입하지 않고 **생성자를 통해** 객체를 생성
+        - 불변 DTO에 적합
+
+## 4. 리플렉션 vs 생성자 호출
+
+- Jackson이 객체를 생성할 때
+    - (1) **기본 생성자**를 사용해 객체 생성 → setter나 **필드**를 리플렉션으로 매핑
+    - (2) **특정 생성자**(@JsonCreator + @JsonProperty)를 통해 필요한 값을 **생성자 파라미터**로 넘겨 객체를 한 번에 생성
+    - (2) 방식을 사용하면 필드를 일일이 setAccessible(true)로 열어 값 대입하는 리플렉션 비용이 줄어듦
+    - 다만 Jackson이 "이 생성자를 써야 해!"라고 판단하기 위해 클래스 구조를 **인스펙션(리플렉션/바이트코드 분석)** 하는 과정은 여전히 있음
+    - 하지만 매 요청마다 필드를 모두 리플렉션으로 세팅하는 것보다는 **훨씬 성능상 유리**
+
+## 5. 실무 팁
+
+1. **불변 DTO**
+    - 모든 필드를 final로 두고 생성자를 통해 필드를 한 번에 초기화
+    - @JsonCreator + @JsonProperty로 Jackson 매핑을 명시하면 생성자 기반 매핑 가능
+2. **Lombok**
+    - @AllArgsConstructor, @RequiredArgsConstructor + @JsonProperty 조합으로 편리하게 작성 가능
+    - 빌더(Builder) 패턴 사용 시에는 추가 설정 필요
+3. **Java Record** (JDK 16+)
+    - DTO 용도로 **Record**를 사용하면 자동으로 생성자/Getter/Equals/HashCode가 생성
+    - Jackson도 대부분 자동으로 인식 → 별도 설정 없이 불변 DTO 구축 가능
+
+## 6. 정리
+
+- DTO와 Entity를 분리해서 관리하면 **계층 간 의존성**을 명확히 분리하고 불필요한 필드 노출을 막을 수 있음
+- DTO는 **불변**으로 구현하면 유지보수성과 안정성이 높아지며 Jackson 매핑 시 **생성자 기반 주입**을 활용하면 **성능**도 개선 가능
+- @JsonCreator와 @JsonProperty를 통해 Jackson이 특정 생성자를 호출하도록 유도하면 필드 직접 주입 방식보다 **리플렉션 오버헤드**가 줄어듦
+
+---
+
+> Today I Learned
+> 
+> - DTO와 Entity의 개념 및 차이점
+> - 불변 DTO(Immutable)와 생성자 주입(Setter 지양) 방식
+> - Jackson의 JSON 매핑 원리 (기본 생성자 + 필드 주입 vs 생성자 주입)
+> - 리플렉션 오버헤드를 줄이는 방법: `@JsonCreator`, `@JsonProperty`, Record
+> - 실무에서 Lombok과 결합해 사용 가능
+
+---
+
+**참고**
+
+- [Spring Documentation - Jackson HttpMessageConverter](https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-config-message-converters)
+- [FasterXML Jackson 공식 문서](https://github.com/FasterXML/jackson-databind)
+- [Baeldung - Jackson Annotations](https://www.baeldung.com/jackson-annotations)
+</details>
+
+<details>
 <summary><h2>📖 2025-01- 학습</h2></summary>
 
 
