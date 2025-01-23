@@ -99,3 +99,27 @@ API의 형태, 구조에 대한 정의. 어떤 메서드를 사용하고, 요청
 폴더 구조(도메인 모델 패턴), yaml 설정, customException 작성 완료료
 </div>
 </details>
+
+<details>
+<summary><h2>2025-01-22 학습</h2></summary>
+<div markdown = "1">
+<h1>API 명세서 수정사항</h1><br>
+- 변수명 통일: 프론트엔드에서 혼동이 없게 변수명 통일<br>
+- 형식 통일: Request는 Header와 Body로 나눠서 Response는 성공, 실패 케이스 작성성<br>
+<h1>ERD 설계 수정</h1><br>
+- knitting_patterns 테이블 삭제
+- 연관관계 변경
+</div>
+</details>
+
+<details>
+<summary><h2>2025-01-23 학습</h2></summary>
+<div markdown = "1">
+<h1>엔티티 설계</h1><br>
+<h2>설계 시 주요 논의점</h2><br>
+- 엔티티에서 비즈니스 로직을 처리해야 하는가?<br>
+=> DDD(Domain Driven Design)에서는 엔티티에서 처리하는게 객체지향적 관점에도 맞음.<br>
+=> 엔티티를 '자료구조'로서 활용하냐, '객체'로서 활용하냐의 문제<br>
+=> 본 프로젝트에서는 전자를 선택하여, 서비스 계층에서 비즈니스 로직을 대부분 처리할 예정<br>
+</div>
+</details>
