@@ -450,5 +450,55 @@ localhost:8000에서 확인 가능
 </div>
 </details>
 
+<details>
+<summary>2025-01-22</summary>
+<div markdown="1">
+
+## Python Pydantic
+### 설명
+- Python에서 데이터 유효성 검증 및 설정 관리에 사용되는 라이브러리
+
+### 특징
+#### 타입 힌트 기반 모델링
+
+- Pydantic은 Python의 타입 힌트를 사용해 데이터 모델을 정의하며, 정의된 타입에 따라 자동으로 데이터를 검증
+- 예: int, str, List, Dict, datetime 등과 같은 기본 타입 및 복합 타입 지원
+
+#### 자동 데이터 변환
+
+- 입력된 데이터가 모델에 정의된 타입과 다를 경우 가능한 한 자동으로 변환
+- 예를 들어, 문자열로 입력된 "123"은 정수 123으로 변환
+
+#### 유효성 검증
+
+- 필드별로 다양한 검증 조건을 설정
+- 예: min_length, max_length, regex, ge(greater than or equal), le(less than or equal) 등.
+
+#### JSON 및 Dict 변환
+
+- Pydantic 모델은 JSON 및 Python dict로 쉽게 변환 가능
+- 데이터 직렬화/역직렬화에 유용용
+
+#### 데이터 계층화
+
+- 중첩된 데이터 구조를 쉽게 표현 가능 / 복잡한 데이터 계층 구조를 다룸
+
+### 프로젝트에서 어떻게 적용?
+
+```
+from pydantic import BaseModel
+
+# ----- Pydantic 모델 -----
+# 서술형 도안 인풋
+class Description_Input(BaseModel):
+    needle: str
+    work: str  
+    detail: str
+```
+서술형 도안의 인풋에 Pydantic 사용
+
+</div>
+</details>
+
 
 
