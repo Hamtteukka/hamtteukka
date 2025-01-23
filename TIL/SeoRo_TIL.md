@@ -579,3 +579,237 @@ function add(x, y) {
 
 위 코드의 함수 선언문에서는 **런타임 이전에 함수 객체가 생성**된다.
 그리고 자바스크립트 엔진은 함수 이름과 동일한 이름의 식별자를 암묵적으로 생성하고 생성된 함수 객체를 할당한다.
+
+# 250122 TIL
+
+
+# ➊ 실행 컨텍스트
+실행 컨텍스트는 실행할 코드에 제공할 환경 정보들을 모아놓은 객체이다.  
+실행 컨텍스트를 구성할 수 있는 방법으로는 **전역공간, 함수** 등이 있다.  
+  
+다음의 코드를 예시로 들며 실행 컨텍스트가 어떻게 생성되는지 살펴보겠다!  
+```javascript
+var a = 1;
+function outer() {
+    function inner() {
+        console.log(a);
+        var a = 3;
+    }
+    inner();
+    console.log(a);
+}
+outer();
+console.log(a);
+```
+
+① 먼저 위의 자바스크립트 코드를 실행하는 순간 **전역 컨텍스트**가 생성되고 콜 스택에 담긴다.  
+② 그 다음에 `outer` 함수가 호출되는 순간 `outer` 실행 컨텍스트가 생성되고 콜 스택에 담긴다.  
+이때, 전역 컨텍스트 위에 `outer` 실행 컨텍스트가 쌓이는데 콜 스택이 이름 그대로 **스택 구조**이기 때문이다!  
+③ 그 다음에 `inner` 함수가 호출되는 순간 `inner` 실행 컨텍스트가 생성되고 콜 스택에 담긴다.  
+④ `inner` 함수 실행이 종료되며 콜 스택에서 `inner` 실행 컨텍스트가 제거된다.  
+⑤ `outer` 함수 실행이 종료되며 콜 스택에서 `outer` 실행 컨텍스트가 제거된다.  
+마지막 줄의 `a`를 콘솔에 출력하는 문까지 실행되면 더는 실행할 코드가 남지 않는다.  
+⑥ 이때 **전역 컨텍스트**가 제거되고, 콜 스택에는 아무것도 남지 않는다.  
+
+![](https://velog.velcdn.com/images/okxooxoo/post/ceacbaf7-1cd7-4a04-9a41-2cfdbe25fd09/image.jpeg)
+
+
+> 그렇다면 실행 컨텍스트에는 어떤 정보가 담길까?
+
+`VariableEnvironment`, `LexicalEnvironment`, `ThisBinding` 이 담긴다.  
+각각에 대하여 더 세부적으로 살펴보자!  
+
+# ➋ LexicalEnvironment
+`LexicalEnvironment`에는 `environmentRecord`와 `outerEnvironmentReference`로 구성되어 있다.  
+
+## ① environmentRecord
+`environmentRecord`에는 식별자 정보가 담겨 있다.  
+식별자 정보는 매개변수의 이름, 함수 선언, 변수명 등이다.  
+위의 예시 코드에서 식별자를 찾아보자면 `a`, `outer`, `inner`가 될 것이다.  
+함수 컨텍스트가 생성될 때 함수 내의 코드 전체를 *순차적으로 살펴보면서 식별자를 수집*한다.  
+  
+여기서 **호이스팅**이라는 개념이 등장한다.  
+> 호이스팅이란 선언문이 코드의 선두로 끌어 올려진 것처럼 동작하는 자바스크립트 고유의 특징이다.  
+
+변수, 함수 등의 식별자가 코드 실행 이전에 실행 컨텍스트의 `environmentRecord`에 등록되는 것은  
+어떻게 보면 선언문이 코드의 선두로 끌어올려져 동작하는 것과 동일하기 때문이다!  
+  
+따라서, 아래의 코드는 다음과 같이 변환하여도 무방하다.  
+```javascript
+function a(x) {
+    console.log(x);
+    var x;
+    console.log(x);
+    var x = 2;
+    console.log(x);
+}
+
+a(1);
+```
+
+⬇️
+
+```javascript
+function a() {
+    var x;
+
+    x = 1;
+    console.log(x);
+    console.log(x);
+    x = 2;
+    console.log(x);
+}
+
+a();
+```
+
+이처럼 변수 선언문은 호이스팅되어 코드의 선두로 끌어올려진 것처럼 동작한다!  
+(변수 할당문은 원래 라인에서 실행된다.)  
+정확히 말하면 변수와 같은 식별자는 코드가 실행되기 이전에 `environmentRecord`에 등록된다!  
+  
+변수 뿐만 아니라 함수도 `environmentRecord`에 등록되는데  
+함수는 `함수 표현식`으로 선언하느냐, `함수 선언문`으로 선언하느냐에 따라 동작 방식이 달라진다.  
+
+> 결론부터 말하자면 함수 선언문은 호이스팅되며,
+함수 표현식은 변수 호이스팅이 발생하며 함수 호이스팅은 되지 않는다.
+
+### ⓐ 함수 표현식
+자바스크립트의 함수는 객체 타입의 값이다.  
+따라서 함수를 변수에 값처럼 할당할 수 있으며  
+다음과 같은 방식으로 함수를 정의할 수 있다.  
+
+```javascript
+var add = function (x, y) {
+	return x + y;
+};
+
+console.log(add(2, 3)); // 5 출력
+```
+위의 코드에서 _add_ 변수에 함수 리터럴을 할당하였다.  
+이와 같이 함수를 정의하는 방식을 **함수 표현식**이라 한다.  
+  
+### ⓑ 함수 선언문
+이번에는 **함수 선언문**의 방식을 이용하여 함수를 정의한 예제 코드를 살펴보자.
+
+```javascript
+function add(x, y) {
+	return x+y;
+}
+
+console.log(add(2, 3)); // 5 출력
+```
+
+위의 코드에서 _add_ 이름을 갖는 함수를 정의하고,  
+_add(2, 3)_ 으로 함수를 호출하였다.  
+  
+**함수 선언문**으로 함수를 정의하면 자바스크립트 엔진은 함수 이름으로 *식별자를 암묵 생성*하고 생성된 함수 객체를 할당한다.  
+
+이처럼 함수는 두 가지 방법으로 정의할 수 있다.  
+
+그러나 함수 표현식은 함수 객체를 참조하는 식별자(변수)만이 `environmentRecord`에 등록되며 함수 자체는 호이스팅 되지 않는다!  
+함수 선언문은 함수 자체가 `environmentRecord`에 등록되며 호이스팅 된다!  
+(또한 함수의 이름과 동일한 식별자가 자동으로 생성되며 함수 객체가 저장된 주소를 가리킨다.)  
+  
+아래의 예시 코드를 통해 이해를 돕도록 하겠다.  
+```javascript
+console.log(sum(1, 2));
+console.log(multiply(3, 4));
+
+function sum(a, b) {
+    return a + b;
+}
+
+var multiply = function (a, b) {
+    return a * b;
+}
+```
+
+위의 코드에서 함수가 호이스팅되면 실제로 어떻게 동작할까?  
+`sum`, `multiply`가 `environmentRecord`에 등록되는데  
+🚨 `multiply` 변수에는 실질적으로 값이 할당되지 않으며(undefined) `sum`에만 함수가 할당된다.  
+  
+따라서 아래의 코드의 동작과 동일하다.  
+
+```javascript
+var sum = function sum(a, b) {
+    return a + b;
+}
+
+var multiply;
+
+console.log(sum(1, 2)); // 3 출력
+console.log(multiply(3, 4)); // 런타임 에러
+
+multiply = function (a, b) {
+    return a * b;
+};
+```
+
+`multiply` 함수의 할당은 원래의 라인에서 실행되므로  
+그 전에 `multiply` 함수를 호출하면 런타임 에러가 발생한다.  
+  
+## ② outerEnvironmentReference
+`outerEnvironmentReference`은 현재 호출된 함수가 선언될 당시의 `LexicalEnvironment`을 참조한다.
+
+위 문장으론 아직 `outerEnvironmentReference`가 무엇인지 잘 와닿지 않는다.
+
+이를 이해하기 전에 우선 **스코프**의 개념에 대해 알아야 한다.  
+  
+> **스코프**란 식별자에 대한 유효 범위이다.
+
+함수에 의해서 스코프가 생성되며 `f`라는 함수 내에서 선언한 `a`라는 변수는
+오직 `f` 함수 내부에서만 접근할 수 있다!  
+`f` 함수 외부에서는 `a` 변수에 접근할 수 없는데
+이는 식별자에 대한 유효 범위가 존재하기 때문이다!
+
+그러나 다음 예시 코드를 살펴보자.
+
+```javascript
+var outer = function () {
+    var a = 1;
+    var inner = function () {
+        console.log(a);
+    };
+    inner(); // 1 출력
+};
+
+outer(); // 1 출력
+```
+
+`inner` 함수 내부에는 `a`라는 변수가 정의되어 있지 않으며,
+`outer` 함수 내부에 `inner` 함수와 `a` 변수가 선언되어 있다.
+
+그러나 `inner` 함수를 실행하면 `a`가 정상적으로 출력된다!
+
+왜일까? 🤔
+
+`inner`의 실행 컨텍스트 내부의 `environmentRecord`에는 변수 `a`가 등록되어 있지 않다.
+원래대로면 `a`가 없기 때문에 에러가 발생하거나 `undefined`가 출력될 것이다.
+그러나 실제로는 `outer`의 실행 컨텍스트로 거슬러 올라가 `a`를 검색하고 1을 출력한다. 
+
+> 이처럼 **식별자의 유효 범위**를 안에서부터 바깥으로 차례로 검색해나가는 것을 스코프 체인이라고 한다.
+
+  
+이는 `inner`의 실행 컨텍스트에서 `outerEnvironmentReference`가
+`outer`의 `LexicalEnvironment`를 참조하고 있기 때문에 가능한 일이다!  
+
+이처럼 `outerEnvironmentReference`는 함수가 선언될 당시의 활성화된 실행 컨텍스트의 `LexicalEnvironment`에 접근한다.  
+
+자신이 속한 부모 함수의 `LexicalEnvironment`를 참조하고 있다고 생각하면 이해가 편하다.  
+
+위의 예시 코드를 바탕으로 실행 컨텍스트를 그림으로 표현하면 다음과 같다.
+
+![](https://velog.velcdn.com/images/okxooxoo/post/ddec2599-98b0-4052-9eb5-1e6571323008/image.jpeg)
+
+
+# ➌ VariableEnvironment
+다시 처음으로 돌아가서 실행 컨텍스트에는 `VariableEnvironment`, `LexicalEnvironment`, `ThisBinding` 이 담긴다고 했다!  
+`VariableEnvironment`에 담기는 내용은 `LexicalEnvironment`와 같다.  
+그러나 `VariableEnvironment`은 최초 실행 시의 스냅샷을 쭉 유지하며,  
+코드 진행에 따라 `LexicalEnvironment`의 내용은 달라질 수 있다.  
+
+# ➍ ThisBinding
+실행 컨텍스트의 `ThisBinding`에는 `this`로 지정된 객체가 저장된다.  
+실행 컨텍스트 활성화 당시에 `this`가 지정되지 않은 경우 `this`에는 **전역 객체**가 저장된다.  
+
+> 전역 객체에는 브라우저의 `window`, Node.js의 `global` 객체 등이 있다.
