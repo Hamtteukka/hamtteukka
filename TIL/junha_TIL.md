@@ -1030,7 +1030,7 @@ console.log(n === null); // true
 </details>
 
 <details>
-<summary><h2>📖 2025-01-13 학습</h2></summary>
+<summary><h2>📖 2025-01-21 학습</h2></summary>
 
 # 실행 컨텍스트란?
 
