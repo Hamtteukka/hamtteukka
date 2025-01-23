@@ -1,4 +1,5 @@
 interface TVideoRoomPreview {
+  id: string;
   title: string;
   hostName: string;
   hostImg: string;
