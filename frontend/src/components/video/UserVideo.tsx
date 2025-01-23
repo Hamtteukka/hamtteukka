@@ -4,7 +4,7 @@ import { useVideoRef } from '@/hooks/useVideoRef';
 import { useEffect } from 'react';
 import { getDeviceId, setupCamera } from '@/util/mediaUtils';
 
-const UserVideo = () => {
+const UserVideo: React.FC = () => {
   const { videoRef, setStream } = useVideoRef();
 
   const initializeCamera = async () => {
@@ -21,7 +21,7 @@ const UserVideo = () => {
     initializeCamera();
   }, []);
 
-  return <video ref={videoRef} autoPlay muted playsInline className='rounded-sm' />;
+  return <video ref={videoRef} autoPlay muted playsInline className='w-full rounded-sm' />;
 };
 
 export default UserVideo;
