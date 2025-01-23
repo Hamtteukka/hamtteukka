@@ -450,5 +450,126 @@ localhost:8000에서 확인 가능
 </div>
 </details>
 
+<details>
+<summary>2025-01-22</summary>
+<div markdown="1">
 
+## Python Pydantic
+### 설명
+- Python에서 데이터 유효성 검증 및 설정 관리에 사용되는 라이브러리
+
+### 특징
+#### 타입 힌트 기반 모델링
+
+- Pydantic은 Python의 타입 힌트를 사용해 데이터 모델을 정의하며, 정의된 타입에 따라 자동으로 데이터를 검증
+- 예: int, str, List, Dict, datetime 등과 같은 기본 타입 및 복합 타입 지원
+
+#### 자동 데이터 변환
+
+- 입력된 데이터가 모델에 정의된 타입과 다를 경우 가능한 한 자동으로 변환
+- 예를 들어, 문자열로 입력된 "123"은 정수 123으로 변환
+
+#### 유효성 검증
+
+- 필드별로 다양한 검증 조건을 설정
+- 예: min_length, max_length, regex, ge(greater than or equal), le(less than or equal) 등.
+
+#### JSON 및 Dict 변환
+
+- Pydantic 모델은 JSON 및 Python dict로 쉽게 변환 가능
+- 데이터 직렬화/역직렬화에 유용용
+
+#### 데이터 계층화
+
+- 중첩된 데이터 구조를 쉽게 표현 가능 / 복잡한 데이터 계층 구조를 다룸
+
+### 프로젝트에서 어떻게 적용?
+
+```
+from pydantic import BaseModel
+
+# ----- Pydantic 모델 -----
+# 서술형 도안 인풋
+class Description_Input(BaseModel):
+    needle: str
+    work: str  
+    detail: str
+```
+서술형 도안의 인풋에 Pydantic 사용
+
+</div>
+</details>
+
+<details>
+<summary>2025-01-23</summary>
+<div markdown="1">
+
+## WebClient
+### WebClient 란?
+
+- WebClient는 RestTemplate를 대체하는 HTTP 클라이언트
+- 기존의 동기 API를 제공할 뿐만 아니라, 논블로킹 및 비동기 접근 방식을 지원해서 효율적인 통신이 가능
+- WebClient는 요청을 나타내고 전송하게 해주는 빌더 방식의 인터페이스를 사용하며, 외부 API로 요청을 할 때 리액티브 타입의 전송과 수신을 합니다. (Mono, Flux)
+
+### 특징
+
+#### 비동기 논블로킹 처리
+
+- 요청과 응답을 논블로킹 방식으로 처리하여 고성능, 고효율 애플리케이션을 구축 가능능
+- Reactor 프로젝트의 Mono와 Flux를 기반으로 작동
+
+#### 동기/비동기 지원
+
+- 기본적으로 비동기로 작동하지만, 동기식으로도 호출 결과를 처리 가능능
+
+#### 유연한 요청 설정:
+
+- HTTP 메서드(GET, POST, PUT, DELETE 등)를 유연하게 설정 가능 / 다양한 헤더, URL 파라미터 등을 간편하게 설정 가능
+
+#### 다양한 인코딩 및 디코딩
+
+- JSON, XML 등 다양한 데이터 포맷을 지원 / 커스텀 인코더/디코더를 추가로 정의 가능
+
+#### 타임아웃 및 재시도
+
+- 요청 타임아웃 및 실패 시 재시도 로직을 쉽게 설정 가능
+
+### 의존성 추가
+```
+// gradle
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+}
+
+```
+
+### 프로젝트에서 어떻게 사용?
+
+- webClient 설정
+```
+private final WebClient webClient;
+
+    public ImageService() {
+        this.webClient = WebClient.builder()
+                .baseUrl("http://localhost:8000")
+                .codecs(configurer -> configurer
+                        .defaultCodecs()
+                        .maxInMemorySize(10 * 1024 * 1024))
+                .build();
+    }
+```
+
+- POST 요청 보내기
+```
+public Mono<DescriptionPatternResponseDto> generateDescription(DescriptionPatternRequestDto dto){
+        return webClient.post()
+                .uri("/v1/description/generate")
+                .body(Mono.just(dto), DescriptionPatternRequestDto.class)
+                .retrieve()
+                .bodyToMono(DescriptionPatternResponseDto.class);
+    }
+```
+
+</div>
+</details>
 
