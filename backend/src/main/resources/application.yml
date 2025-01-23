@@ -1,9 +1,12 @@
 #spring.application.name=hamtteukka
 spring:
+  application:
+    name: hamtteukka
+
   datasource:
     # MySql
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url:
+    url: ${MYSQL_URL}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
 
@@ -22,3 +25,4 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
+
