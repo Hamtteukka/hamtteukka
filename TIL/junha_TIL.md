@@ -1195,3 +1195,256 @@ console.log(a);     // 1
 이렇게 `outer` 함수에서 `inner` 함수 내부의 변수에 접근할 수 없는 것을 `변수 은닉화(variable shadowing)`이라고 한다.
 
 </details>
+
+<details>
+<summary><h2>📖 2025-01-22 학습</h2></summary>
+
+# 상황에 따라 달라지는 this
+
+`this`는 기본적으로 실행 컨텍스트가 생성될 때, 즉 함수를 호출할 때 결정된다.
+
+## 전역 공간에서의 this
+
+전역 공간에서 `this`는 전역 객체를 가리킨다. 즉, 브라우저 환경에서 전역 객체는 `window`이고 `Node.js` 환경에서는 `global`이다.
+
+전역변수를 선언하면 자바스크립트 엔진은 이를 전역객체의 프로퍼티로 할당한다.
+
+<!-- prettier-ignore -->
+```javascript
+var a = 1;
+console.log(a);           // 1
+console.log(window.a);    // 1
+console.log(this.a);      // 1
+```
+
+위 코드에서 알 수 있듯이, 브라우저 환경에서 `window === this`이고, 전역 공간에서 `a === window.a`, `a === this.a`라는 것도 알 수 있다. 이를 응용하면 아래와 같은 코드도 가능하다.
+
+```javascript
+var a = 1;
+window.b = 2;
+window.a = 3;
+b = 4;
+```
+
+하지만, **삭제** 명령에 대해서는 조금 다르다.
+
+<!-- prettier-ignore -->
+```javascript
+var a = 1;
+delete window.a;                  // false
+console.log(a, window.a, this.a); // 1, 1, 1
+var b = 2;
+delete b;                         // false
+console.log(b, window.b, this.b); // 2, 2, 2
+window.c = 3;
+delete window.c;                  // true
+console.log(c, window.c, this.c); // Uncaught ReferenceError: c is not defined
+window.d = 4;
+delete d;                         // true
+console.log(d, window.d, this.d); // Uncaught ReferenceError: d is not defined
+```
+
+위와 같이 전역객체의 프로퍼티로 할당한 경우 삭제가 되지만, 전역변수로 선언한 경우에는 삭제가 되지 않는다.
+
+## 메서드로서 호출할 때 그 메서드 내부에서의 this
+
+### 함수 vs. 메서드
+
+함수와 메서드를 구분하는 유일한 차이는 **독립성** 이다. 함수는 그 자체로 독립적인 기능을 수행하지만, 메서드는 자신을 호출한 대상 객체에 관한 동작을 수행한다. 자바스크립트에서는 상황별로 `this` 키워드에 다른 값을 부여하게 함으로써 이를 구현했다.
+
+<!-- prettier-ignore -->
+```javascript
+var func = function (x) {
+  console.log(this, x);
+};
+func(1);        // Window { ... } 1
+
+var obj = {
+  method: func,
+};
+obj.method(2);  // { method: function } 2
+```
+
+함수는 객체의 메서드로서 호출하는 경우에는 메서드로 동작하고, 그렇지 않으면 함수로 동작한다. 함수로 동작했을 때는 `this`가 전역 객체인 `window`, 메서드로 동작했을 때는 `Object`가 된다. 자바스크립트에서는 '함수로서 호출'과 '메서드로서 호출'을 함수 이름 앞에 객체가 명시되어 있는지 여부로 판단한다.
+
+### 메서드 내부에서의 this
+
+`this`에는 호출한 주체에 대한 정보가 담긴다. 만약 `outer.inner.method()`로 `method` 함수를 호출했다면, 여기서는 `method`가 가리키는 `this`는 `outer.inner`가 된다.
+
+## 함수로서 호출할 때 그 함수 내부에서의 this
+
+### 메서드의 내부함수에서의 this
+
+<!-- prettier-ignore -->
+```javascript
+var obj1 = {
+  outer: function () {
+    console.log(this);            
+    var innerFunc = function () {
+      console.log(this);
+    };
+    innerFunc();          // 전역 객체(Window)
+
+    var obj2 = {
+      innerMethod: innerFunc,
+    };
+    obj2.innerMethod();   // obj2
+  },
+};
+obj1.outer();             // obj1
+```
+
+위 코드 결과에서 확인할 수 있듯이, 함수 앞에 점(.)이나 대괄호([]) 만으로 호출되는 함수의 `this`가 어떤 객체를 가리키는지 결정된다. `innerFunc()`가 호출될 때 발생하는 과정은, `innerFunc` 함수의 실행 컨텍스트가 생성되면서 호이스팅, 스코프 체인 수집, `this` 바인딩 등을 수행하고, `this`가 지정되지 않았기 때문에 자동으로 스코프 체인상의 최상위 객체인 전역 객체(`Window`)가 바인딩 된다.
+
+> 즉, `this` 바인딩에 관해서는 함수를 실행하는 당시의 주변 환경은 중요하지 않고, 오직 해당 함수를 호출하는 구문 앞에 점 또는 대괄호 표기의 유무가 관건이다.
+
+### this를 바인딩하지 않는 함수
+
+ES6에서는 `this`를 바인딩하지 않는 화살표 함수(arrow function)을 도입했다. 화살표 함수는 실행 컨텍스트를 생성할 때 `this` 바인딩 과정 자체가 빠지게 되어, 상위 스코프의 `this`를 그대로 활용할 수 있다.
+
+```javascript
+var obj = {
+  outer: function () {
+    console.log(this); // { outer: [Function: outer] }
+    var innerFunc = () => {
+      console.log(this); // { outer: [Function: outer] }
+    };
+    innerFunc();
+  },
+};
+obj.outer();
+```
+
+## 콜백 함수 호출 시 그 함수 내부에서의 this
+
+함수 A의 제어권을 다른 함수(또는 메서드) B에게 넘겨주는 경우, 함수 A를 콜백 함수라고 한다. 이 때, 함수 A는 함수 B의 내부 로직에 따라 실행되고, `this`도 함수 B 내부 로직에서 정한 규칙에 따라 값이 결정된다.
+
+## 생성자 함수 내부에서의 this
+
+'생성자'는 **구체적인 인스턴스를 만들기 위한** 일종의 **틀** 이다. 여기서 `this`는 곧 새로 만들 구체적인 **인스턴스 자신** 이 된다.
+
+# 명시적으로 this를 바인딩하는 방법
+
+## call 메서드
+
+```javascript
+Function.prototype.call(thisArg[, arg1[, arg2[, ...]]]);
+```
+
+<!-- prettier-ignore -->
+```javascript
+var func = function (a, b, c) {
+  console.log(this, a, b, c);
+};
+
+func(1, 2, 3);                // Window{ ... } 1 2 3
+func.call({ x: 1 }, 4, 5, 6); // { x: 1 } 4 5 6
+```
+
+<!-- prettier-ignore -->
+```javascript
+var obj = {
+  a: 1,
+  function(x, y) {
+    console.log(this.a, x, y);
+  },
+};
+
+obj.method(2, 3);                 // 1 2 3
+obj.method.call({ a: 4 }, 2, 3);  // 4 2 3
+```
+
+## apply 메서드
+
+```javascript
+Function.prototype.apply(thisArg[, argsArray]);
+```
+
+`call` 메서드와 `apply` 메서드는 기능적으로 완전히 동일하다.
+단, `call` 메서드는 첫 번째 인자를 제외한 나머지 모든 인자들을 호출할 함수의 매개변수로 지정하고, `apply` 메서드는 두 번째 인자를 배열로 받아 그 배열의 요소들을 호출할 함수의 매개변수로 지정한다.
+
+```javascript
+var func = function (a, b, c) {
+  console.log(this, a, b, c);
+};
+
+func.apply({ x: 1 }, [4, 5, 6]); // { x: 1 } 4 5 6
+
+var obj = {
+  a: 1,
+  method: function (x, y) {
+    console.log(this.a, x, y);
+  },
+};
+obj.method.apply({ a: 2 }, [3, 4]); // 2 3 4
+```
+
+## call / apply 메서드의 활용
+
+### 생성자 내부에서 다른 생성자를 호출
+
+생성자 내부에서 다른 생성자와 공통된 내용이 있을 때 `call`이나 `apply`를 이용해 다른 생성자를 호출하여 간단하게 반복을 줄일 수 있다.
+
+```javascript
+function Person(name, gender) {
+  this.name = name;
+  this.gender = gender;
+}
+function Student(name, gender, school) {
+  Person.call(this, name, gender);
+  this.school = school;
+}
+function Employee(name, gender, company) {
+  Person.call(this, name, gender);
+  this.company = company;
+}
+
+var jh = new Student('준하', 'male', '아주대');
+var th = new Employee('태호', 'male', '구글');
+
+console.log(jh); // Student { name: '준하', gender: 'male', school: '아주대' }
+console.log(th); // Employee { name: '태호', gender: 'male', company: '구글' }
+```
+
+## bind 메서드
+
+```javascript
+Function.prototype.bind(thisArg[, arg1[, arg2[, ...]]])
+```
+
+bind 메서드는 `call`과 비슷하지만, 즉시 호출하지 않고 넘겨받은 `this`와 인수들로 새로운 함수를 반환하는 메서드다.
+
+<!-- prettier-ignore -->
+```javascript
+var func = function (a, b, c, d) {
+  console.log(this, a, b, c, d);
+};
+func(1, 2, 3, 4);                     // Window { ... } 1 2 3 4
+
+var bindFunc1 = func.bind({ x: 1 });
+bindFunc1(1, 2, 3, 4);                // { x: 1 } 1 2 3 4
+
+var bindFunc2 = func.bind({ x: 1}, 4, 5);
+bindFunc2(6, 7);                      // { x: 1 } 4 5 6 7
+bindFunc3(8, 9);                      // { x: 1 } 4 5 6 7
+```
+
+위와 같이 `bind` 메서드는 함수에 this를 미리 적용하는 것과 부분 적용 함수를 구현하는 두 가지 목적을 모두 지닌다.
+
+## 화살표 함수
+
+ES6에 새롭게 도입된 화살표 함수는 실행 컨텍스트 생성 시 `this`를 바인딩하는 과정이 제외되었다. 즉, 함수 내부에는 `this`가 없고, 접근하고자 하면 스코프체인상 가장 가까운 this에 접근한다.
+
+```javascript
+var obj = {
+  outer: function () {
+    console.log(this);
+    var innerFunc = () => {
+      console.log(this);
+    };
+    innerFunc(); // { outer: [Function: outer] }
+  },
+};
+obj.outer(); // { outer: [Function: outer] }
+```
+</details>
