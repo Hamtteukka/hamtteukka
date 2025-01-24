@@ -1,7 +1,6 @@
+import { TPattern } from '@/types/pattern';
 import { createContext } from 'react';
 
-type PatternType = 'select' | 'text' | 'dot';
-
-const PatternTypeContext = createContext<React.Dispatch<React.SetStateAction<PatternType>> | null>(null);
+const PatternTypeContext = createContext<React.Dispatch<React.SetStateAction<TPattern>> | null>(null);
 
 export default PatternTypeContext;
