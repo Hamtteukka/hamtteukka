@@ -573,3 +573,54 @@ public Mono<DescriptionPatternResponseDto> generateDescription(DescriptionPatter
 </div>
 </details>
 
+<details>
+<summary>2025-01-24</summary>
+<div markdown="1">
+
+                        
+## DifferedResult
+### 개념
+
+- 요청-응답의 흐름을 비동기적으로 처리하기 위한 객체
+- 동기 작업의 완료를 기다리는 대신 결과를 나중에 제공하는 데 사용
+
+### 특징
+
+#### 비동기 응답 처리
+
+- 요청에 대한 응답을 즉시 반환하지 않고, 작업이 완료될 때까지 대기하거나 콜백을 통해 처리
+
+#### 비동기 작업 상태 관리
+
+- DeferredResult는 작업의 상태(예: 완료, 실패, 타임아웃)를 관리
+- 상태 변화에 따라 콜백 함수나 핸들러를 트리거
+
+#### 시간 초과 지원
+
+- 지정된 시간이 초과되면 타임아웃 상태로 전환하며, 적절한 대체 응답을 제공
+
+#### 쓰레드 효율성
+
+요청 스레드를 차단하지 않고, 비동기적으로 작업이 완료될 때까지 다른 작업을 수행
+
+### 프로젝트에서 적용
+```
+@PostMapping("/ai/description")
+    @Operation(summary="서술형 도안 FastAPI에 요청해서 받아오기")
+    public DeferredResult<DescriptionPatternCreateResponse> generateDescriptionPattern(@RequestBody DescriptionPatternCreateRequest request) {
+        DeferredResult<DescriptionPatternCreateResponse> output = new DeferredResult<>(300000L); // 5분 타임아웃
+
+        patternCreateService.createDescription(request)
+                .subscribe(response -> output.setResult(response), // 성공 시 결과 반환
+                        error -> output.setErrorResult(error)); // 실패 시 에러 반환
+
+        return output;
+    }
+```
+#### 사용한 이유
+- FastAPI에서 서술형 도안을 받을 때 60 ~ 90 초 가량 시간이 소요됨 Mono 타입으로 받았을 시에는 타임아웃이 발생하여 503 Error가 발생하였음
+- DefferedResult 타입을 사용함으로 타임 아웃 시간을 설정할 수 있어 요청에 대한 응답을 받을 수 있었음
+
+</div>
+</details>
+
