@@ -5,7 +5,7 @@ from utils.dot_utils import create_dot_pattern
 
 router = APIRouter()
 
-@router.post("/v1/dot/generate")
+@router.post("/ai/dot")
 async def convert_image(
     file: UploadFile = File(...),
     height: int = Form(),
