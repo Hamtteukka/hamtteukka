@@ -4,23 +4,26 @@ import { useState } from 'react';
 import SelectCard from './SelectCard';
 import TextPatternFormContainer from '@/components/pattern/new/text/TextPatternFormContainer';
 import DotPatternFormContainer from '@/components/pattern/new/dot/DotPatternFormContainer';
+import PatternTypeContext from '@/components/context/PatternTypeContext';
 
 const NewPatternForm = () => {
-  const [patternType, setPatterType] = useState<'text' | 'dot'>();
+  const [patternType, setPatternType] = useState<'select' | 'text' | 'dot'>('select');
 
-  return !patternType ? (
+  return patternType === 'select' ? (
     <section className='flex h-full grow items-center justify-between'>
-      <button onClick={() => setPatterType('text')}>
+      <button onClick={() => setPatternType('text')}>
         <SelectCard type='text' />
       </button>
-      <button onClick={() => setPatterType('dot')}>
+      <button onClick={() => setPatternType('dot')}>
         <SelectCard type='dot' />
       </button>
     </section>
-  ) : patternType === 'text' ? (
-    <TextPatternFormContainer />
   ) : (
-    <DotPatternFormContainer />
+    <div className='flex flex-col gap-4'>
+      <PatternTypeContext.Provider value={setPatternType}>
+        {patternType === 'text' ? <TextPatternFormContainer /> : <DotPatternFormContainer />}
+      </PatternTypeContext.Provider>
+    </div>
   );
 };
 
