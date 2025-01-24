@@ -9,7 +9,7 @@ interface PLabeledInput {
 const LabeledInput: React.FC<PLabeledInput> = ({ label, input, help }) => {
   return (
     <div className='flex w-full items-start gap-2.5'>
-      <label className='flex w-[6rem] items-center gap-0.5'>
+      <label className='flex w-28 items-center gap-0.5'>
         <span className='font-bold'>{label}</span>
         {help && <HelpIcon content={help} />}
       </label>
