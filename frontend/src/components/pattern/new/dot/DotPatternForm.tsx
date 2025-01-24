@@ -6,14 +6,14 @@ import ImageInput from '@/components/pattern/new/dot/ImageInput';
 import SizeInput from '@/components/pattern/new/dot/SizeInput';
 import LabeledInput from '@/components/pattern/new/LabeledInput';
 import Button from '@/components/ui/button/Button';
-import { colorNum, sizeNum } from '@/lib/constants/pattern';
+import { COLOR_NUM, SIZE_NUM } from '@/lib/constants/pattern';
 import { patternInput } from '@/lib/pattern';
 import { useContext, useState } from 'react';
 
 const DotPatternForm: React.FC = () => {
-  const [width, setWidth] = useState<number>(sizeNum.default);
-  const [height, setHeight] = useState<number>(sizeNum.default);
-  const [num, setNum] = useState<number>(colorNum.default);
+  const [width, setWidth] = useState<number>(SIZE_NUM.DEFAULT_SIZE);
+  const [height, setHeight] = useState<number>(SIZE_NUM.DEFAULT_SIZE);
+  const [num, setNum] = useState<number>(COLOR_NUM.DEFAULT_COLOR_NUM);
 
   const setPatterType = useContext(PatternTypeContext);
   if (!setPatterType) {
