@@ -1,5 +1,7 @@
 package com.ssafy.hamtteukka.service;
 
+import com.ssafy.hamtteukka.dto.DescriptionPatternCreateRequest;
+import com.ssafy.hamtteukka.dto.DescriptionPatternCreateResponse;
 import com.ssafy.hamtteukka.dto.DotPatternCreateRequest;
 import com.ssafy.hamtteukka.dto.DotPatternCreateResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,15 +12,12 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class PatternCreateService {
-//    @Value("${AI_URL}")
-//    private String aiUrl;
-    // 저걸로는 아직 안됨 나중에 테스트
 
     private final WebClient webClient;
 
-    public PatternCreateService(WebClient.Builder webClientBuilder) {
+    public PatternCreateService(WebClient.Builder webClientBuilder, @Value("${AI_URL}")String aiUrl) {
         this.webClient = webClientBuilder
-                .baseUrl("http://localhost:8000")
+                .baseUrl(aiUrl)
                 .codecs(configurer -> configurer
                         .defaultCodecs()
                         .maxInMemorySize(10 * 1024 * 1024))
@@ -40,5 +39,15 @@ public class PatternCreateService {
                 .retrieve()
                 .bodyToMono(DotPatternCreateResponse.class);
     }
+
+    public Mono<DescriptionPatternCreateResponse> createDescription(DescriptionPatternCreateRequest request){
+        return webClient.post()
+                .uri("/v1/description/generate")
+                .body(Mono.just(request), DescriptionPatternCreateRequest.class)
+                .retrieve()
+                .bodyToMono(DescriptionPatternCreateResponse.class);
+    }
+
+
 }
 
