@@ -1030,7 +1030,7 @@ console.log(n === null); // true
 </details>
 
 <details>
-<summary><h2>📖 2025-01-13 학습</h2></summary>
+<summary><h2>📖 2025-01-21 학습</h2></summary>
 
 # 실행 컨텍스트란?
 
@@ -1194,4 +1194,628 @@ console.log(a);     // 1
 위와 같은 실행 결과가 나오는 것은 스코프에 의해 결정된다. `inner` 함수가 실행될 때는 바깥에 있는 `a`에 접근하기 전에 `inner` 함수에서 호이스팅된 `a`에 접근한다. 하지만 이 때는 `a`가 초기화되지 않은 상태이기 때문에 `undefined`가 출력된다. `outer` 함수에서 `a`를 출력할 때는 자신, 또는 자신의 바깥 스코프에서 `a`를 찾는다. 자신보다 더 깊은 스코프로 들어가서 확인할 수 없기 때문에 `inner` 함수의 `a`를 출력하는 것이 아니라 바깥의 `a` 값이 1이 출력된다. 마찬가지로 마지막 코드에서도 동인한 스코프에 있는 `a`인 1이 출력된다.
 이렇게 `outer` 함수에서 `inner` 함수 내부의 변수에 접근할 수 없는 것을 `변수 은닉화(variable shadowing)`이라고 한다.
 
+</details>
+
+<details>
+<summary><h2>📖 2025-01-22 학습</h2></summary>
+
+# 상황에 따라 달라지는 this
+
+`this`는 기본적으로 실행 컨텍스트가 생성될 때, 즉 함수를 호출할 때 결정된다.
+
+## 전역 공간에서의 this
+
+전역 공간에서 `this`는 전역 객체를 가리킨다. 즉, 브라우저 환경에서 전역 객체는 `window`이고 `Node.js` 환경에서는 `global`이다.
+
+전역변수를 선언하면 자바스크립트 엔진은 이를 전역객체의 프로퍼티로 할당한다.
+
+<!-- prettier-ignore -->
+```javascript
+var a = 1;
+console.log(a);           // 1
+console.log(window.a);    // 1
+console.log(this.a);      // 1
+```
+
+위 코드에서 알 수 있듯이, 브라우저 환경에서 `window === this`이고, 전역 공간에서 `a === window.a`, `a === this.a`라는 것도 알 수 있다. 이를 응용하면 아래와 같은 코드도 가능하다.
+
+```javascript
+var a = 1;
+window.b = 2;
+window.a = 3;
+b = 4;
+```
+
+하지만, **삭제** 명령에 대해서는 조금 다르다.
+
+<!-- prettier-ignore -->
+```javascript
+var a = 1;
+delete window.a;                  // false
+console.log(a, window.a, this.a); // 1, 1, 1
+var b = 2;
+delete b;                         // false
+console.log(b, window.b, this.b); // 2, 2, 2
+window.c = 3;
+delete window.c;                  // true
+console.log(c, window.c, this.c); // Uncaught ReferenceError: c is not defined
+window.d = 4;
+delete d;                         // true
+console.log(d, window.d, this.d); // Uncaught ReferenceError: d is not defined
+```
+
+위와 같이 전역객체의 프로퍼티로 할당한 경우 삭제가 되지만, 전역변수로 선언한 경우에는 삭제가 되지 않는다.
+
+## 메서드로서 호출할 때 그 메서드 내부에서의 this
+
+### 함수 vs. 메서드
+
+함수와 메서드를 구분하는 유일한 차이는 **독립성** 이다. 함수는 그 자체로 독립적인 기능을 수행하지만, 메서드는 자신을 호출한 대상 객체에 관한 동작을 수행한다. 자바스크립트에서는 상황별로 `this` 키워드에 다른 값을 부여하게 함으로써 이를 구현했다.
+
+<!-- prettier-ignore -->
+```javascript
+var func = function (x) {
+  console.log(this, x);
+};
+func(1);        // Window { ... } 1
+
+var obj = {
+  method: func,
+};
+obj.method(2);  // { method: function } 2
+```
+
+함수는 객체의 메서드로서 호출하는 경우에는 메서드로 동작하고, 그렇지 않으면 함수로 동작한다. 함수로 동작했을 때는 `this`가 전역 객체인 `window`, 메서드로 동작했을 때는 `Object`가 된다. 자바스크립트에서는 '함수로서 호출'과 '메서드로서 호출'을 함수 이름 앞에 객체가 명시되어 있는지 여부로 판단한다.
+
+### 메서드 내부에서의 this
+
+`this`에는 호출한 주체에 대한 정보가 담긴다. 만약 `outer.inner.method()`로 `method` 함수를 호출했다면, 여기서는 `method`가 가리키는 `this`는 `outer.inner`가 된다.
+
+## 함수로서 호출할 때 그 함수 내부에서의 this
+
+### 메서드의 내부함수에서의 this
+
+<!-- prettier-ignore -->
+```javascript
+var obj1 = {
+  outer: function () {
+    console.log(this);            
+    var innerFunc = function () {
+      console.log(this);
+    };
+    innerFunc();          // 전역 객체(Window)
+
+    var obj2 = {
+      innerMethod: innerFunc,
+    };
+    obj2.innerMethod();   // obj2
+  },
+};
+obj1.outer();             // obj1
+```
+
+위 코드 결과에서 확인할 수 있듯이, 함수 앞에 점(.)이나 대괄호([]) 만으로 호출되는 함수의 `this`가 어떤 객체를 가리키는지 결정된다. `innerFunc()`가 호출될 때 발생하는 과정은, `innerFunc` 함수의 실행 컨텍스트가 생성되면서 호이스팅, 스코프 체인 수집, `this` 바인딩 등을 수행하고, `this`가 지정되지 않았기 때문에 자동으로 스코프 체인상의 최상위 객체인 전역 객체(`Window`)가 바인딩 된다.
+
+> 즉, `this` 바인딩에 관해서는 함수를 실행하는 당시의 주변 환경은 중요하지 않고, 오직 해당 함수를 호출하는 구문 앞에 점 또는 대괄호 표기의 유무가 관건이다.
+
+### this를 바인딩하지 않는 함수
+
+ES6에서는 `this`를 바인딩하지 않는 화살표 함수(arrow function)을 도입했다. 화살표 함수는 실행 컨텍스트를 생성할 때 `this` 바인딩 과정 자체가 빠지게 되어, 상위 스코프의 `this`를 그대로 활용할 수 있다.
+
+```javascript
+var obj = {
+  outer: function () {
+    console.log(this); // { outer: [Function: outer] }
+    var innerFunc = () => {
+      console.log(this); // { outer: [Function: outer] }
+    };
+    innerFunc();
+  },
+};
+obj.outer();
+```
+
+## 콜백 함수 호출 시 그 함수 내부에서의 this
+
+함수 A의 제어권을 다른 함수(또는 메서드) B에게 넘겨주는 경우, 함수 A를 콜백 함수라고 한다. 이 때, 함수 A는 함수 B의 내부 로직에 따라 실행되고, `this`도 함수 B 내부 로직에서 정한 규칙에 따라 값이 결정된다.
+
+## 생성자 함수 내부에서의 this
+
+'생성자'는 **구체적인 인스턴스를 만들기 위한** 일종의 **틀** 이다. 여기서 `this`는 곧 새로 만들 구체적인 **인스턴스 자신** 이 된다.
+
+# 명시적으로 this를 바인딩하는 방법
+
+## call 메서드
+
+```javascript
+Function.prototype.call(thisArg[, arg1[, arg2[, ...]]]);
+```
+
+<!-- prettier-ignore -->
+```javascript
+var func = function (a, b, c) {
+  console.log(this, a, b, c);
+};
+
+func(1, 2, 3);                // Window{ ... } 1 2 3
+func.call({ x: 1 }, 4, 5, 6); // { x: 1 } 4 5 6
+```
+
+<!-- prettier-ignore -->
+```javascript
+var obj = {
+  a: 1,
+  function(x, y) {
+    console.log(this.a, x, y);
+  },
+};
+
+obj.method(2, 3);                 // 1 2 3
+obj.method.call({ a: 4 }, 2, 3);  // 4 2 3
+```
+
+## apply 메서드
+
+```javascript
+Function.prototype.apply(thisArg[, argsArray]);
+```
+
+`call` 메서드와 `apply` 메서드는 기능적으로 완전히 동일하다.
+단, `call` 메서드는 첫 번째 인자를 제외한 나머지 모든 인자들을 호출할 함수의 매개변수로 지정하고, `apply` 메서드는 두 번째 인자를 배열로 받아 그 배열의 요소들을 호출할 함수의 매개변수로 지정한다.
+
+```javascript
+var func = function (a, b, c) {
+  console.log(this, a, b, c);
+};
+
+func.apply({ x: 1 }, [4, 5, 6]); // { x: 1 } 4 5 6
+
+var obj = {
+  a: 1,
+  method: function (x, y) {
+    console.log(this.a, x, y);
+  },
+};
+obj.method.apply({ a: 2 }, [3, 4]); // 2 3 4
+```
+
+## call / apply 메서드의 활용
+
+### 생성자 내부에서 다른 생성자를 호출
+
+생성자 내부에서 다른 생성자와 공통된 내용이 있을 때 `call`이나 `apply`를 이용해 다른 생성자를 호출하여 간단하게 반복을 줄일 수 있다.
+
+```javascript
+function Person(name, gender) {
+  this.name = name;
+  this.gender = gender;
+}
+function Student(name, gender, school) {
+  Person.call(this, name, gender);
+  this.school = school;
+}
+function Employee(name, gender, company) {
+  Person.call(this, name, gender);
+  this.company = company;
+}
+
+var jh = new Student('준하', 'male', '아주대');
+var th = new Employee('태호', 'male', '구글');
+
+console.log(jh); // Student { name: '준하', gender: 'male', school: '아주대' }
+console.log(th); // Employee { name: '태호', gender: 'male', company: '구글' }
+```
+
+## bind 메서드
+
+```javascript
+Function.prototype.bind(thisArg[, arg1[, arg2[, ...]]])
+```
+
+bind 메서드는 `call`과 비슷하지만, 즉시 호출하지 않고 넘겨받은 `this`와 인수들로 새로운 함수를 반환하는 메서드다.
+
+<!-- prettier-ignore -->
+```javascript
+var func = function (a, b, c, d) {
+  console.log(this, a, b, c, d);
+};
+func(1, 2, 3, 4);                     // Window { ... } 1 2 3 4
+
+var bindFunc1 = func.bind({ x: 1 });
+bindFunc1(1, 2, 3, 4);                // { x: 1 } 1 2 3 4
+
+var bindFunc2 = func.bind({ x: 1}, 4, 5);
+bindFunc2(6, 7);                      // { x: 1 } 4 5 6 7
+bindFunc3(8, 9);                      // { x: 1 } 4 5 6 7
+```
+
+위와 같이 `bind` 메서드는 함수에 this를 미리 적용하는 것과 부분 적용 함수를 구현하는 두 가지 목적을 모두 지닌다.
+
+## 화살표 함수
+
+ES6에 새롭게 도입된 화살표 함수는 실행 컨텍스트 생성 시 `this`를 바인딩하는 과정이 제외되었다. 즉, 함수 내부에는 `this`가 없고, 접근하고자 하면 스코프체인상 가장 가까운 this에 접근한다.
+
+```javascript
+var obj = {
+  outer: function () {
+    console.log(this);
+    var innerFunc = () => {
+      console.log(this);
+    };
+    innerFunc(); // { outer: [Function: outer] }
+  },
+};
+obj.outer(); // { outer: [Function: outer] }
+```
+</details>
+
+<details>
+<summary><h2>📖 2025-01-23 학습</h2></summary>
+# 콜백 함수란?
+
+> A와 B는 다음 날 아침 8시에 만나기로 했다. A는 수시로 깨어 시계를 확인했고, B는 알람을 맞추고 자다가 6시에 알람 소리를 듣고 일어났다.
+
+위와 같은 경우에, B의 알람이 콜백 함수와 비슷하다고 생각할 수 있다. 즉, 콜백 함수는 간단히 말하면 자신의 호출 제어권을 다른 함수에게 위임한 함수라고 할 수 있다. 콜백 함수를 위임받은 함수는 적절한 시점에 콜백 함수를 실행한다.
+
+# 제어권
+
+## 호출 시점
+
+콜백 함수의 대표적인 예시는 `setInterval(func, delay[, param1, param2, ...])`가 있다. `setInterval`의 첫 번째 인자가 콜백 함수가 되고, `delay`에 따라 첫 번째 인자인 `func`이 실행된다.
+이와 같이 콜백 함수의 제어권을 넘겨받은 코드(`setInterval`)는 콜백 함수 호출 시점에 대한 제어권을 갖는다.
+
+## 인자
+
+또다른 대표적인 예시로 `Array.prototype.map`이 있다.
+
+```javascript
+Array.prototype.map(callback[, thisArg])
+callback: function(currentValue, index, array)
+```
+
+이 때 콜백 함수의 인자로 배열의 요소 중 현재값이, 두 번째 인자에는 현재값의 인덱스가, 세 번째 인자에는 `map` 메서드의 대상이 되는 배열 자체가 담긴다. 이러한 인자들은 콜백 함수가 아니라 `map` 메서드에 의해 결정되는 인자들이고, 따라서 `map` 메서드에서 정의한 규칙에 따라 콜백 함수를 작성해야 한다.
+이와 같이 콜백 함수의 제어권을 넘겨받은 코드(`map`)는 콜백 함수를 호출할 때 인자에 어떤 값들을 어떤 순서로 넘길 것인지에 대한 제어권을 갖는다.
+
+# 콜백 함수는 함수다
+
+콜백 함수는 메서드가 아니라 함수다. 콜백 함수로 어떠한 객체의 메서드를 전달해도, 메서드가 아니라 함수로서 호출된다.
+
+<!-- prettier-ignore -->
+```javascript
+var obj = {
+  vals: [1, 2, 3],
+  logValues: function (v, i) {
+    console.log(this, v, i);
+  },
+};
+obj.logValues(1, 2);                // { vals: [1, 2, 3], logValues: f } 1 2
+[4, 5, 6].forEach(obj.logValues);   // Window { ... } 4 0
+                                    // Window { ... } 5 1
+                                    // Window { ... } 6 2
+```
+
+위와 같이 `obj.logValues`를 `forEach()`의 콜백 함수로 전달하더라도, 이 함수는 `obj`의 메서드로서 호출되는 것이 아니라 하나의 함수로서 호출된다. 따라서 `this`를 별도로 지정하지 않았기 때문에 여기서 가리키는 `this`는 `obj`가 아니라 전역객체가 된다.
+
+# 콜백 함수 내부의 this에 다른 값 바인딩하기
+
+```javascript
+var obj1 = {
+  name: 'obj1',
+  func: function () {
+    var self = this;
+    return function () {
+      console.log(self.name);
+    };
+  },
+};
+var callback = obj1.func();
+setTimeout(callback, 1000);
+```
+
+위 코드에서, `var callback = obj1.func()`에서 callback에 먼저 `obj1.func()`으로 만든 함수를 `callback`애 할당한다. 이 때 `obj1.func`의 `this`는 `obj1`으로 바인딩되기 때문에 `setTimeout(callback, 1000)`에서는 우리가 원하는대로 `this`에 `obj1`이 할당된다. 이와 같은 방식으로, 코드 작성이 번거롭지만 `this`를 이용해 다양한 상황에서 재활용 할 수 있다.
+
+이와 같은 번거로움을 보완하기 위해 `ES5`에서 `bind` 메서드가 등장했다.
+
+```javascript
+var obj1 = {
+  name: 'obj1',
+  func: function () {
+    console.log(this.name);
+  },
+};
+setTimeout(obj1.func.bind(obj1), 1000);
+
+var obj2 = { name: 'obj2' };
+setTimeout(obj1.func.bind(obj2), 1500);
+```
+
+# 콜백 지옥과 비동기 제어
+
+동기적인 코드는 현재 실행 중인 코드가 완료된 후 다음 코드를 실행하는 방식이고, 비동기적인 코드는 이와 반대로 현재 실행 중인 코드의 완료 여부와 무관하게 즉시 다음 코드로 넘어간다. 비동기적인 코드는 **별도의 요청, 실행 대기, 보류** 등과 관련된 코드가 있다.
+이러한 비동기적인 코드를 작성할 때 콜백 지옥에 빠지지 않기 위한 방법이 몇 가지 있다.
+
+```javascript
+var addCoffee = function (name) {
+  return function (prevName) {
+    return new Promise(function (resolve) {
+      setTimeout(function () {
+        var newName = prevName ? prevName + ', ' + name : name;
+        console.log(newName);
+        resolve(newName);
+      }, 500);
+    });
+  };
+};
+addCoffee('에스프레소')().then(addCoffee('아메리카노')).then(addCoffee('카페모카')).then(addCoffee('카페라떼'));
+```
+
+첫 번째로 `ES6`의 `Promise`이다. `resolve`와 `reject` 함수를 호출하여 비동기 작업의 성공 여부를 전달하고, 이를 통해 동기적 표현이 가능하다. `.then()`으로 `resolve`된 `Promise`를 받아서 이후 작업을 수행할 수 있다.
+
+```javascript
+var addCoffee = function (prevName, name) {
+  setTimeout(function () {
+    coffeeMaker.next(prevName ? prevName + ', ' + name : name);
+  }, 500);
+};
+
+var coffeeGenerator = function* () {
+  var espresso = yield addCoffee('', '에스프레소');
+  console.log(espresso);
+  var americano = yield addCoffee(espresso, '아메리카노');
+  console.log(espresso);
+  var mocha = yield addCoffee(espresso, '카페모카');
+  console.log(mocha);
+  var latte = yield addCoffee(espresso, '카페라떼');
+  console.log(latte);
+};
+var coffeeMaker = coffeeGenerator();
+coffeeMaker.next();
+```
+
+두 번째로 `ES6`의 `Generator`이다. `*`로 `Generator`임을 명시한다. `Generator` 함수를 실행하면 `Iterator`를 반환하고, `.next()`와 `yield`를 활용하여 비동기 작업의 동기적 표현이 가능하다.
+
+```javascript
+var addCoffee = function (name) {
+  return new Promise(function (resolve) {
+    setTimeout(function () {
+      resolve(name);
+    }, 500);
+  });
+};
+
+var coffeeMaker = async function () {
+  var coffeeList = '';
+  var _addCoffee = async function (name) {
+    coffeeList += (coffeeList ? ',' : '') + (await addCoffee(name));
+  };
+
+  await _addCoffee('에스프레소');
+  console.log(coffeeList);
+  await _addCoffee('아메리카노');
+  console.log(coffeeList);
+  await _addCoffee('카페모카');
+  console.log(coffeeList);
+  await _addCoffee('카페라떼');
+  console.log(coffeeList);
+};
+coffeeMaker();
+```
+
+마지막으로 `ES2017`의 `async/await`이다. 비동기 작업을 수행하고자 하는 함수 앞에 `async`를 표기하고, 각각의 비동기 작업이 끝날때까지 `await`로 기다리고 다음 작업을 수행함으로써 비동기 작업의 동기적 표현이 가능하다.
+</details>
+
+<details>
+<summary><h2>📖 2025-01-24 학습</h2></summary>
+# 클로저의 의미 및 원리 이해
+
+> 자신을 내포하는 함수의 컨텍스트에 접근할 수 있는 함수
+> 함수가 특정 스코프에 접근할 수 있도록 의도적으로 그 스코프에서 정의하는 것
+> **_함수를 선언할 때 만들어지는 유효범위가 사라진 후에도 호출할 수 있는 함수_** > **_이미 생명 주기상 끝난 외부 함수의 변수를 참조하는 함수_**
+> 자유변수가 있는 함수와 자유변수를 알 수 있는 환경의 결합
+> 로컬 변수를 참조하고 있는 함수 내의 함수
+> **_자신이 생성될 때의 스코프에서 알 수 있었던 변수들 중 언젠가 자신이 실행될 때 사용할 변수들만을 기억하여 유지시키는 함수_**
+
+클로저는 자바스크립트 고유의 개념이 아니고 여러 함수형 프로그래밍 언어에서 등장하는 보편적인 특성이기 때문에 설명하는 방식도 각각 조금씩 다르다.
+
+```javascript
+var outer = function () {
+  var a = 1;
+  var inner = function () {
+    console.log(a);
+  };
+  inner();
+};
+outer();
+```
+
+위 코드에서는 `inner` 함수에서 `a`를 `environmentRecord`에서 찾지 못하기 때문에 `outerEnvironmentReference`에 지정된 상위 컨텍스트인 `outer`의 `LexicalEnvironment`에 접근해서 `a`를 찾는다. 그래서 4번째 줄에서 `2`를 출력하고, `outer` 함수의 실행 컨텍스트가 종료되면 더이상 `LexicalEnvironment`에 저장된 식별자들(`a`, `inner`)에 대한 참조를 지운다. 그러면 각 식별자들에 저장되어 있던 값은 자신을 참조하는 변수가 하나도 없기 때문에 `가비지 컬렉터`의 수집 대상이 된다.
+
+```javascript
+var outer = function () {
+  var a = 1;
+  var inner = function () {
+    return ++a;
+  };
+  return inner();
+};
+var outer2 = outer();
+console.log(outer2);
+```
+
+위 코드에서 `outer` 함수는 `inner` 함수의 실행 결과를 반환한다. 이번에도 마찬가지로 `outer` 함수의 실행 컨텍스트가 종료된 시점에 `a`와 `inner`를 참조하는 대상이 없어지기 때문에 `가비지 컬렉터`의 수집 대상이 된다.
+
+이 두 코드는 `outer` 함수의 실행 컨텍스트가 종료되기 이전에 `inner` 함수의 실행 컨텍스트가 종료되고, 이후 별도로 `inner` 함수를 호출할 수 없다는 공통점이 있다.
+
+<!-- prettier-ignore -->
+```javascript
+var outer = function () {
+  var a = 1;
+  var inner = function () {
+    return ++a;
+  };
+  return inner;
+};
+var outer2 = outer();
+console.log(outer2());  // 2
+console.log(outer2());  // 3
+```
+
+이번에는 `inner` 함수를 `outer` 함수 안에서 실행하지 않고 함수 자체를 `return` 하고있다. 그러면 `outer` 함수의 실행 컨텍스트가 종료되더라도 `outer2` 변수는 여전히 `inner` 함수를 참조하게 될 것이고, 9, 10번째 줄에서 `outer2`를 호출하면서 앞서 반환된 `inner` 함수가 실행된다.
+`inner` 함수의 실행 컨텍스트의 `outerEnvironmentReference`에는 `outer` 함수의 `LexicalEnvironment`가 담긴다. 이후 스코프 체이닝에 따라 `outer`에서 선언한 변수 `a`에 접근하게 된다.
+
+`outer` 함수의 실행이 이미 종료되었음에도 불구하고 `inner` 함수의 실행 시점에 `outer` 함수의 `LexicalEnvironment`에 접근할 수 있는 것은 `가비지 컬렉터`의 동작 방식 때문이다. `가비지 컬렉터`는 어떤 값을 참조하는 변수가 단 하나라도 존재한다면 수집 대상에 포함시키지 않는다. 위 코드에서는 `outer2`에 의해 `inner` 함수가 실행되면서 실행 컨텍스트가 활성화 될 것이고, 이 때 `outerEnvironmentReference`가 `outer` 함수의 `LexicalEnvironment`를 필요로 할 것이기 때문에 `outer` 함수는 수집 대상에서 제외된다.
+
+위와 같은 내용을 바탕으로, 클로저는 아래와 같이 정의할 수 있다.
+
+> **_클로저란 어떤 함수 A에서 선언한 a를 참조하는 내부함수 B를 외부로 전달할 경우 A의 실행 컨텍스트가 종료된 이후에도 변수 a가 사라지지 않는 현상_**
+
+# 클로저와 메모리 관리
+
+클로저는 필요에 의해 의도적으로 함수의 지역변수가 메모리를 소모하도록 함으로써 발생한다. 즉, 필요성이 사라진다면 더이상 메모리를 소모하지 않게 해주어야 하고, 이를 위해서는 참조 카운트가 0이 되도록 하여 `가비지 컬렉터`의 수집 대상이 되게 한다.
+참조 카운트를 0으로 만들기 위해서는 식별자에 참조형이 아닌 기본형 데이터(null, undefined)를 할당하면 된다.
+
+<!-- prettier-ignore -->
+```javascript
+var outer = function () {
+  var a = 1;
+  var inner = function () {
+    return ++a;
+  };
+  return inner;
+};
+var outer2 = outer();
+console.log(outer2());
+console.log(outer2());
+outer2 = null;  // outer 식별자의 inner 함수 참조를 끊는다.
+```
+
+# 클로저의 활용
+
+## 접근 권한 제어(정보 은닉)
+
+자바스크립트는 기본적으로 변수 자체에 `public`, `protected`, `private` 등의 접근 권한을 직접 부여하도록 설계되어 있지 않다. 하지만 클로저를 이용하면 함수 차원에서 `return`을 통해 함수 내부의 변수를 `public`한 값과 `private`한 값으로 구분할 수 있다.
+
+```javascript
+var car = {
+    fuel: Math.ceil(Math.random() * 10 + 10),
+    power: Math.ceil(Math.random() * 3 + 2),
+    moved: 0,
+    run: function() {
+        ...
+    }
+}
+```
+
+위와 같은 코드가 있다고 할 때, `car.fuel = 1000;`와 같은 코드를 작성한다면 `car` 객체의 `fuel` 변수에 할당되어 있는 랜덤값이 의미가 없어져버린다. 따라서 이러한 정보를 은닉하기 위해서 객체를 함수로 바꾸고 `return`으로 함수의 변수의 접근 권한을 설정할 수 있다.
+
+```javascript
+var createCar = function () {
+  fuel = Math.ceil(Math.random() * 10 + 10);
+  power = Math.ceil(Math.random() * 3 + 2);
+  moved = 0;
+  return {
+    get moved() {
+      return moved;
+    },
+    run: function () {
+      ...
+    },
+  };
+};
+var car = createCar();
+```
+
+코드를 위와 같이 변경하면, `moved` 변수는 `getter`만 부여함으로써 읽기 전용 속성이 부여되었기 때문에 `car.moved`로 접근할 수 있지만, `fuel`과 `power` 변수는 비공개 멤버이기 때문에 `car.fuel`, `car.power`로 변수에 접근하려 하면 `undefined`가 반환된다.
+
+이렇게 함수의 `return`에서 발생하는 클로저를 이용하여 정보를 은닉할 수 있다.
+
+## 부분 적용 함수
+
+부분 적용 함수(partially applied function)란 n개의 인자를 받는 함수에 미리 m개의 인자만 넘겨 기억시켰다가, 나중에 (n-m)개의 인자를 넘기면 원래 함수의 실행 결과를 얻을 수 있게 하는 함수이다. 미리 일부 인자를 넘겨두어 기억하게 하고 추후 필요한 시점에 기억했던 인자들까지 함께 실행하게 한다는 개념 자체가 클로저의 정의에 부합한다.
+
+대표적인 예로 `디바운스(debounce)`가 존재한다.
+
+```javascript
+var debounce = function (eventName, func, wait) {
+  var timeoutId = null;
+  return function (event) {
+    var self = this;
+    console.log(eventName, 'event 발생');
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(func.bind(self, event), wait);
+  };
+};
+
+var moveHandler = function (e) {
+  console.log('move event 처리');
+};
+var wheelHandler = function (e) {
+  console.log('wheel event 처리');
+};
+document.body.addEventListener('mousemove', debounce('move', moveHandler, 500));
+document.body.addEventListener('mousewheel', debounce('wheel', wheelHandler, 700));
+```
+
+위 코드는 마우스 이벤트에 대한 `debounce`를 구현한 것이다. 마우스의 움직임과 스크롤 이벤트가 발생할 때마다 각각 `500ms`, `700ms`의 대기시간을 갖고 이벤트에 대한 처리를 한다. 동작 방식을 간략하게 정리하면 아래와 같다.
+
+1. 마우스 이벤트가 발생함.
+2. `debounce` 함수에서 반환된 함수가 실행됨.
+3. 기존에 비동기로 동작중이던 `setTimeout`을 `clearTimeout` 함수를 통해 중단시킴.
+4. `bind` 함수를 이용하여 마우스 이벤트에 대한 처리 함수(`func`)의 `this`를 지정하고 `event`(마우스 이벤트)를 `argument`로 넘겨준 함수를 `setTimeout`의 콜백 함수로 지정함.
+
+위 과정을 통해 `wait`만큼의 시간이 지나기 전에 마우스 이벤트가 발생하면 해당 이벤트에 대한 처리를 하지 않고, 마우스 이벤트가 없는 상태로 `wait`만큼의 시간이 지난 후에야 해당 이벤트에 대한 처리를 진행한다.
+
+이러한 동작 과정에서 클로저로 처리되는 변수는 `debounce` 함수가 종료된 이후에도 참조하고 있는 `eventName`, `func`, `wait`, `timeoutId`가 있다.
+
+## 커링 함수
+
+커링 함수는 여러 개의 인자를 받는 함수를 하나의 인자만 받는 함수로 나눠서 순차적으로 호출될 수 있게 체인 형태로 구성한 것을 말한다. 마지막 인자가 전달되기 전까지는 함수를 실행하지 않는다.
+
+<!-- prettier-ignore -->
+```javascript
+var curry3 = function (func) {
+  return function (a) {
+    return function (b) {
+      return func(a, b);
+    };
+  };
+};
+
+var getMaxWith10 = curry3(Math.max)(10);
+console.log(getMaxWith10(8));             // 10
+console.log(getMaxWith10(25));            // 25
+
+var getMinWith10 = curry3(Math.min)(10);
+console.log(getMinWith10(8));             // 8
+console.log(getMinWith10(25));            // 10
+```
+
+위 코드는 가독성을 위해 화살표 함수를 적용할 수 있다.
+
+<!-- prettier-ignore -->
+```javascript
+var curry5 = func => a => b => func(a, b);
+```
+
+이러한 커링 함수를 사용한다면 각 단계에서 받은 인자들은 모두 마지막 단계에서 참조할 것이기 때문에 `GC(가비지 컬렉션)`의 수거 대상이 되지 않고, 마지막 호출로 실행 컨텍스트가 종료된 후에야 `GC`의 수거 대상이 된다.
+
+보통 커링 함수는 자주 쓰이는 함수에서 매개변수가 항상 비슷하고 일부만 바뀌는 경우에 적절하게 사용된다. 대표적인 예로 Flux 아키텍처의 구현체 중 하나인 `Redux`의 미들웨어가 있다.
+
+<!-- prettier-ignore -->
+```javascript
+//  Redux Middleware 'Logger'
+const logger = store => next => action => {
+  console.log('dispatching', action);
+  console.log('next state', store.getState());
+  return next(action);
+};
+// Redux Middleware 'thunk'
+const thunk = store => next => action => {
+  return typeof action === 'function' 
+    ? action(dispatch, store.getState) 
+    : next(action);
+};
+```
+
+여기서 `store`는 프로젝트 내에서 한 번 생성된 이후로 바뀌지 않는 속성이고, `dispatch`의 의미를 가지는 `next`도 마찬가지지만, `action`은 매번 달라진다. 따라서 `store`와 `next`의 값이 결정되면 `Redux` 내부에서 `logger` 또는 `thunk`에 `store`, `next`를 미리 넘겨서 반환된 함수를 저장시켜놓고, 이후에 `action`만 받아서 처리할 수 있게 한다.
 </details>
