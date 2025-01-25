@@ -1,6 +1,6 @@
 import { ModalProvider } from '@/components/context/ModalContext';
-import CreateRoomButton from '@/components/knitogether/CreateRoomButton';
-import VideoRoomList from '@/components/video/VideoRoomList';
+import CreateRoomButton from '@/components/page/knitogether/CreateRoomButton';
+import VideoRoomList from '@/components/page/knitogether/video/VideoRoomList';
 
 const Knitogether: React.FC = () => {
   return (

@@ -1,10 +1,10 @@
 'use client';
 
 import PatternTypeContext from '@/components/context/PatternTypeContext';
-import ColorNumInput from '@/components/pattern/new/dot/ColorNumInput';
-import ImageInput from '@/components/pattern/new/dot/ImageInput';
-import SizeInput from '@/components/pattern/new/dot/SizeInput';
-import LabeledInput from '@/components/pattern/new/LabeledInput';
+import ColorNumInput from '@/components/page/pattern/new/dot/ColorNumInput';
+import ImageInput from '@/components/page/pattern/new/dot/ImageInput';
+import SizeInput from '@/components/page/pattern/new/dot/SizeInput';
+import LabeledInput from '@/components/page/pattern/new/LabeledInput';
 import Button from '@/components/ui/button/Button';
 import { COLOR_NUM, SIZE_NUM } from '@/lib/constants/pattern';
 import { patternInput } from '@/lib/pattern';

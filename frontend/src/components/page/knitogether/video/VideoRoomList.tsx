@@ -1,6 +1,6 @@
 'use client';
 
-import VideoRoomCard from '@/components/video/VideoRoomCard';
+import VideoRoomCard from '@/components/page/knitogether/video/VideoRoomCard';
 import { MVideoRoomList } from '@/mocks/data/video';
 
 const VideoRoomList: React.FC = () => {

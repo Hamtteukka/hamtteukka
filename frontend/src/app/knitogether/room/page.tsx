@@ -1,7 +1,7 @@
-import CameraToggleButton from '@/components/knitogether/CameraToggleButton';
-import LeaveRoomButton from '@/components/knitogether/LeaveRoomButton';
-import MikeToggleButton from '@/components/knitogether/MikeToggleButton';
-import UserVideoCard from '@/components/video/UserVideoCard';
+import CameraToggleButton from '@/components/page/knitogether/CameraToggleButton';
+import LeaveRoomButton from '@/components/page/knitogether/LeaveRoomButton';
+import MikeToggleButton from '@/components/page/knitogether/MikeToggleButton';
+import UserVideoCard from '@/components/page/knitogether/video/UserVideoCard';
 import { MUser } from '@/mocks/data/user';
 
 const KnitogetherRoom: React.FC = () => {

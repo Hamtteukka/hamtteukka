@@ -1,11 +1,10 @@
 'use client';
 
 import PatternTypeContext from '@/components/context/PatternTypeContext';
-import ImageInput from '@/components/pattern/new/dot/ImageInput';
-import LabeledInput from '@/components/pattern/new/LabeledInput';
-import CraftInput from '@/components/pattern/new/text/CraftInput';
-import DetailInput from '@/components/pattern/new/text/DetailInput';
-import NeedleInput from '@/components/pattern/new/text/NeedleInput';
+import LabeledInput from '@/components/page/pattern/new/LabeledInput';
+import CraftInput from '@/components/page/pattern/new/text/CraftInput';
+import DetailInput from '@/components/page/pattern/new/text/DetailInput';
+import NeedleInput from '@/components/page/pattern/new/text/NeedleInput';
 import Button from '@/components/ui/button/Button';
 import useTextInput from '@/hooks/useTextInput';
 import { NEEDLE_TYPE } from '@/lib/constants/pattern';

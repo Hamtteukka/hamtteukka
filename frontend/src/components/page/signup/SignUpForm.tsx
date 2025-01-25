@@ -1,7 +1,7 @@
 'use client';
 
-import ImageInput from '@/components/pattern/new/dot/ImageInput';
-import LabeledInput from '@/components/pattern/new/LabeledInput';
+import ImageInput from '@/components/page/pattern/new/dot/ImageInput';
+import LabeledInput from '@/components/page/pattern/new/LabeledInput';
 import Button from '@/components/ui/button/Button';
 import TextInput from '@/components/ui/input/TextInput';
 import { useState } from 'react';

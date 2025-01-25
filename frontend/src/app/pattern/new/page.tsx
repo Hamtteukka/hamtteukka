@@ -1,4 +1,4 @@
-import NewPatternForm from '@/components/pattern/new/NewPatternForm';
+import NewPatternForm from '@/components/page/pattern/new/NewPatternForm';
 import { H1 } from '@/components/typography/Heading';
 
 const NewPatternPage: React.FC = () => {

@@ -3,7 +3,7 @@ import { H4 } from '@/components/typography/Heading';
 import TextInput from '@/components/ui/input/TextInput';
 import Dropdown from '@/components/ui/dropdown/Dropdown';
 import ConfirmDialog from '@/components/ui/dialog/ConfirmDialog';
-import ImageInput from '@/components/pattern/new/dot/ImageInput';
+import ImageInput from '@/components/page/pattern/new/dot/ImageInput';
 import { MAX_ROOM_USERS } from '@/lib/constants/knitogether';
 
 const CreateRoomDialog: React.FC = () => {

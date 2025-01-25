@@ -1,6 +1,6 @@
 'use client';
 
-import UserVideo from '@/components/video/UserVideo';
+import UserVideo from '@/components/page/knitogether/video/UserVideo';
 import Avatar from '@/components/ui/Avatar';
 import Expand from '/public/svg/expandIcon.svg';
 import Crown from '/public/svg/crownIcon.svg';

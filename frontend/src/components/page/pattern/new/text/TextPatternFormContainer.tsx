@@ -1,4 +1,4 @@
-import TextPatternForm from '@/components/pattern/new/text/TextPatternForm';
+import TextPatternForm from '@/components/page/pattern/new/text/TextPatternForm';
 
 const TextPatternFormContainer: React.FC = () => {
   return (

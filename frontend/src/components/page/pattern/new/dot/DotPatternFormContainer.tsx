@@ -1,4 +1,4 @@
-import DotPatternForm from '@/components/pattern/new/dot/DotPatternForm';
+import DotPatternForm from '@/components/page/pattern/new/dot/DotPatternForm';
 
 const DotPatternFormContainer: React.FC = () => {
   return (
