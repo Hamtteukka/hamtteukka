@@ -801,6 +801,7 @@ LIMIT 10;
 </details>
 
 <details>
+<<<<<<< HEAD
 <summary><h2>📖 2025-01-23 학습</h2></summary>
 
 # DTO vs Entity, 불변 DTO, Jackson 매핑 방식
@@ -922,6 +923,8 @@ LIMIT 10;
 </details>
 
 <details>
+=======
+>>>>>>> b79003b3ab030ab3b203f70bc377e9f2beddfeb0
 <summary><h2>📖 2025-01- 학습</h2></summary>
 
 

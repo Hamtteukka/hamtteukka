@@ -116,8 +116,8 @@ const [books, setBooks] = React.useState([]);
 useEffect(() => {
   fetch(`${baseUrl}/${props.id}`)
     .then((response) => response.json())
-    .then(booksList => {
-        setState({ books: booksList });
+    .then((booksList) => {
+      setState({ books: booksList });
     });
 }, [props.id]);
 ```
@@ -180,7 +180,7 @@ useScrollHook();
 
 # 결론
 
-가장 중요한 것은 React Hooks를 통해 Functional Component에서 생명주기를 다룰 수 있다는 점인 것 같다. 그래서 React Hooks의 이점에 대해 내가 내린 결론은 다음과 같다. 
+가장 중요한 것은 React Hooks를 통해 Functional Component에서 생명주기를 다룰 수 있다는 점인 것 같다. 그래서 React Hooks의 이점에 대해 내가 내린 결론은 다음과 같다.
 
 > 1. Functional Component에서 생명주기를 다룰 수 있다.
 > 2. 간결한 코드로 생명주기를 다룰 수 있다.
@@ -196,13 +196,13 @@ useScrollHook();
 화면에 숫자 0을 나타내고, +1 버튼을 누를 때마다 화면에 나타나는 숫자를 1씩 증가시키고 싶다. 어떻게 하면 될까?
 
 ```jsx
-export default function App() {  
+export default function App() {
   let num = 0;
 
   function handleClick() {
     num = num + 1;
   }
-  
+
   return (
     <>
       <p>num</p>
@@ -271,7 +271,7 @@ React는 컴포넌트를 리렌더링할 때 그 시점의 **스냅샷**을 찍�
 ```jsx
 export default funtion App() {
   const [num, setNum] = useState(0);
-  
+
   return (
     <>
       <p>num</p>
@@ -298,12 +298,16 @@ export default funtion App() {
 batching은 하나의 이벤트를 하나의 batch로 취급하고 수행한다. 즉, 이벤트 핸들러가 종료될 때까지 렌더링을 하지 않고 대기하다가 이벤트 핸들러의 모든 작업이 수행된 후에 최종적인 결과에 대해서만 렌더링을 수행한다.
 
 ```jsx
-<button onClick={() => {
-  setNum(num + 1); // 0 + 1 = 1, 렌더링 대기
-  setNum(num + 1); // 0 + 1 = 1, 렌더링 대기
-  setNum(num + 1); // 0 + 1 = 1, 렌더링 대기
-  // 이벤트 핸들러가 종료된 이후 리렌더링
-}}>+3</button>
+<button
+  onClick={() => {
+    setNum(num + 1); // 0 + 1 = 1, 렌더링 대기
+    setNum(num + 1); // 0 + 1 = 1, 렌더링 대기
+    setNum(num + 1); // 0 + 1 = 1, 렌더링 대기
+    // 이벤트 핸들러가 종료된 이후 리렌더링
+  }}
+>
+  +3
+</button>
 ```
 
 ### 업데이터 함수(updater function)
@@ -311,14 +315,18 @@ batching은 하나의 이벤트를 하나의 batch로 취급하고 수행한다.
 하나의 batch 안에서 상태 값을 업데이트 하고 그 값을 다시 참고하여 업데이트 하고싶을 수 있다. 이 때 `n => n + 1` 을 사용할 수 있고 이를 **업데이터 함수(updater function)**라고 한다.
 
 ```jsx
-<button onClick={() => {
-  setNum(n => n + 1); // 0 + 1 = 1
-  setNum(n => n + 1); // 1 + 1 = 2
-  setNum(n => n + 1); // 2 + 1 = 3
-}}>+3</button>
+<button
+  onClick={() => {
+    setNum((n) => n + 1); // 0 + 1 = 1
+    setNum((n) => n + 1); // 1 + 1 = 2
+    setNum((n) => n + 1); // 2 + 1 = 3
+  }}
+>
+  +3
+</button>
 ```
 
-업데이터 함수는 단순히 state 값을 대체하는 것이 아니라 React에 *state 값으로 무언가를 하라* 고 지시하는 것이다.
+업데이터 함수는 단순히 state 값을 대체하는 것이 아니라 React에 _state 값으로 무언가를 하라_ 고 지시하는 것이다.
 업데이터 함수는 이벤트 핸들러의 다른 코드가 모두 실행된 후 처리되도록 **큐(Queue)**로 들어간다. 큐의 작업들은 이벤트 핸들러의 코드가 모두 실행된 이후 순차적(FIFO)으로 수행된다.
 
 큐에 들어간 업데이터 함수는 이전 state를 참조하여 state를 업데이트 한다.
@@ -333,7 +341,7 @@ useReducer는 useState와 동일한 기능을 수행한다. 단, useState와 다
 // react 공식 문서 참조
 
 const [state, dispatch] = useReducer(reducer, initialArg, init?);
-                                     
+
 function handleButtonClick() {
   dispatch({ type: 'incremented_age' });
 }
@@ -380,9 +388,8 @@ useState, useReducer 둘 중 무엇을 선택할지는 개발자의 자유다.
 ---
 
 # References
-> https://ko.react.dev/learn/adding-interactivity
-> https://react.dev/blog/2022/03/08/react-18-upgrade-guide#automatic-batching
-> https://d-cron.tistory.com/77
+
+> https://ko.react.dev/learn/adding-interactivity > https://react.dev/blog/2022/03/08/react-18-upgrade-guide#automatic-batching > https://d-cron.tistory.com/77
 
 </details>
 
@@ -486,9 +493,7 @@ const sum = a + b;
 
 # References
 
-> https://ko.react.dev/learn/escape-hatches
-> https://velog.io/@okxooxoo/React-useEffect%EB%8A%94-%EC%99%9C-%EC%82%AC%EC%9A%A9%ED%95%A0%EA%B9%8C
-> https://velog.io/@yeonjin1357/React-Side-Effect-%EA%B7%B8%EB%A6%AC%EA%B3%A0-useEffect
+> https://ko.react.dev/learn/escape-hatches > https://velog.io/@okxooxoo/React-useEffect%EB%8A%94-%EC%99%9C-%EC%82%AC%EC%9A%A9%ED%95%A0%EA%B9%8C > https://velog.io/@yeonjin1357/React-Side-Effect-%EA%B7%B8%EB%A6%AC%EA%B3%A0-useEffect
 
 </details>
 
@@ -550,9 +555,7 @@ Context는 부모 컴포넌트가 자신의 자식 컴포넌트 전체에게 데
 createContext(initialState);
 
 // 2.
-<Context.Provider value={value}>
-  {children}
-</Context.Provider>
+<Context.Provider value={value}>{children}</Context.Provider>;
 
 // 3.
 useContext(Context);
@@ -572,7 +575,7 @@ export const SetNumContext = createContext(null);
 // App.jsx
 export default function App() {
   const [num, setNum] = useState(0);
-  
+
   return (
     <div>
       <NumContext.Provider value={num}>
@@ -626,13 +629,13 @@ useMemo와 useCallback에는 메모이제이션이라는 개념이 적용된다.
 ## 계산한 값을 재사용
 
 메모이제이션은 거창한 개념이 아니고 단순하다.
-내가 **계산한 값**을 **재사용**할 수 있도록 **기억**해두는 것이다. 
+내가 **계산한 값**을 **재사용**할 수 있도록 **기억**해두는 것이다.
 
 useMemo, useCallback과 직접적인 관련이 있는 것은 아니지만, 간단하게 피보나치 수열을 예시로 살펴보겠다.
 
 ```javascript
 function fibo(n) {
-  if(n < 2) {
+  if (n < 2) {
     return n;
   }
   return fibo(n - 1) + fibo(n - 2);
@@ -652,6 +655,7 @@ for(int i = 2; i <= 5; i++) {
 
 console.log(memo[5]);
 ```
+
 위 코드에서는 6번의 연산(초기화 과정을 2회로 가정)만에 피보나치 수열의 5번째 값을 구할 수 있다.
 
 두 코드의 차이점은, 계산했던 값을 기억하고 있느냐이다.
@@ -664,7 +668,7 @@ console.log(memo[5]);
 5. fibo(1), fibo(0)
 
 fibo(1)을 5회 호출했다. 계산했던 값이지만 그 값을 기억하고 있지 못하기 때문에 동일한 결과를 내놓는 작업을 반복했다.
-***비효율적이다.***
+**_비효율적이다._**
 
 하지만 두 번째 코드는 memo[0], memo[1], memo[2], memo[3], memo[4], memo[5] 각각에 대한 연산을 **1번씩**만 했다. 이전에 계산했던 값을 memo라는 배열에 저장해 놓았기 때문이다.
 
@@ -672,7 +676,7 @@ fibo(1)을 5회 호출했다. 계산했던 값이지만 그 값을 기억하고 
 
 ## 메모이제이션은 React에서 언제 필요할까?
 
-리액트의 함수형 컴포넌트는 리랜더링 될 때마다 컴포넌트 함수가 다시 실행된다. 따라서 컴포넌트가 리랜더링 될 때마다 컴포넌트가 갖고 있는 모든 함수나 계산들도 다시 실행된다. *값이 바뀌지 않더라도 말이다.* 이러한 점은 불필요한 계산을 포함할 수 있다.
+리액트의 함수형 컴포넌트는 리랜더링 될 때마다 컴포넌트 함수가 다시 실행된다. 따라서 컴포넌트가 리랜더링 될 때마다 컴포넌트가 갖고 있는 모든 함수나 계산들도 다시 실행된다. _값이 바뀌지 않더라도 말이다._ 이러한 점은 불필요한 계산을 포함할 수 있다.
 
 컴포넌트의 props에 종속되지 않는, 계산이 필요한 값이 존재한다고 하자.
 
@@ -698,10 +702,7 @@ const memoizedValue = useMemo(calculateValue, dependencies);
 `calculateValue`로부터 반환되는 값이 `memoizedValue`에 저장된다. `dependencies`는 의존성 배열로, 콜백 함수를 실행할지 결정한다. `dependencies`의 값이 변경되면 콜백 함수를 실행하여 캐시된 값을 최신화 한다. `dependencies` 값의 변경 여부는 `Object.is`로 확인한다.
 
 ```javascript
-const memoizedValue = useMemo(
-  () => calculate(a, b),
-  [a, b]
-);
+const memoizedValue = useMemo(() => calculate(a, b), [a, b]);
 ```
 
 이와 같이 코드를 작성하면 첫 랜더링에 `calculate` 함수가 실행되며 `memoizedValue`가 결정된다. 이후에 발생하는 리랜더링에서는 `a`나 `b`의 값이 바뀌지 않는다면 `calculate` 함수가 실행되지 않고 이미 계산된 `memoizedValue`가 사용되며, `a`나 `b`의 값 둘 중 하나라도 바뀐다면 `calculate` 함수가 다시 실행되어 `memoizedValue`가 업데이트 된다.
@@ -735,20 +736,14 @@ const memoizedFn = useCallback(fn, dependencies);
 
 `fn`은 캐싱할 함수이다. 어떤 인자나 반환값도 가질 수 있다. 모든 랜더링에서 첫 번째 랜더링과 dependencies의 값이 바뀔 때마다 `fn`의 함수가 `memoizedFn`으로 반환된다.
 
-
-
 # References
 
-> https://ko.react.dev/reference/react/useMemo
-> https://ko.react.dev/reference/react/useCallback
-> https://ko.react.dev/reference/react/memo
+> https://ko.react.dev/reference/react/useMemo > https://ko.react.dev/reference/react/useCallback > https://ko.react.dev/reference/react/memo
 
 </details>
 
 <details>
 <summary><h2>📖 2025-01-20 학습</h2></summary>
-
-
 
 ## 데이터 타입의 종류
 
@@ -804,10 +799,10 @@ var a;
 ### 데이터 할당
 
 ```javascript
-var a;              // 변수 a 선언
-a = 'abc';          // 변수 a에 데이터 할당
+var a; // 변수 a 선언
+a = 'abc'; // 변수 a에 데이터 할당
 
-var a = 'abc';      // 변수 선언과 할당을 한 문장으로 표현
+var a = 'abc'; // 변수 선언과 할당을 한 문장으로 표현
 ```
 
 변수를 선언하고 할당하는 과정은 다음과 같다.
@@ -849,8 +844,8 @@ b = 7;
 
 ```javascript
 var obj1 = {
-    a: 1,
-    b: 'bbb'
+  a: 1,
+  b: 'bbb',
 };
 ```
 
@@ -883,8 +878,8 @@ obj2.c = 20;
 이후에 `a`와 `b`, `obj1`과 `obj2`의 관계는 어떻게 될까?
 
 ```javascript
-a !== b
-obj1 === obj2
+a !== b;
+obj1 === obj2;
 ```
 
 코드로 표현하면 위와 같은 결과가 된다.
@@ -908,23 +903,23 @@ obj2 = { c: 10, d: 'ddd' };
 
 ```javascript
 var user = {
-    name: 'Jaenam',
-    gender: 'male'
+  name: 'Jaenam',
+  gender: 'male',
 };
 
-var changeName = function(user, newName) {
-    var newUser = user;
-    newUser.name = newName;
-    return newUser;
+var changeName = function (user, newName) {
+  var newUser = user;
+  newUser.name = newName;
+  return newUser;
 };
 
 var user2 = changeName(user, 'Jung');
 
-if(user !== user2) {
-    console.log('유저 정보가 변경되었습니다.');
+if (user !== user2) {
+  console.log('유저 정보가 변경되었습니다.');
 }
-console.log(user.name, user2.name);     // Jung Jung
-console.log(user === user2);            // true
+console.log(user.name, user2.name); // Jung Jung
+console.log(user === user2); // true
 ```
 
 위와 같은 코드에서는 `if`문을 지나치고 `user === user2`의 결과가 `true`가 된다. 이러한 상황에서는 불변 객체가 필요하다.
@@ -932,21 +927,21 @@ console.log(user === user2);            // true
 이를 위해서는
 
 ```javascript
-var changeName = function(user, newName) {
-    return {
-        name: newName,
-        gender: user.gender
-    }
-}
+var changeName = function (user, newName) {
+  return {
+    name: newName,
+    gender: user.gender,
+  };
+};
 ```
 
 ```javascript
 var copyObject = function (target) {
-    var result = {};
-    for (var prop in target) {
-        result[prop] = target[prop];
-    }
-    return result;
+  var result = {};
+  for (var prop in target) {
+    result[prop] = target[prop];
+  }
+  return result;
 };
 ```
 
@@ -959,11 +954,11 @@ var copyObject = function (target) {
 
 ```javascript
 var user1 = {
-    name: 'Jaenam',
-    urls: {
-        portfolio: 'http://github.com/abc',
-        blog: 'http://blog.com',
-    }
+  name: 'Jaenam',
+  urls: {
+    portfolio: 'http://github.com/abc',
+    blog: 'http://blog.com',
+  },
 };
 
 var user2 = copyObject(user);
@@ -979,15 +974,16 @@ user2.urls.portfolio = 'http://portfolio.com';
 
 ```javascript
 var copyObject = function (target) {
-    var result = {};
-    if (typeof target === 'object' && target !== null) {        // 자바스크립트에서 typeof 명령어가 null에 대해 'object'를 반환한다.(자바스크립트 자체의 버그)
-        for (var prop in target) {
-            result[prop] = copyObject(target[prop]);
-        }
-    } else {
-        result = target;
+  var result = {};
+  if (typeof target === 'object' && target !== null) {
+    // 자바스크립트에서 typeof 명령어가 null에 대해 'object'를 반환한다.(자바스크립트 자체의 버그)
+    for (var prop in target) {
+      result[prop] = copyObject(target[prop]);
     }
-    return result;
+  } else {
+    result = target;
+  }
+  return result;
 };
 ```
 
@@ -995,8 +991,8 @@ var copyObject = function (target) {
 
 ```javascript
 var copyObjectViaJSON = function (target) {
-    return JSON.parse(JSON.stringify(target));
-}
+  return JSON.parse(JSON.stringify(target));
+};
 ```
 
 ## undefined와 null
@@ -1447,6 +1443,7 @@ var obj = {
 };
 obj.outer(); // { outer: [Function: outer] }
 ```
+
 </details>
 
 <details>
@@ -1602,6 +1599,7 @@ coffeeMaker();
 ```
 
 마지막으로 `ES2017`의 `async/await`이다. 비동기 작업을 수행하고자 하는 함수 앞에 `async`를 표기하고, 각각의 비동기 작업이 끝날때까지 `await`로 기다리고 다음 작업을 수행함으로써 비동기 작업의 동기적 표현이 가능하다.
+
 </details>
 
 <details>
@@ -1818,4 +1816,5 @@ const thunk = store => next => action => {
 ```
 
 여기서 `store`는 프로젝트 내에서 한 번 생성된 이후로 바뀌지 않는 속성이고, `dispatch`의 의미를 가지는 `next`도 마찬가지지만, `action`은 매번 달라진다. 따라서 `store`와 `next`의 값이 결정되면 `Redux` 내부에서 `logger` 또는 `thunk`에 `store`, `next`를 미리 넘겨서 반환된 함수를 저장시켜놓고, 이후에 `action`만 받아서 처리할 수 있게 한다.
+
 </details>

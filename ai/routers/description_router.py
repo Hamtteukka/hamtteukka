@@ -8,7 +8,7 @@ import traceback
 
 router = APIRouter()
 
-@router.post("/v1/description/generate")
+@router.post("/ai/description")
 async def generate(input_data: Description_Input):
     try:
         original_workflow = await load_workflow_file(WORKFLOW_PATH)

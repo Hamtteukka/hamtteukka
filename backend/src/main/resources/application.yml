@@ -1,9 +1,12 @@
 #spring.application.name=hamtteukka
 spring:
+  application:
+    name: hamtteukka
+
   datasource:
     # MySql
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url:
+    url: ${MYSQL_URL}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
 
@@ -14,7 +17,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+<<<<<<< backend/src/main/resources/application.yml
+  #      show_sql: true
+=======
 #        show_sql: true
+>>>>>>> backend/src/main/resources/application.yml
 
   config:
     import: application-secret.yml
@@ -22,3 +29,4 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
+

@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { ReactNode } from 'react';
 
 interface PButton {
@@ -12,8 +13,12 @@ const Button: React.FC<PButton> = ({ children, onClick, type = 'filled', classNa
 
   return (
     <button
-      className={`cursor-pointer rounded-sm border px-3 py-2 text-body1 ${borderColor} ${bgColor} ${textColor} ${className} hover:opacity-90`}
+      className={cn(
+        `flex cursor-pointer justify-center rounded-sm border px-3 py-2 font-bold ${borderColor} ${bgColor} ${textColor} hover:opacity-90`,
+        className,
+      )}
       onClick={onClick}
+      type='button'
     >
       {children}
     </button>
