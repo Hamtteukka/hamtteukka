@@ -6,6 +6,7 @@
   --background: #FAFAFA;
   --background-gray: #BDBDBD;
   --background-modal: rgba(0, 0, 0, 0.3);
+  --background-kakao: #FEE500;
   --text-black: #222222;
   --text-deepgray: #616161;
   --text-disabled: #9E9E9E;
@@ -15,7 +16,7 @@
   --primary-dark: #222222;
   --border: #E9E9E9;
   --border-input: #BDBDBD;
-  --border-activative: #222222;
+  --border-activate: #222222;
   --action-warning: #DC2023;
 
   --text-heading1: 1.5rem;
