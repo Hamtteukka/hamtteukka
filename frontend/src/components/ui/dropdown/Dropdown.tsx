@@ -1,6 +1,6 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import clsx from 'clsx';
-import { Fragment } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import DropdownIcon from '/public/svg/DropdownIcon.svg';
 
 interface PDropdown<T extends string> {
@@ -11,12 +11,22 @@ interface PDropdown<T extends string> {
 }
 
 function Dropdown<T extends string>({ list, value, onClick, placeholder }: PDropdown<T>) {
+  const [buttonWidth, setButtonWidth] = useState(0);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (buttonRef.current) {
+      setButtonWidth(buttonRef.current.offsetWidth);
+    }
+  }, []);
+
   return (
     <Menu>
       <MenuButton as={Fragment}>
         {() => (
           <button
-            className='flex w-36 cursor-pointer items-center justify-between rounded-sm border border-primary-dark bg-white px-3 py-2 font-bold hover:opacity-90'
+            ref={buttonRef}
+            className='flex min-w-36 cursor-pointer items-center justify-between rounded-sm border border-primary-dark bg-white px-3 py-2 font-bold hover:opacity-90'
             onClick={() => {}}
           >
             {value ?? placeholder}
@@ -26,7 +36,8 @@ function Dropdown<T extends string>({ list, value, onClick, placeholder }: PDrop
       </MenuButton>
       <MenuItems
         anchor='bottom'
-        className='min-w-36 divide-y divide-primary-dark rounded-sm border border-primary-dark bg-white font-bold'
+        className='divide-y divide-primary-dark rounded-sm border border-primary-dark bg-white font-bold'
+        style={{ width: buttonWidth }}
       >
         {list.map((text) => (
           <MenuItem key={text} as={Fragment}>

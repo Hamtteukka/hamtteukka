@@ -7,7 +7,12 @@ import TrashIcon from '/public/svg/trashIcon.svg';
 
 const DragAndDropUploadImg = dynamic(() => import('@/components/ui/dranAndDropUpload/DragAndDropUpload'));
 
-const ImageInput = () => {
+interface PImageInput {
+  description?: string;
+  className?: string;
+}
+
+const ImageInput: React.FC<PImageInput> = ({ description = '', className = '' }) => {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -35,7 +40,7 @@ const ImageInput = () => {
       <Image className='hover:bg-modal' width={500} height={500} src={previewUrl} alt='참고 이미지' />
     </div>
   ) : (
-    <DragAndDropUploadImg setImage={handleFile} />
+    <DragAndDropUploadImg setImage={handleFile} description={description} className={className} />
   );
 };
 

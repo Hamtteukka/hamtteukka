@@ -4,13 +4,15 @@ import { useState, useCallback } from 'react';
 import { addFile, handleFile } from '@/util/fileHandler';
 import Button from '@/components/ui/button/Button';
 import ImgIcon from '/public/svg/imgIcon.svg';
+import { cn } from '@/lib/utils';
 
 interface PDragAndDropUploadImg {
   setImage: (file: File) => void;
+  description?: string;
   className?: string;
 }
 
-const DragAndDropUploadImg: React.FC<PDragAndDropUploadImg> = ({ className = '', setImage }) => {
+const DragAndDropUploadImg: React.FC<PDragAndDropUploadImg> = ({ setImage, description = '', className = '' }) => {
   const [dragging, setDragging] = useState(false);
 
   const handleDragIn = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -49,14 +51,17 @@ const DragAndDropUploadImg: React.FC<PDragAndDropUploadImg> = ({ className = '',
 
   return (
     <div
-      className={`${className} ${dragging ? 'bg-black/5' : 'bg-inherit'} flex h-72 flex-col items-center justify-center gap-5 rounded-md border-2 border-dashed border-input`}
+      className={cn(
+        `${className} ${dragging ? 'bg-black/5' : 'bg-inherit'} flex h-72 flex-col items-center justify-center gap-5 rounded-md border-2 border-dashed border-input`,
+        className,
+      )}
       onDragEnter={handleDragIn}
       onDragLeave={handleDragOut}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
       <ImgIcon />
-      <p className='text-center font-bold text-placeholder'>AI가 참고할 이미지를 첨부해 주세요.</p>
+      <p className='text-center text-detail text-placeholder'>{description}</p>
       <Button className='border-input bg-gray text-white' onClick={() => addFile(true, setImage)}>
         이미지 가져오기
       </Button>
