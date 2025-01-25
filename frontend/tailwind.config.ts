@@ -53,6 +53,15 @@ const config: Config = {
       outlineColor: {
         activative: 'var(--border-activative)',
       },
+      keyframes: {
+        bounceY: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+      },
+      animation: {
+        bounceY: 'bounceY 1.5s infinite',
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],
