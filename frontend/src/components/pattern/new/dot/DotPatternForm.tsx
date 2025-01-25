@@ -32,7 +32,12 @@ const DotPatternForm: React.FC = () => {
         help={patternInput.color.help}
         input={<ColorNumInput num={num} setNum={setNum} />}
       />
-      <LabeledInput label={patternInput.image.label} help={patternInput.image.help} input={<ImageInput />} />
+      <LabeledInput
+        label={patternInput.image.label}
+        help={patternInput.image.help}
+        input={<ImageInput description='AI가 참고할 이미지를 첨부해 주세요.' className='h-72' />}
+      />
+
       <div className='flex gap-2.5 self-end'>
         <Button type='outlined' onClick={() => setPatterType('select')}>
           이전
