@@ -20,6 +20,7 @@ const config: Config = {
         DEFAULT: 'var(--background)',
         gray: 'var(--background-gray)',
         modal: 'var(--background-modal)',
+        kakao: 'var(--background-kakao)',
       },
       textColor: {
         DEFAULT: 'var(--text-black)',
@@ -48,10 +49,10 @@ const config: Config = {
       borderColor: {
         DEFAULT: 'var(--border)',
         input: 'var(--border-input)',
-        activative: 'var(--border-activative)',
+        activate: 'var(--border-activate)',
       },
       outlineColor: {
-        activative: 'var(--border-activative)',
+        activate: 'var(--border-activate)',
       },
       keyframes: {
         bounceY: {

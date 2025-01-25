@@ -20,7 +20,7 @@ const TextInput: React.FC<PTextInput> = ({
   return (
     <input
       className={cn(
-        'w-full resize-none overflow-hidden rounded-sm border border-input bg-white px-4 py-2.5 text-detail text-black placeholder:text-placeholder focus:outline-activative',
+        'focus:outline-activate w-full resize-none overflow-hidden rounded-sm border border-input bg-white px-4 py-2.5 text-detail text-black placeholder:text-placeholder',
         className,
       )}
       id={id}
