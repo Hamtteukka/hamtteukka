@@ -1,7 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/button/Button';
-import CreateRoomDialog from '@/components/knitogether/CreateRoomDialog';
+import CreateRoomDialog from '@/components/page/knitogether/CreateRoomDialog';
 import { useModal } from '@/hooks/useModal';
 
 const CreateRoomButton: React.FC = () => {

@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import SelectCard from './SelectCard';
-import TextPatternFormContainer from '@/components/pattern/new/text/TextPatternFormContainer';
-import DotPatternFormContainer from '@/components/pattern/new/dot/DotPatternFormContainer';
+import TextPatternFormContainer from '@/components/page/pattern/new/text/TextPatternFormContainer';
+import DotPatternFormContainer from '@/components/page/pattern/new/dot/DotPatternFormContainer';
 import PatternTypeContext from '@/components/context/PatternTypeContext';
 import { TPattern } from '@/types/pattern';
 import Image from 'next/image';
