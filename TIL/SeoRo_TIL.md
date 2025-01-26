@@ -813,3 +813,561 @@ outer(); // 1 출력
 실행 컨텍스트 활성화 당시에 `this`가 지정되지 않은 경우 `this`에는 **전역 객체**가 저장된다.  
 
 > 전역 객체에는 브라우저의 `window`, Node.js의 `global` 객체 등이 있다.
+
+# 250123 TIL
+
+
+# ➊ this
+> `this`는 통상 클래스로 생성한 인스턴스 **객체**를 의미한다.
+
+그러나 다른 언어에서와 달리 자바스크립트에서 `this`는 (클래스 내부가 아니어도) **어디서든지 사용**할 수 있으며, `this`를 출력하면 예상과 다르게 동작할 때가 많다.  
+
+`this`는 함수가 호출될 때 결정된다.  
+
+지금부터 전역 공간, 함수, 메서드, 화살표 함수, 콜백 함수, 생성자 함수 내부에서  
+`this`를 사용할 때 어떤 객체가 바인딩 되는지 알아보도록 하겠다.  
+
+## ① 전역 공간에서의 this
+전역 공간에서 `this`는 전역 객체를 가리킨다.  
+여기서 전역 객체는 JS 런타임 환경에 따라 달라지는데,  
+브라우저 환경에서는 `window`이고 Node.js 환경에서는 `global`이다.  
+
+그리고 이 전역 객체는 프로퍼티를 가지는데  
+전역 공간에서 선언한 모든 변수는 전역 객체의 프로퍼티로 등록된다!  
+
+아래 예제를 살펴보자.  
+
+```
+var a = 1;
+console.log(a); // 1
+console.log(window.a); // 1
+console.log(this.a); // 1
+```
+
+전역 변수 `a`에 1을 할당하였더니 `a`, `window.a`, `this.a` 모두 1이 출력되었다.  
+위의 예제를 통해 전역 변수는 `global` 혹은 `window`의 프로퍼티라는 것을 알 수 있다.  
+
+그렇다면 지역 변수는 어떨까?  
+> 자바스크립트의 모든 변수는 실행 컨텍스트의 `LexicalEnvironment` 객체의 프로퍼티로서 동작한다!
+  
+따라서 전역 공간에서 선언한 변수는 전역 컨텍스트의 `LexicalEnvironment` 객체의 프로퍼티이며,  
+함수 내부에서 변수를 선언하더라도 그 변수는 실행 컨텍스트의 `LexicalEnvironment` 객체의 프로퍼티가 된다.  
+
+🚨
+하지만 전역 컨텍스트의 `L.E`가 전역 객체(`this`)를 그대로 참조할 뿐  
+지역 실행 컨텍스트의 `L.E`와 `this`는 별개이므로 혼동하지 않도록 주의하자!  
+
+## ② 메서드 안에서의 this
+어떤 함수를 호출할 때는 **함수로서 호출하는 경우**와 **메서드로서 호출하는 경우** 2가지가 있다.  
+
+둘은 무슨 차이일까? 아래 예제를 통해 설명하도록 하겠다.  
+
+```
+var func = function (x) {
+    console.log(this, x);
+};
+func(1);
+var obj = {
+    method: func
+};
+obj.method(2);
+```
+위의 코드에서 `func`이라는 동일한 함수를 그냥 함수로서 호출하는 경우와  
+`obj` 객체의 프로퍼티로 등록 후 객체의 메서드로서 호출하는 경우를 확인할 수 있다.  
+
+`func`을 그냥 함수로서 호출하면 `this`는 전역 객체인 `window`가 된다.  
+그러나 프로퍼티 접근 연산자(.)로 연결하여 객체의 메서드로서 호출하면 `this`는 `obj`가 된다.  
+
+실제로 자바스크립트 엔진은 **점(.) 연산자의 유무**로 메서드로서 호출했는지, 함수로서 호출했는지 판단한다.  
+
+> 🚨 어떤 함수를 함수로서 호출하면 실행 컨텍스트가 생성될 때 `this` 바인딩을 따로 하지 않는다.  
+
+이처럼 `this`가 따로 지정되지 않으면 전역 객체를 바라보게 된다.  
+
+이러한 점 때문에 우리는 `this`가 실제 어떤 객체를 바라보고 있는지 예측할 수 없다.  
+
+아래 예제를 통해 `this`가 어떤 객체를 참조하고 있는지 살펴보자!  
+```
+var obj1 = {
+    outer: function () {
+        console.log(this);
+        var innerFunc = function () {
+            console.log(this);
+        }
+        innerFunc(); // window
+        var obj2 = {
+            innerMethod: innerFunc
+        };
+        obj2.innerMethod(); // obj2
+    }
+};
+obj1.outer(); // obj1
+```
+
+위에서 함수 실행문은 총 3개이다.  
+가장 먼저 실행되는 함수는 `obj1.outer();`으로 프로퍼티 접근 연산자(.)을 이용하여 메서드로서 호출하였다.  
+따라서 이 함수 안에서 `this`는 `obj1` 이다.  
+
+두 번째로 실행되는 함수는 `innerFunc();`으로 그저 함수로서 호출하였다.  
+`this`가 바인딩되지 않았으므로 전역 객체를 바라보게 된다.  
+따라서 `this`는 `window` 이다.  
+
+세 번째로 실행되는 함수는 `obj2.innerMethod();`으로 프로퍼티 접근 연산자(.)을 이용하여 메서드로서 호출하였다.  
+따라서 이 함수 안에서 `this`는 `obj2` 이다.  
+
+이처럼 `this`은 함수를 어떻게 호출하느냐에 따라 바라보는 객체가 달라진다.  
+함수를 메서드로서 실행하면 실행 컨텍스트가 생성될 때 `this`는 점(.) 앞의 객체를 바인딩하며  
+함수를 그냥 함수로서 실행하면 `this` 바인딩을 하지 않으므로 전역 객체를 바라보게 되는 것이다!  
+
+함수 내부에서 `this`가 전역 객체를 바라보는 문제를 보완하고자  
+ES6 부터 화살표 함수가 도입되었다!  
+
+## ③ 화살표 함수 안에서의 this
+화살표 함수는 실행 컨텍스트를 생성할 때 `this` 바인딩 과정 자체가 빠지게 되어  
+상위 스코프의 `this`를 그대로 활용하게 된다.  
+
+```
+var obj = {
+    outer: function () {
+        console.log(this);
+        var innerFunc = () => {
+            console.log(this);
+        };
+        innerFunc();
+    }
+};
+obj.outer(); // obj
+```
+
+위의 예제에서 `obj.outer();` 함수를 메서드로서 호출하였다.  
+따라서 가장 먼저 `obj` 객체가 출력된다.  
+
+그 다음으로 화살표 함수인 `innerFunc();`을 함수로서 호출하는데  
+상위 스코프의 `this`을 그대로 활용하여 `obj` 객체가 출력된다.  
+
+## ④ 콜백 함수 안에서의 this
+> 함수 A의 제어권을 다른 함수 B에게 넘겨주는 경우 함수 A를 콜백 함수라고 한다.
+
+이때, 함수 A는 함수 B의 내부 로직에 따라 실행되며, `this` 역시 함수 B 내부 로직에서 정한 규칙에 따라 값이 결정된다!  
+
+아래 예제 코드를 살펴보자.  
+
+```
+setTimeout(function () { console.log(this); }, 300);
+document.body.querySelector('#a')
+    .addEventListener('click', function (e) {
+        console.log(this, e);
+    });
+```
+
+0.3초 뒤에 실행되는 콜백 함수는 `window`가 출력되며  
+`id`가 `a`인 요소를 클릭했을 때 실행되는 콜백 함수는 해당 `id = a`인 요소를 출력하게 된다.  
+
+이는 `addEventListener` 함수가 콜백 함수에서의 `this`를 무엇으로 할지에 대해 미리 정의해두었기 때문이다!  
+
+## ⑤ 생성자 함수 안에서의 this
+> 생성자 함수는 어떤 공통된 성질을 지니는 객체들을 생성하는 데 사용하는 함수이다.
+  
+자바에서의 `class`와 유사하다고 생각하면 된다.  
+
+결론부터 말하자면 생성자 함수 내부에서의 `this`은 곧 새로 만들 인스턴스 자신을 의미한다.  
+
+아래 예제를 살펴보자!  
+```
+var Cat = function (name, age) {
+    this.bark = '야옹';
+    this.name = name;
+    this.age = age;
+};
+var choco = new Cat('초코', 7);
+var nabi = new Cat('나비', 5);
+console.log(choco, nabi); // 초코 객체와 나비 객체 출력
+```
+
+위 생성자 함수 안에서의 `this`는 앞으로 생성될 객체에 접근하기 위함이다.  
+따라서 `this`을 통해 하나의 생성자 함수로 다양한 속성을 갖는 객체를 생성할 수 있다. (다형성)  
+
+# ➋ 명시적으로 this 바인딩 하기
+명시적으로 `this`을 바인딩할 수 있는 방법으로 세 가지 메서드가 존재한다.  
+`call`, `apply`, `bind` 을 차례대로 살펴보자!  
+
+## ① call 메서드
+`call`은 메서드의 호출 주체인 함수를 즉시 실행하며  
+메서드의 첫 번째 인자를 `this`로 바인딩하고 두 번째 인자를 호출할 함수의 매개변수로 한다.  
+
+```
+var func = function (a, b, c) {
+    console.log(this, a, b, c);
+};
+func(1, 2, 3);
+func.call({ x: 1 }, 4, 5, 6);
+```
+
+위 예제에서 `func`을 그냥 함수로서 호출했을 때 `this`은 전역 객체가 된다.  
+그러나 `call` 메서드를 이용하여 호출했을 때 첫 번째 인자로 전달된 객체인 `{ x: 1 }`이 `this`가 된다!  
+
+## ② apply 메서드
+`apply` 메서드는 `call` 메서드와 기능적으로 완전히 동일하다.  
+그러나 유일한 차이는 `call` 메서드는 첫 번째 인자를 제외한 나머지 모든 인자들을 호출할 함수의 매개변수로 지정하는 반면,  
+`apply` 메서드는 두 번째 인자를 배열로 받아 그 배열의 요소들을 호출할 함수의 매개변수로 지정한다.  
+
+아래의 예제를 살펴보자.  
+```
+var func = function (a, b, c) {
+    console.log(this, a, b, c);
+};
+func.call({ x: 1 }, 4, 5, 6); // { x: 1 } 4 5 6
+func.apply({ x: 1 }, [4, 5, 6]); // { x: 1 } 4 5 6
+```
+
+같은 함수를 `call` 메서드와 `apply` 메서드 두 방식으로 호출해보았다.  
+인자를 전달하는 방식만 다를 뿐 두 실행문 모두 같은 출력 결과를 가진다.  
+
+## ③ bind 메서드
+`bind` 메서드는 위의 두 메서드와 다르게 즉시 호출하지 않고  
+전달받은 `this`와 인수들을 바탕으로 새로운 함수를 반환한다.  
+
+아래의 예제를 살펴보자.  
+```
+var func = function (a, b, c, d) {
+    console.log(this, a, b, c, d);
+};
+var bindFunc = func.bind({ x: 1 }, 4, 5);
+bindFunc(6, 7);
+```
+`bind` 메서드를 이용하여 새로운 함수 `bindFunc`을 반환하였다.  
+이 `bindFunc`을 호출하면 인자로 전달된 `{ x: 1 }` 객체가 `this`로서 출력되며,  
+인자로 전달된 `4`와 `5`도 순서대로 파라미터 `a`와 `b`에 전달된다.  
+즉, 최초 `func` 함수에 4, 5, 6, 7을 인자로 넘기고 `{ x: 1 }` 객체가 `this`로 바인딩된 것과 같다.  
+
+이처럼 `call`, `apply`, `bind` 메서드를 이용하면  
+`this`를 예측할 수 있으므로 개발자들의 혼란을 막을 수 있다.  
+또한 화살표 함수를 이용하여 상위 스코프의 `this`를 그대로 이용할 수 있다.  
+
+# 250124 TIL
+
+# ➊ 콜백 함수
+> 콜백 함수는 다른 코드의 인자로 넘겨주는 함수이다.  
+  
+다른 코드의 인자로 넘겨줌으로써 그 제어권도 함께 위임한다.  
+제어권을 위임하였다는 건 무슨 의미일까?  
+  
+제어권을 넘겨받은 함수 A는 콜백 함수 B의 **호출 시점, 인자, this**를 결정할 권리를 가진다.  
+  
+## ① 호출 시점
+> 제어권을 넘겨받은 함수는 콜백 함수가 언제 호출되는지 결정할 수 있다.  
+
+아래의 예제를 살펴보자!  
+
+```
+var count = 0;
+var cbFunc = function () {
+    console.log(count);
+    if (++count > 4) clearInterval(timer);
+};
+var timer = setInterval(cbFunc, 300);
+```
+
+`cbFunc`은 콜백 함수로서 `setInterval`의 인자로 전달되었다.  
+`setInterval`은 `0.3`초마다 콜백 함수를 실행하는 함수이다.  
+이처럼 콜백 함수는 즉시 실행하는 것이 아니라 언제 실행할지에 대한 호출 시점을 `setInterval`에게 결정하도록 맡긴다.  
+  
+## ② 인자
+> 콜백 함수의 제어권을 넘겨받은 코드는 콜백 함수를 호출할 때 인자에 어떤 값들을 어떤 순서로 넘길 것인지에 대한 제어권을 가진다.  
+
+```
+var newArr = [10, 20, 30].map(function (currentValue, index) {
+    console.log(currentValue, index);
+    return currentValue + 5;
+});
+console.log(newArr);
+
+// 실행 결과
+// 10 0
+// 20 1
+// 30 2
+// [15, 25, 35]
+```
+
+`map` 함수는 호출 주체인 배열을 순회하면서 각 요소에 접근하는 함수이다.  
+각 요소에 대하여 콜백 함수를 실행하고 그 리턴값으로 새로운 배열을 생성하여 반환한다.  
+  
+위의 코드에서 콜백 함수는 `currentValue`, `index`을 인자로 받는다.  
+이때 `currentValue`은 배열의 각 요소의 값을 의미하고 `index`은 각 요소의 순서(인덱스)를 의미한다.  
+  
+🚨 만약 이 두 인자의 순서를 바꾼다 하더라도 첫 번째 인자는 값을 의미하고 두 번째 인자는 인덱스를 의미한다.  
+  
+이처럼 콜백 함수의 제어권을 넘겨받은 코드는 콜백 함수를 호출할 때 인자에 어떤 값들을 어떤 순서로 넘길 것인지에 대한 제어권을 가진다.  
+  
+## ③ this
+
+> 콜백 함수도 함수이기 때문에 기본적으로는 `this`가 전역 객체를 참조하지만,  
+제어권을 넘겨받을 코드에서 콜백 함수에 별도로 `this`가 될 대상을 지정한 경우에는 그 대상을 참조하게 된다.  
+  
+실제 `map` 함수는 아래의 코드와 유사하다.  
+어떻게 `map` 함수가 콜백 함수의 `this`를 지정할 수 있는지 한번 살펴보자!  
+
+```
+Array.prototype.map = function (callback, thisArg) {
+    var mappedArr = [];
+    for (var i = 0; i < this.length; i++) {
+        var mappedValue = callback.call(thisArg || window, this[i], i, this);
+        mappedArr[i] = mappedValue;
+    }
+    return mappedArr;
+}
+```
+
+위 코드에서 `call` 메서드를 사용하여 `thisArg` 값이 있을 경우에 `thisArg`을 `this`로 지정하고,  
+`thisArg` 값이 없을 경우에 `this`을 전역 객체로 지정한다.  
+  
+이처럼 제어권을 넘겨받은 코드에서 콜백 함수 내부에서의 **`this`가 될 대상을 명시적으로 바인딩**한다.  
+
+```
+setTimeout(function () {
+    console.log(this);
+}, 300);
+
+[1, 2, 3, 4, 5].forEach(function (x) {
+    console.log(this);
+});
+
+document.body.querySelector('#a')
+    .addEventListener('click', function (e) {
+        console.log(this, e);
+    }
+);
+```
+
+위의 예시에서 `setTimeout`, `forEach`, `addEventListener` 각 함수가 인수로 콜백 함수를 넘겨받는다.  
+  
+이때, `setTimeout`, `forEach`는 내부 코드에서 콜백 함수의 `this`를 따로 바인딩하지 않았기 때문에 전역 객체인 `window`가 출력된다.  
+그러나 `addEventListener`은 `addEventListener`의 `this`를 그대로 콜백 함수의 `this`로  
+지정하도록 정의되어 있기 때문에 `id='a'`인 `dom` 요소가 출력된다.  
+  
+결론!  
+이처럼 콜백 함수는 자신을 호출한 함수에게 제어권을 넘겨준다.  
+제어권이란 **호출 시점, 인자, this**을 결정할 권리를 말한다.  
+또한, 콜백 함수는 어떤 객체의 메서드여도 무조건 메서드가 아닌 함수로 호출되므로 이 점에 유의하자!  
+  
+# ➋ 콜백 지옥
+
+콜백 지옥은 콜백 함수를 익명 함수로 전달하는 과정이 반복되어  
+코드의 들여쓰기 수준이 감당하기 힘들 정도로 깊어지는 현상이다.  
+  
+주로 이벤트 처리나 서버 통신과 같이 비동기적인 작업을 수행하기 위해 이런 형태가 자주 등장하는데  
+가독성이 떨어지는 것은 물론, 코드를 수정하기도 어렵다.  
+  
+그렇다면 **동기**와 **비동기**는 무엇일까?  
+  
+## ① 동기 vs 비동기
+먼저, 비동기는 동기의 반대말이다.  
+  
+동기적인 코드는 현재 실행 중인 코드가 완료된 후에야 다음 코드를 실행하는 방식이다.  
+반대로 비동기적인 코드는 현재 실행 중인 코드의 완료 여부와 무관하게 즉시 다음 코드로 넘어간다.  
+  
+만약 서버에게 유저 데이터를 요청한다고 가정해보자!  
+동기적인 방식에서는 서버가 유저 데이터를 반환할 때까지 다른 코드를 실행하지 않고 계속 기다린다.  
+만약 서버의 응답이 지연되면 그동안 프로그램의 다른 작업도 지연된다.  
+  
+반면에 비동기적인 방식에서는 서버에게 데이터를 요청한 후,  
+그 응답을 기다리지 않고 다른 코드를 실행한다.  
+서버가 데이터를 반환하면 그때서야 데이터를 처리한다.  
+  
+이처럼 **서버 요청이 잦은 웹 앱, 모바일 앱에서 비동기는 매우 중요하다!**  
+사용자의 인터페이스가 멈추지 않도록 하고 동시에 여러 작업을 효율적으로 처리할 수 있다.  
+  
+> 🤔 콜백 함수를 사용해서 비동기적인 작업을 수행하면
+왜 콜백 지옥 현상이 자주 일어난다는 걸까?
+  
+아래의 예시를 살펴보자!  
+
+```
+loginUser(userEmail, password, function(user) {
+    console.log('User logged in:', user);
+    
+    getUserRole(user.id, function(role) {
+        console.log('User role:', role);
+        
+        if (role === 'admin') {
+            getAdminData(function(adminData) {
+                console.log('Admin data:', adminData);
+                
+                // 추가적인 작업 수행
+            });
+        } else {
+            getUserData(function(userData) {
+                console.log('User data:', userData);
+                
+                // 추가적인 작업 수행
+            });
+        }
+    });
+});
+```
+
+위의 예시에서 유저의 로그인 요청을 하고 유저가 로그인을 성공하면 그 유저의 역할을 조회한다.  
+유저의 역할을 성공적으로 조회하면 그 유저가 관리자인지 일반 유저인지에 따라 또 비동기적인 요청을 수행한다.  
+  
+(위는 간단한 예시이지만) 이처럼 연달아 비동기 작업을 수행하기 위해  
+콜백 함수를 사용하면 들여쓰기 수준이 깊어져 가독성이 떨어지고 유지보수도 힘들어진다.  
+🚨 이를 콜백 지옥이라 한다!  
+  
+## ② Promise
+콜백 지옥을 완화하기 위해 ES6부터 `Promise`가 도입되었다.  
+  
+`Promise`은 어떠한 비동기 작업을 수행하고 성공 혹은 실패 여부를 반환한다.  
+비동기 작업이 성공했을 경우와 실패했을 경우로 나누어 각기 다른 작업을 수행할 수 있다.  
+  
+`Promise`은 클래스이기 때문에 `new` 키워드를 사용하여 객체를 생성할 수 있다.  
+`executor`는 `new Promise`에 의해 자동으로 그리고 즉각적으로 호출된다.  
+  
+```
+const promise = new Promise(function(resolve, reject) {
+    // executor
+});
+```
+
+### ⓐ 상태
+`Promise` 객체는 **상태**를 가지는데 여기서 말하는 상태란 프로미스의 처리 과정을 의미한다.  
+`new Promise`로 프로미스를 생성하고 종료될 때까지 3가지 상태를 갖는다!  
+  
+- 대기(pending): 이행하지도, 거부하지도 않은 초기 상태
+- 이행(fulfilled): 비동기 작업이 성공적으로 완료됨 (= 성공)
+- 거부(rejected): 비동기 작업이 실패함
+
+### ⓑ Producer
+`new Promise` 메서드를 호출할 때 콜백 함수를 선언할 수 있고, 콜백 함수의 인자는 `resolve`, `reject`이다.  
+`resolve`나 `reject` 둘 중 하나는 반드시 호출해야 한다!  
+  
+- `resolve`: 호출하면 `Promise`가 이행(fulfilled) 상태가 된다.
+- `jeject`: 호출하면 `Promise`가 실패(rejected) 상태가 된다.
+
+### ⓒ Consumer
+- `then`: 이행(fulfilled) 상태가 되면 처리 결과 값을 받아 그에 따른 로직을 수행한다. (= 성공)
+- `catch`: 실패(rejected) 상태가 되면 실패한 이유(실패 처리의 결과 값)를 받아 그에 따른 로직을 수행한다.
+- `finally`: 이행 또는 실패 여부와 상관 없이 마지막에 무조건 호출된다!
+  
+아래의 예제를 살펴보자!  
+
+```
+function loginUser(userEmail, password) {
+    return new Promise((resolve, reject) => {
+        // 아래는 비동기 작업이라 가정
+        if (userEmail === 'user@gmail.com' && password === '1234') {
+            const user = { id: 1, email: userEmail };
+            resolve(user);
+        } else {
+            reject('Invalid email or password');
+        }
+    });
+}
+
+function getUserRole(userId) {
+    return new Promise((resolve, reject) => {
+        // 아래는 비동기 작업이라 가정
+        if (userId === 1) {
+            const role = 'admin';
+            resolve(role);
+        } else if (userId > 1) {
+            const role = 'user';
+            resolve(role);
+        } else {
+            reject('User role not found');
+        }
+    });
+}
+
+function getAdminData() {
+    return new Promise((resolve, reject) => {
+        // 아래는 비동기 작업이라 가정
+        const adminData = { secret: 'secret data' };
+        resolve(adminData);
+    });
+}
+
+function getUserData() {
+    return new Promise((resolve, reject) => {
+        // 아래는 비동기 작업이라 가정
+        const userData = { info: 'user data' };
+        resolve(userData);
+    });
+}
+```
+
+`loginUser`, `getUserRole`, `getAdminData`, `getUserData`은 모두 비동기 작업을 수행한다.  
+이 비동기 작업은 언제 완료될지 모르기 때문에 `Promise` 객체로 감싸주었다.  
+  
+`loginUser`은 이 `Promise` 객체를 반환하는데 이 객체는 처음엔 대기 상태를 가지고 있다가  
+비동기 처리가 완료됨에 따라 이행 혹은 실패 상태를 갖게 될 것이다.  
+  
+이행 혹은 실패 상태를 갖게 되면 그에 따라 분기 처리를 할 수 있다.  
+바로 아래의 예시 코드처럼 말이다.  
+
+```
+loginUser(userEmail, password)
+    .then(user => {
+        console.log('User logged in:', user);
+        return getUserRole(user.id);
+    })
+    .then(role => {
+        console.log('User role:', role);
+        if (role === 'admin') {
+            return getAdminData();
+        } else {
+            return getUserData();
+        }
+    })
+    .then(data => {
+        console.log('Data:', data);
+        // 추가적인 작업 수행
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+```
+
+이처럼 `Promise`을 사용하면 `executor`은 바로 실행되지만  
+그 내부에 `resolve` 또는 `reject` 함수를 호출하는 구문이 있을 경우  
+둘 중 하나가 실행되기 전까지 다음(`then`) 또는 오류(`catch`) 구문으로 넘어가지 않는다.  
+  
+이러한 프로미스 체이닝을 통해 비동기 작업의 동기적 표현이 가능해진다.  
+  
+## ③ async - await
+ES2017부터 `async` - `await` 기능이 추가되었다.  
+  
+비동기 작업을 수행하고자 하는 함수 앞에 `async`을 표기하고,  
+함수 내부에서 실질적인 비동기 작업이 필요한 위치마다 `await`을 표기하는 것만으로  
+뒤의 내용을 자동으로 `promise`로 전환하고, 해당 내용이 **`resolve`된 이후에야 다음으로 진행**한다.  
+
+```
+async function handleUser(userEmail, password) {
+    try {
+        const user = await loginUser(userEmail, password);
+        const role = await getUserRole(user.id);
+
+        let data;
+        if (role === 'admin') {
+            data = await getAdminData();
+        } else {
+            data = await getUserData();
+        }
+        
+        console.log('Data:', data);
+        // 추가적인 작업 수행
+        
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// 함수를 호출하여 실행
+handleUser('user@gmail.com', '1234');
+```
+
+위의 예시 코드를 살펴보면,  
+비동기 작업을 수행하는 `loginUser`, `getUserRole`, `getAdminData`, `getUserData` 앞에 모두 `await`을 표기하였다.  
+`await`이 표기된 함수들은 자동으로 `promise`로 전환되고 `resolve`된 이후에야 다음으로 진행한다!  
+  
+이처럼 `Promise`와 `async` - `await`를 활용하면 콜백 지옥 문제를 효과적으로 해결할 수 있다.
+
