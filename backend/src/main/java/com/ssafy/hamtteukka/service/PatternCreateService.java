@@ -34,7 +34,7 @@ public class PatternCreateService {
         bodyBuilder.part("background", String.valueOf(request.isBackground()));
 
         return webClient.post()
-                .uri("/v1/dot/generate")
+                .uri("/ai/dot")
                 .bodyValue(bodyBuilder.build())
                 .retrieve()
                 .bodyToMono(DotPatternCreateResponse.class);
@@ -42,7 +42,7 @@ public class PatternCreateService {
 
     public Mono<DescriptionPatternCreateResponse> createDescription(DescriptionPatternCreateRequest request){
         return webClient.post()
-                .uri("/v1/description/generate")
+                .uri("/ai/description")
                 .body(Mono.just(request), DescriptionPatternCreateRequest.class)
                 .retrieve()
                 .bodyToMono(DescriptionPatternCreateResponse.class);
