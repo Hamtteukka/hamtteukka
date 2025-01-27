@@ -7,7 +7,7 @@ import ImageInput from '@/components/page/pattern/new/dot/ImageInput';
 import { MAX_ROOM_USERS } from '@/lib/constants/knitogether';
 
 const CreateRoomDialog: React.FC = () => {
-  const [image, setImage] = useState<File>();
+  const [image, setImage] = useState<File | null>(null);
   const [title, setTitle] = useState<string>();
   const [maxUsers, setMaxUsers] = useState<string>();
 
@@ -22,7 +22,12 @@ const CreateRoomDialog: React.FC = () => {
     <ConfirmDialog onConfirm={handleConfirmClick} confirmText='생성'>
       <div className='flex w-80 flex-col gap-4 px-4'>
         <H4>방 생성</H4>
-        <ImageInput description='방의 미리보기 이미지를 등록해 주세요!' className='h-60' />
+        <ImageInput
+          file={image}
+          setFile={setImage}
+          description='방의 미리보기 이미지를 등록해 주세요!'
+          className='h-60'
+        />
         <TextInput value={title} placeholder='방 제목' onChange={handleTitleChange} />
         <Dropdown
           value={maxUsers}
