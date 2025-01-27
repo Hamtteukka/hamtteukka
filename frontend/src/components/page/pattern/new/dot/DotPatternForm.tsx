@@ -1,26 +1,46 @@
 'use client';
 
-import PatternTypeContext from '@/components/context/PatternTypeContext';
 import ColorNumInput from '@/components/page/pattern/new/dot/ColorNumInput';
 import ImageInput from '@/components/page/pattern/new/dot/ImageInput';
 import SizeInput from '@/components/page/pattern/new/dot/SizeInput';
 import LabeledInput from '@/components/page/pattern/new/LabeledInput';
 import Button from '@/components/ui/button/Button';
-import { COLOR_NUM, SIZE_NUM } from '@/lib/constants/pattern';
+import NewPatternLanding from '@/components/ui/landing/NewPatternLanding';
+import { usePatternContext } from '@/hooks/usePatternContext';
+import { useSetPatternTypeContext } from '@/hooks/useSetPatternTypeContext';
+import { COLOR_NUM, PATTERN_PAGE, SIZE_NUM } from '@/lib/constants/pattern';
 import { patternInput } from '@/lib/pattern';
-import { useContext, useState } from 'react';
+import { generateDotPattern } from '@/service/pattern';
+import { useState } from 'react';
 
 const DotPatternForm: React.FC = () => {
   const [width, setWidth] = useState<number>(SIZE_NUM.DEFAULT_SIZE);
   const [height, setHeight] = useState<number>(SIZE_NUM.DEFAULT_SIZE);
-  const [num, setNum] = useState<number>(COLOR_NUM.DEFAULT_COLOR_NUM);
+  const [colorNum, setColorNum] = useState<number>(COLOR_NUM.DEFAULT_COLOR_NUM);
+  const [image, setImage] = useState<File | null>(null);
+  const [isPending, setIsPending] = useState<boolean>(false);
 
-  const setPatterType = useContext(PatternTypeContext);
-  if (!setPatterType) {
-    throw new Error('useContext must be used within a PatternTypeProvider');
-  }
+  const setPatterType = useSetPatternTypeContext();
+  const patternContext = usePatternContext();
 
-  return (
+  const submit = async (): Promise<void> => {
+    const formData = new FormData();
+    formData.append('width', width.toString());
+    formData.append('height', height.toString());
+    formData.append('nColors', colorNum.toString());
+    formData.append('file', image!);
+    //TODO: 배경 삭제 관련
+    formData.append('background', 'True');
+
+    setIsPending(true);
+    const data = await generateDotPattern(formData);
+    patternContext.setDotPattern({ dotPattern: data.dotPattern });
+    setPatterType(PATTERN_PAGE.DOT_RESULT);
+  };
+
+  return isPending ? (
+    <NewPatternLanding message='도안을 만들고 있어요...' />
+  ) : (
     <form className='flex flex-col gap-4' onSubmit={(e) => e.preventDefault()}>
       <LabeledInput
         label={patternInput.size.label}
@@ -30,19 +50,26 @@ const DotPatternForm: React.FC = () => {
       <LabeledInput
         label={patternInput.color.label}
         help={patternInput.color.help}
-        input={<ColorNumInput num={num} setNum={setNum} />}
+        input={<ColorNumInput num={colorNum} setNum={setColorNum} />}
       />
       <LabeledInput
         label={patternInput.image.label}
         help={patternInput.image.help}
-        input={<ImageInput description='AI가 참고할 이미지를 첨부해 주세요.' className='h-72' />}
+        input={
+          <ImageInput
+            file={image}
+            setFile={setImage}
+            description='AI가 참고할 이미지를 첨부해 주세요.'
+            className='h-72'
+          />
+        }
       />
 
       <div className='flex gap-2.5 self-end'>
-        <Button type='outlined' onClick={() => setPatterType('select')}>
+        <Button type='outlined' onClick={() => setPatterType(PATTERN_PAGE.SELECT)}>
           이전
         </Button>
-        <Button onClick={() => {}}>생성 (3/3)</Button>
+        <Button onClick={submit}>생성 (3/3)</Button>
       </div>
     </form>
   );

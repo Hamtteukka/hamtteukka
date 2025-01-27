@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import LabeledInput from '@/components/pattern/new/LabeledInput';
+import LabeledInput from '@/components/page/pattern/new/LabeledInput';
 import { patternInput } from '@/lib/pattern';
 
 const meta = {

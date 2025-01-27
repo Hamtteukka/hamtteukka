@@ -7,7 +7,7 @@ import TextInput from '@/components/ui/input/TextInput';
 import { useState } from 'react';
 
 const SignUpForm: React.FC = () => {
-  const [image, setImage] = useState<File>();
+  const [image, setImage] = useState<File | null>(null);
   const [nickname, setNickname] = useState<string>();
 
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,7 +16,10 @@ const SignUpForm: React.FC = () => {
 
   return (
     <div className='flex flex-col gap-8'>
-      <LabeledInput label='프로필 이미지' input={<ImageInput description='프로필 이미지를 등록해 주세요.' />} />
+      <LabeledInput
+        label='프로필 이미지'
+        input={<ImageInput file={image} setFile={setImage} description='프로필 이미지를 등록해 주세요.' />}
+      />
       <LabeledInput
         label='닉네임'
         input={<TextInput value={nickname} placeholder='닉네임' onChange={handleNicknameChange} className='w-80' />}

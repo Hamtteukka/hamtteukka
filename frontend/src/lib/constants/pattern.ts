@@ -1,3 +1,16 @@
+const SELECT = 0;
+const TEXT = 1;
+const DOT = 2;
+const TEXT_RESULT = 3;
+const DOT_RESULT = 4;
+export const PATTERN_PAGE = {
+  SELECT,
+  TEXT,
+  DOT,
+  TEXT_RESULT,
+  DOT_RESULT,
+} as const;
+
 const MIN_SIZE = 10;
 const MAX_SIZE = 200;
 const DEFAULT_SIZE = 50;

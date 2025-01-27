@@ -8,12 +8,13 @@ import TrashIcon from '/public/svg/trashIcon.svg';
 const DragAndDropUploadImg = dynamic(() => import('@/components/ui/dranAndDropUpload/DragAndDropUpload'));
 
 interface PImageInput {
+  file: File | null;
+  setFile: React.Dispatch<React.SetStateAction<File | null>>;
   description?: string;
   className?: string;
 }
 
-const ImageInput: React.FC<PImageInput> = ({ description = '', className = '' }) => {
-  const [file, setFile] = useState<File | null>(null);
+const ImageInput: React.FC<PImageInput> = ({ file, setFile, description = '', className = '' }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {

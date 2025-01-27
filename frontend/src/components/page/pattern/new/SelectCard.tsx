@@ -1,8 +1,10 @@
 import { patternOptions } from '@/lib/pattern';
 import { H2 } from '@/components/typography/Heading';
+import { TPattern } from '@/types/pattern';
+import { PATTERN_PAGE } from '@/lib/constants/pattern';
 
 interface PSelectCard {
-  type: 'text' | 'dot';
+  type: Extract<TPattern, typeof PATTERN_PAGE.TEXT | typeof PATTERN_PAGE.DOT>;
 }
 
 const SelectCard: React.FC<PSelectCard> = ({ type }) => {
