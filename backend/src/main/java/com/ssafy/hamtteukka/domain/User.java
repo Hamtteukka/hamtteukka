@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -18,4 +19,11 @@ public class User {
 
     private String profileId;
 
+    protected User() {}
+
+    public User(Long id, String nickname, String profileId) {
+        this.id = id;
+        this.nickname = nickname;
+        this.profileId = profileId;
+    }
 }
