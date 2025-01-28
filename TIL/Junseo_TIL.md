@@ -2085,3 +2085,101 @@ Jenkins는 CI/CD 과정을 자동화하여 개발자들이 소스 코드 변경 
 **위 코드 해석**
 
 git에서 branch를 받아오고 디렉터리를 바꾸고 S3 파일 업로드를 한 뒤 로그를 찍는 젠킨스 파이프 라인 예제이다.
+
+# 0124 TIL
+## CKA
+
+# Labels and Selectors
+
+---
+
+> 그룹으로 묶는 표중방법이다.
+> 
+
+Labels는 각 물품에 부착된 속성인 것이다. 등급, 종류, 색깔에 따라 각각의 물품에 속서을 추가하는 것이다. 
+
+Selectors는 이 항목들을 필터링 하는 것을 도와준다. 예를 들어, 클래스가 포유류이면 포유류 목록이 나오고 이런 식이다. 
+
+### Label
+
+모든 리소스를 구성하는 강력한 쿠버네티스의 기능이다. 서비스에 붙여놓은 바코드라고 생각하면 된다. (일종의 검색 기능)
+
+**특징**
+
+- 키-값 쌍
+- 레이블 셀렉터를 사용하면 각종 리소스를 필터링해서 선택할 수 있다.
+- 리소스는 한 개 이상의 레이블을 가질 수 있다.
+- 리소스를 만드는 시점에 레이블을 첨부할 수 있고, 수정 및 추가도 가능하지만 안정적인 실행을 위해 미리 첨부하는 것이 좋다.
+- 모든 사람들이 쉽게 이해할 수 있는 체계적인 시스템 구축 가능
+
+**pod 생성 시 Label 지정 방법** 
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    create_method: manual
+    env: prod
+  name: nodejs-manual-v2
+spec:
+  containers:
+  - name: nodejs
+    image: gasbugs/nodejs
+    ports:
+    - containerPort: 8080
+      protocal: TCP
+```
+
+**기존 Pod에 Label 추가** 
+
+```
+# 기존 Pod에 추가
+kubectl label pod http-go-v2 test=foo
+
+# 기존 Pod의 레이블 수정
+kubectl label pod http-go-v2 rel=beta --overwrite
+
+# 기존 Pod 레이블 삭제 (레이블 이름 뒤에 '-' 입력)
+kubectl label pod http-go-v2 rel-
+```
+
+**Label 조회** 
+
+```
+# 전체 Pod label 조회
+kubectl get pod --show-labels
+
+# 특정 label 컬럼으로 조회
+# kubectl get pod -L {조회할 key 값}
+kubectl get pod -L app,rel
+
+### 레이블 필터링 검색 ###
+# app이 있는 Pod 검색
+kubectl get pod --show-labels -l 'app'
+
+# app이 없는 Pod 검색
+kubectl get pod --show-labels -l '!app'
+
+# app이 test가 아닌 Pod 검색
+kubectl get pod --show-labels -l 'app!=test'
+
+# app이 test값이 아니고, rel 값이 beta인 Pod 검색
+kubectl get pod --show-labels -l 'app!=test, rel=beta'
+```
+
+• 레이블을 필터링할 때 리눅스 쉘에서는 !, =와 같은 특수문자가 쉘 자체에서 해석될 수 있기 때문에, 이를 올바르게 전달하려면 따옴표로 묶어줘야 한다.
+
+**selector을 이용해서 label을 활용해 pod 가져오기**
+
+```
+kubectl get pods --selector app=APP1
+```
+
+**우린 replicaset 정의 파일에서 label이 2곳에서 정의되는 것을 볼 수 있다.** 
+
+template 섹션 아래 정의 된 label은 pod에서 구성된 label 이다.
+
+맨 위에 정의된 label은 replicaset의 label이다. 
+
+replicaset의 label은 replicaset를 발견하기 위해 다른 개체를 구성할 때 사용될 것이다.
