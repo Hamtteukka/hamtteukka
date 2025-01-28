@@ -1929,3 +1929,159 @@ selector은 이 서비스가 적용될 pod 정보를 지정한다. ( pod 정의 
     - 하나뿐인 세션 스토리지에 장애가 발생하면, 모든 서버가 세션 데이터를 정상적으로 사용할 수 없게 된다. ⇒ 보통 세션 스토리지를 여러개로 구성하는 방식으로 해결한다.
 - 클러스터링과 같은 HA 구성으로 단일 장애 지점을 해소해도, 복제 지연으로 인한 일시적인 세션 정보 유실 문제는 발생할 수 있다.
 - 외부 스토리지를 관리하기 위한 추가적인 리소스가 요구될 수 있다.
+
+# 0123 TIL
+## [공통] Jenkins
+
+---
+
+[[Jenkins] Jenkins, CI/CD, Pipeline 이해하기](https://onestone-note.tistory.com/38#7.%207.%C2%A0%20Jenkins%C2%A0%20%EC%8B%A4%EC%8A%B5)
+
+[[Jenkins] Jenkins란? Jenkins를 사용하는 이유 및 Declarative pipeline 문법](https://kanoos-stu.tistory.com/51)
+
+## CI / CD란 무엇인가?
+
+### CI란
+
+- Continuous Integration을 말한다.
+    - 코드를 통합한다.
+    - 여러 명의 많은 개발자들이 코드 베이스를 계속해서 통합하는 것을 말한다.
+    - 여러 개발자들이 코드를 각각 가능한 빠르게 배포하는 것을 말한다.
+    - 즉, 코드를 통합하는 것이다.
+
+### CD란
+
+- Continuous Delivery ⇒ 무엇을 배달 ?
+    - 내부 사용자 혹은 외부 사용자에게 서비스를 지속적으로 배달한다.
+    - 버전 1을 쓰다가 끊기지 않고 배포하는 것을 말한다. ECS를 사용하면 이를 편리하게 구축할 수 있다.
+
+### CI / CD란
+
+개발자들이 개발을 하는 개발환경을 사용자가 사용 가능한 서비스로 전달하는 모든 과정을 지속가능한 형태로, 가능하다면 자동으로 해서 개발자와 사용자 사이의 격차를 없애는 것이다. 이러한 과정에서는 코드를 빌드하고, 테스트하고 배포하는 활동이 있다. 
+
+### CI / CD 파이브 라인
+
+![image](/uploads/dfe35e48c244676f93d46a1018922dab/image.png){width=636 height=162}
+
+## Jenkins란 무엇인가 ?
+
+Jenkins는 CI/CD 과정을 자동화하여 개발자들이 소스 코드 변경 사항을 신속하게 테스트하고 배포할 수 있도록 돕는 ‘CI/CD 도구’ 이다. 
+
+### 기본 개념
+
+- Java Runtime Environment에서 동작한다.
+- 다양한 플러그인들을 활용해서 각종 자동화 작업을 처리할 수 있다.
+- AWS 배포, 테스크, 도커 빌드 등 할 것이 너무 많으니 각각의 컴포넌트 들을 하나의 플러그인으로 모듈화를 해놓았는데 이를 활용하여 사용하면 된다.
+- 가장 핵심적인 파이프 라인, 시크릿 키 마저도 플러그인으로 동작시킬 수 있다.
+- 즉, **일련의 자동화 작업의 순서들의 집합**인 **Pipeline**을 통해 CI/CD 파이프라인을 구축한다.
+
+### Jenkins의 대표 Plugins
+
+- **Credentials Plugin**
+    - Jenkins는 그냥 단지 서버이기 때문에 배포에 필요한 각종 리소스에 접근하기 위해서는 여러가지 중요 정보들을 저장하고 있어야 한다.
+    - 리소스에는 클라우드 리소스 혹은 베어메탈에 대한 SSH 접근 등을 의미한다.
+        - 베어 메탈 ? 어떠한 소프트웨어도 담겨 있지 않은 하드웨어를 가리킨다.
+    - AWS 토큰, Git access 토큰, Secret key, SSH 등의 정보들을 저장할 때 사용한다.
+    - 위와 같이 중요한 정보들을 저장해주는 플러그인
+    - Jenkins는 private network에 떠있기 때문에 보안상 너무 걱정하지 않아도 된다.
+- **Git Plugin**
+    - Jenkins에서 git에 대한 소스 코드를 긁어와서 빌드할 수 있도록 도와준다.
+- **Pipeline**
+    - 핵심 기능인 파이프라인 마저도 플러그인이다.
+- **Docker plugin and Docker Pipeline**
+    - Docker agent를 사용하고 jenkins에서 도커를 사용하기 위한 플러그인이다.
+
+### Jenkins의 PipeLine 깊게 살펴보기
+
+![image](/uploads/9bf77e1e3477379cdf27e1e646710091/image.png){width=628 height=170}
+
+**Pipeline**
+
+- CI/CD 파이프라인을 젠킨스에 구현하기 위한 일련의 플러그인들의 집합이자 구성이다.
+- 즉, 여러 플러그인들을 이 파이프라인에서 용도에 맞게 사용하고 정의함으로써 파이프라인을 통한 서비스가 배포된다.
+- Pipeline DSL (Domain Specific Language)로 작성되었다.
+- 젠킨스가 동작되기 위해서는 여러 플러그인들이 파이프라인을 통해 흘러가는 과정이라고 할 수 있다.
+
+**Pipeline을 구성하는 요소**
+
+- 두 가지 형태의 Pipeline Syntax가 존재
+    - Declarative ( 더 최신이고 가독성 좋음 )
+    - Scripted Pipeline
+
+**Pipeline의 Section 구성**
+
+- Sections [ 가장 큰 개념 ]
+    - Agent section
+    - Post section
+    - State section
+    - Steps section
+
+**Pipeline의 Section 깊게 알아보기** 
+
+**Agent section**
+
+- 젠킨스는 많은 일을 해야 하기 때문에 혼자 하기 버겁다.
+- 여러 Slave Node를 두고 일을 시킬 수 있는데, 이처럼 **어떤 젠킨스가 일을 하게 할 것인지를 지정**한다.
+- 젠킨스 노드 관리에서 새로 노드를 띄우거나 혹은 Docker 이미지를 통해 처리할 수 있다.
+- 쉽게 말하면, 젠킨스를 이용하여 시종을 여러 명 둘 수 있는데 어떤 시종에게 일을 시킬 것이냐 하는 것을 결정하는 것이다.
+- 젠킨스 노드만 넣을 수 있는 것이 아니라 젠킨스 안에 있는 도커 컨테이너에 들어가서 일을 시킬 수도 있다.
+
+**Post section**
+
+- 스테이지가 끝난 이후의 결과에 따라 후속 조치를 취할 수 있다.
+- 각각의 단계 별로 구별하면 예시로 다음과 같다.
+    - 성공 시에 성공 이메일, 실패하면 중단 혹은 건너 뛰기.
+- 작업 결과에 따른 행동을 취할 수 있다.
+
+**Stage Section**
+
+- 어떤 일들을 처리할 것인지 일련의 stage를 정의한다.
+- 일종의 카테고리라고 보면 된다.
+    - 프론트 엔드 배포를 위한 스테이지 등
+
+**Steps Section**
+
+- 한 스테이지 안에서는 단계로 일련의 스텝을 보여준다.
+- Steps 내부는 여러 가지 스텝들로 구성되며 여러 작업들을 실행 가능하다.
+- 플러그인을 깔면 사용할 수 있는 스텝들이 생겨난다.
+- 빌드를 할 때 디렉터리를 옮겨서 빌드를 한다거나, 다른 플러그인을 깔아서 해당 플러그인의 메서드를 활용해서 일을 처리한다던지 하는 작업들을 할 수 있다.
+- 플러그인을 설치하면 쓸 수 있는 Steps들이 많아진다.
+
+![image](/uploads/3738d558306c26bbaf9f4cdb3d0dd0d7/image.png){width=636 height=434}
+
+### Declaratives 문법 알아보기
+
+**Declaratives**
+
+- Environment, stage, options, parameters, triggers, when 등의 Declarative가 있다.
+- 각 stage 안에서 어떠한 일을 할 것인지 정의하는게 Declarative 이다.
+
+**Declaratives의 단계** 
+
+**Environment**
+
+![image](/uploads/9df25966b6e8b5d209c7e21231a5743e/image.png){width=639 height=154}
+
+- **Parameter**
+    - 파이프라인 실행 시에 파라미터 받는다
+    
+![image](/uploads/841f2bfbe59dfbbcab3bc2138fd999a7/image.png){width=638 height=94}
+
+- **Triggers**
+    - 어떤 형태로 트리거 되는가 ?
+    - 이 파이프라인이 어떤 주기로 실행 되는가 ?
+
+- **When**
+    - Production 환경에서만 수행되어야 하는 작업 정리
+
+![image](/uploads/95853e2782801843736fa78e893292c2/image.png){width=638 height=306}
+
+## 기본 실습 코드
+
+![image](/uploads/a6f0496a7ca1c37f4bfb0ce6e06fb483/image.png){width=639 height=616}
+
+**pipeline ⇒ agent ⇒ stage ⇒ step 순**으로 작업이 세분화 된다. 
+
+**위 코드 해석**
+
+git에서 branch를 받아오고 디렉터리를 바꾸고 S3 파일 업로드를 한 뒤 로그를 찍는 젠킨스 파이프 라인 예제이다.

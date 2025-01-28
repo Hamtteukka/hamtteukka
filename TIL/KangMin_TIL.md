@@ -453,8 +453,6 @@ localhost:8000에서 확인 가능
 <details>
 <summary>2025-01-22</summary>
 <div markdown="1">
-<<<<<<< HEAD
-=======
 
 ## Python Pydantic
 ### 설명
