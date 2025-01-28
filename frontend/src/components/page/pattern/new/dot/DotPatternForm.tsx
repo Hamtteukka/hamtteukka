@@ -1,7 +1,7 @@
 'use client';
 
 import ColorNumInput from '@/components/page/pattern/new/dot/ColorNumInput';
-import ImageInput from '@/components/page/pattern/new/dot/ImageInput';
+import ImageInput from '@/components/ui/input/ImageInput';
 import SizeInput from '@/components/page/pattern/new/dot/SizeInput';
 import LabeledInput from '@/components/page/pattern/new/LabeledInput';
 import Button from '@/components/ui/button/Button';

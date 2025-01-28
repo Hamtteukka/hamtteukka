@@ -5,7 +5,9 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import TrashIcon from '/public/svg/trashIcon.svg';
 
-const DragAndDropUploadImg = dynamic(() => import('@/components/ui/dranAndDropUpload/DragAndDropUpload'));
+const DragAndDropUploadImg = dynamic(() => import('@/components/ui/dragAndDropUpload/DragAndDropUpload'), {
+  ssr: false,
+});
 
 interface PImageInput {
   file: File | null;

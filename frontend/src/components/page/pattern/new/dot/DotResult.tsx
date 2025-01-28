@@ -19,7 +19,15 @@ const DotResult: React.FC = () => {
     <section className='flex flex-col gap-8'>
       <LabeledInput
         label='도트 도안'
-        input={<Image src={patternContext.dotPattern.dotPattern} alt='도트 도안' width={500} height={500} />}
+        input={
+          <Image
+            className='rounded-sm'
+            src={patternContext.dotPattern.dotPattern}
+            alt='도트 도안'
+            width={500}
+            height={500}
+          />
+        }
       />
       <div className='flex justify-end gap-2.5'>
         <Button onClick={reGenerate} type='outlined'>

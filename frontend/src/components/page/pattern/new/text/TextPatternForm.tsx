@@ -5,34 +5,59 @@ import CraftInput from '@/components/page/pattern/new/text/CraftInput';
 import DetailInput from '@/components/page/pattern/new/text/DetailInput';
 import NeedleInput from '@/components/page/pattern/new/text/NeedleInput';
 import Button from '@/components/ui/button/Button';
+import NewPatternLanding from '@/components/ui/landing/NewPatternLanding';
+import { usePatternContext } from '@/hooks/usePatternContext';
 import { useSetPatternTypeContext } from '@/hooks/useSetPatternTypeContext';
 import useTextInput from '@/hooks/useTextInput';
 import { NEEDLE_TYPE, PATTERN_PAGE } from '@/lib/constants/pattern';
 import { patternInput } from '@/lib/pattern';
-import { TCraftTypeKr, TNeedle } from '@/types/pattern';
+import { generateTextPattern } from '@/service/pattern';
+import { TCraftTypeKr, TNeedle, TTextPatternInstruction } from '@/types/pattern';
 import { useState } from 'react';
 
 const TextPatternForm: React.FC = () => {
   const [needle, setNeedle] = useState<TNeedle>(NEEDLE_TYPE.knitting);
   const [craft, setCraft] = useState<TCraftTypeKr>();
-  const [details, seDetails] = useTextInput<HTMLTextAreaElement>('');
+  const [detail, seDetail] = useTextInput<HTMLTextAreaElement>('');
+  const [isPending, setIsPending] = useState<boolean>(false);
 
   const setPatterType = useSetPatternTypeContext();
+  const patternContext = usePatternContext();
 
-  return (
+  const submit = async (): Promise<void> => {
+    if (!craft) {
+      alert('작품 종류를 선택해주세요.');
+      return;
+    }
+
+    const body: TTextPatternInstruction = {
+      needle,
+      work: craft,
+      detail,
+    };
+
+    setIsPending(true);
+    const data = await generateTextPattern(body);
+    patternContext.setTextPattern({ description: data.description, expectedImage: data.expectedImage });
+    setPatterType(PATTERN_PAGE.TEXT_RESULT);
+  };
+
+  return isPending ? (
+    <NewPatternLanding message='도안을 만들고 있어요...' />
+  ) : (
     <form className='flex flex-col gap-4' onSubmit={(e) => e.preventDefault()}>
       <LabeledInput label={patternInput.needle.label} input={<NeedleInput needle={needle} setNeedle={setNeedle} />} />
       <LabeledInput label={patternInput.craftType.label} input={<CraftInput craft={craft} setCraft={setCraft} />} />
       <LabeledInput
-        label={patternInput.details.label}
-        help={patternInput.details.help}
-        input={<DetailInput onChange={seDetails} />}
+        label={patternInput.detail.label}
+        help={patternInput.detail.help}
+        input={<DetailInput onChange={seDetail} />}
       />
       <div className='flex gap-2.5 self-end'>
         <Button type='outlined' onClick={() => setPatterType(PATTERN_PAGE.SELECT)}>
           이전
         </Button>
-        <Button onClick={() => {}}>생성 (3/3)</Button>
+        <Button onClick={submit}>생성 (3/3)</Button>
       </div>
     </form>
   );

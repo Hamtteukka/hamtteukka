@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import dynamic from 'next/dynamic';
 
-const DragAndDropUploadImg = dynamic(() => import('@/components/ui/dranAndDropUpload/DragAndDropUpload'));
+const DragAndDropUploadImg = dynamic(() => import('@/components/ui/dragAndDropUpload/DragAndDropUpload'));
 
 const meta = {
   title: 'ui/DragAndDropUpload',

@@ -7,6 +7,12 @@ export type TNeedle = (typeof NEEDLE_TYPE)[keyof typeof NEEDLE_TYPE];
 export type TCraftType = (typeof CRAFT_TYPE)[keyof typeof CRAFT_TYPE];
 export type TCraftTypeKr = keyof typeof craftTypeKrToEn;
 
+export interface TTextPatternInstruction {
+  needle: string;
+  work: string;
+  detail: string;
+}
+
 export interface TTextPattern {
   description: string;
   expectedImage: string;

@@ -7,14 +7,22 @@ interface PTextArea {
   minHeight: number;
   placeholder?: string;
   className?: string;
+  disabled?: boolean;
 }
 
-const TextArea: React.FC<PTextArea> = ({ value, onChange, minHeight, placeholder = '', className = '' }) => {
+const TextArea: React.FC<PTextArea> = ({
+  value,
+  onChange,
+  minHeight,
+  placeholder = '',
+  className = '',
+  disabled = false,
+}) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (textareaRef && textareaRef.current) {
-      textareaRef.current.style.height = `${minHeight}px`;
+      textareaRef.current.style.height = `${Math.max(textareaRef.current.scrollHeight, minHeight)}px`;
     }
   }, []);
 
@@ -30,13 +38,14 @@ const TextArea: React.FC<PTextArea> = ({ value, onChange, minHeight, placeholder
   return (
     <textarea
       className={cn(
-        'focus:outline-activate w-full resize-none overflow-hidden rounded-sm border border-input bg-white px-4 py-2.5 text-detail text-black placeholder:text-placeholder',
+        'w-full resize-none overflow-hidden rounded-sm border border-input bg-white px-4 py-2.5 text-detail text-black placeholder:text-placeholder focus:outline-activate',
         className,
       )}
       ref={textareaRef}
       value={value}
       onChange={handleChange}
       placeholder={placeholder}
+      disabled={disabled}
     />
   );
 };
