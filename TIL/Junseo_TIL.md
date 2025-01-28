@@ -2183,3 +2183,115 @@ template 섹션 아래 정의 된 label은 pod에서 구성된 label 이다.
 맨 위에 정의된 label은 replicaset의 label이다. 
 
 replicaset의 label은 replicaset를 발견하기 위해 다른 개체를 구성할 때 사용될 것이다.
+
+
+# 0127 TIL
+## CKA
+
+# Multiple Schedulers
+
+---
+
+쿠버네티스 클러스터는 한번에 여러 스케쥴러를 가질 수 있다. 포드를 만들거나 배치할 때 쿠버네티스에게 특정 일정 관리자가 포드를 지정하도록 지시할 수 있다. 
+
+일정 관리자가 여럿일 경우 반드시 이름이 달라야 한다. 그래야 개별 일정 관리자로 구분할 수 있다. 
+
+기본 스케쥴러는 이름이 default-scheduler이다. 그 이름은 kube-scheduler 이다. 기본 스케쥴러는 이름을 설정하지 않으면 기본 스케쥴러이다. 
+
+### Kube-Scheduler
+
+**역할**
+
+기본 스케쥴러이다. 일반적으로 POD, Deployment 배포 시 사용된다.
+
+`kube-scheduler`는 기본적으로 Kubernetes 클러스터의 **Control Plane**에서 실행되는 하나의 Pod이다. 먼저 **kube-scheduler**가 실행 중인지 확인하려면 `kubectl`을 사용하여 클러스터 내에서 관련 Pod를 찾을 수 있다.
+
+**한계점**
+
+특정 응용 프로그램의 requirement를 따라갈 수 있는 특정 Node에만 두어야 한다면 어떨까?
+
+### Custom Scheduler
+
+**default-scheduler**
+
+kube-scheduler에서 자동으로 만들어진 스케쥴러이다. 기본 스케쥴러의 구성은 아래 내역과 같다.
+
+**scheduler-config.yaml**
+
+```
+apiVersion: kubescheduler.config.k8s.io/v1
+kind: KubeSchedulerConfiguration
+profiles:
+- schedulerName: default-scheduler #이름을 설정하지 않으면 기본 스케줄러이다.
+```
+
+만일 , 사용자가 스케쥴러를 직접 지정한다면 아래와 같은 형태로 지정 할 수 있다.
+
+```
+apiVersion: kubescheduler.config.k8s.io/v1
+kind: KubeSchedulerConfiguration
+profiles:
+- schedulerName: my-scheduler #이름 설정
+```
+
+### Deploy Additional Scheduler as a Pod
+
+- 스케쥴러를 pod로 배포하는 경우
+
+Pod 정의 파일을 생성하고, kubeconfig 속성을 명시한다. 
+
+**my-custom-scheduler.yaml**
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-custom-scheduler
+  namepsace: kube-system
+spec:
+  containers:
+  - command:
+    - kube-scheduler
+    - --address=127.0.0.1 #kube-api 서버와 인증 하기 위한 path
+    - --kubeconfig=/etc/kubernetes/scheduler.conf #스케줄러 구성 파일의 경로를 지정 
+    #스케줄러가 클러스터와의 인증 및 구성을 위해 사용하는 설정 정보를 포함
+    
+    - --config=/etc/kubernetes/my-scheduler-config.yaml # 사용자 지정 kube-scheduler 구성 파일을 넘긴다. 
+    image: k8s.gcr.io/kube-scheduler-amd64:v1.11.3
+    name: kube-scheduler
+```
+
+**my-scheduler-config.yaml**
+
+```yaml
+apiVersion: kubescheduler.config.k8s.io/v1
+kind: KubeSchedulerConfiguration
+profiles:
+- schedulerName: my-scheduler
+leaderElection:
+ leaderElect: true
+ resourceNamespace: kube-system
+ resourceName: look-object-my-scheduler
+    - --scheduler-name=my-custom-scheduler
+    - --lock-object-name=my-custom-scheduler
+```
+
+**leaderElection.leaderElect**
+
+복사본을 여러개의 마스터 노드에서 실행할 때 사용한다. 동일한 스케쥴러의 복사본 여러 개가 다른 노드에서 실행될 경우 한 번에 하나만 활성화 할 수 있다. 리더 선출 옵션은 스케쥴 활동을 이끌 리더를 선택하는 데에 도움이 된다. 
+
+스케쥴러 리더를 선택하도록 지시한다. 여러 스케쥴러가 실행 중일 때 리더를 선출하여 작업을 중복 실행하지 않도록 함. 
+
+**lock-object-name**
+
+리더 선출 시 사용되는 잠금 오브젝트의 이름. 
+
+위 두개의 옵션은 Custom Scheduler와 Default Scheduler를 나누기 위해서 사용한다. 
+
+### View Schedulers
+
+```yaml
+kubectl get pods --namespace=kube-system
+```
+
+스케쥴러가 실행되는 것을 볼 수 있다.
