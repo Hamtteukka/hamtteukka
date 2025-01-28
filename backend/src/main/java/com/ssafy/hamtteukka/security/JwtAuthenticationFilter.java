@@ -27,7 +27,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // token 없어도되는 path
     private static final List<String> CHECK_URLS = Arrays.asList(
             "/feeds/search",
-            "/kakao-login",
+            "/swagger-ui",
+            "/v3/api-docs",
+            "/users",
+            "/auth",
             "/test/"
     );
 
