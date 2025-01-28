@@ -20,7 +20,7 @@ export const patternInput = {
   craftType: {
     label: '작품 종류',
   },
-  details: {
+  detail: {
     label: '상세 설명',
     help: '모양, 패턴, 크기 등 만들고 싶은 작품에 대해 자유롭게 설명해 주세요.',
   },
