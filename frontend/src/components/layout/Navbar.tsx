@@ -3,7 +3,7 @@ import AlertIcon from '/public/svg/alertIcon.svg';
 import logo from '/public/logo/logo.png';
 import { navigationList } from '@/lib/navigation';
 import NavItem from './NavItem';
-import KaKaoAuthButton from '@/components/page/signup/KaKaoAuthButton';
+import KakaoAuthButton from '@/components/page/auth/KaKaoAuthButton';
 
 const Navbar: React.FC = () => {
   const isLogin = false;
@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
       <div className='fixed flex h-screen w-64 flex-col gap-8 px-4 py-10'>
         <header className='flex items-center justify-between'>
           <Image width={67} height={67} src={logo} className='h-11 w-11' alt='함뜨까 로고' />
-          {isLogin ? <AlertIcon height='24' width='24' /> : <KaKaoAuthButton />}
+          {isLogin ? <AlertIcon height='24' width='24' /> : <KakaoAuthButton />}
         </header>
         <ul>
           {navigationList.map((item: TNavigation) => (

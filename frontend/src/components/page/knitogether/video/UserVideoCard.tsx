@@ -4,11 +4,11 @@ import UserVideo from '@/components/page/knitogether/video/UserVideo';
 import Avatar from '@/components/ui/Avatar';
 import Expand from '/public/svg/expandIcon.svg';
 import Crown from '/public/svg/crownIcon.svg';
-import { TUser } from '@/types/user';
+import { TVideoUser } from '@/types/user';
 import { VIDEO_USER_ROLE } from '@/lib/constants/knitogether';
 
 interface PUserVideoCard {
-  user: TUser;
+  user: TVideoUser;
 }
 
 const UserVideoCard: React.FC<PUserVideoCard> = ({ user: { role, nickname, imageUrl } }) => {

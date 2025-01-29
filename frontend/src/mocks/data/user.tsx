@@ -1,9 +1,9 @@
 import { VIDEO_USER_ROLE } from '@/lib/constants/knitogether';
-import { TUser } from '@/types/user';
+import { TVideoUser } from '@/types/user';
 
-export const MUser: TUser = {
+export const MVideoUser: TVideoUser = {
   userId: '1',
-  role: VIDEO_USER_ROLE.HOST,
   nickname: '설핢',
   imageUrl: '/image/profile.png',
+  role: VIDEO_USER_ROLE.HOST,
 };
