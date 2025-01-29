@@ -35,7 +35,7 @@ const NavItemIcon: React.FC<PNavItemIcon> = ({ type }) => {
       return pathname.startsWith('/knitogether') ? <FilledKnitogether /> : <Knitogether />;
     }
     case 'archive': {
-      return pathname === '/archive' ? <FilledArchive /> : <Archive />;
+      return pathname.startsWith('/archive') ? <FilledArchive /> : <Archive />;
     }
     case 'profile': {
       return pathname === '/profile/me' ? <FilledProfile /> : <Profile />;
