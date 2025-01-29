@@ -56,3 +56,5 @@ export const CRAFT_TYPE = {
   PET_ITEM,
   OTHER,
 } as const;
+
+export const AI_GENERATION_TOTAL_COUNT = 3;

@@ -10,6 +10,7 @@ import { PatternProvider } from '@/components/context/PatternContext';
 import { PATTERN_PAGE } from '@/lib/constants/pattern';
 import TextResult from '@/components/page/pattern/new/text/TextResult';
 import DotResult from '@/components/page/pattern/new/dot/DotResult';
+import { ModalProvider } from '@/components/context/ModalContext';
 
 const NewPatternForm = () => {
   const [patternType, setPatternType] = useState<TPattern>(PATTERN_PAGE.SELECT);
@@ -46,7 +47,9 @@ const NewPatternForm = () => {
   return (
     <PatternProvider>
       <PatternTypeContext.Provider value={setPatternType}>
-        <Children />
+        <ModalProvider>
+          <Children />
+        </ModalProvider>
       </PatternTypeContext.Provider>
     </PatternProvider>
   );

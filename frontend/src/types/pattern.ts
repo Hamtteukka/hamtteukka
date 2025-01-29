@@ -20,3 +20,6 @@ export interface TTextPattern {
 export interface TDotPattern {
   dotPattern: string;
 }
+
+// TODO: 도안 게시할 때
+export interface TPatternPost {}

@@ -4,14 +4,14 @@ import { TDotPattern, TTextPattern, TTextPatternInstruction } from '@/types/patt
 
 export const generateTextPattern = async (body: TTextPatternInstruction): Promise<TTextPattern> => {
   const { status, message, data } = await pattern.generateTextPattern(body);
-  if (status !== SUCCESS) new Error(message);
+  if (status !== SUCCESS) throw new Error(message);
 
   return data;
 };
 
 export const generateDotPattern = async (formData: FormData): Promise<TDotPattern> => {
   const { status, message, data } = await pattern.generateDotPattern(formData);
-  if (status !== SUCCESS) new Error(message);
+  if (status !== SUCCESS) throw new Error(message);
 
   return data;
 };

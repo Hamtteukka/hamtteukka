@@ -9,9 +9,10 @@ import NewPatternLanding from '@/components/ui/landing/NewPatternLanding';
 import { usePatternContext } from '@/hooks/usePatternContext';
 import { useSetPatternTypeContext } from '@/hooks/useSetPatternTypeContext';
 import useTextInput from '@/hooks/useTextInput';
-import { NEEDLE_TYPE, PATTERN_PAGE } from '@/lib/constants/pattern';
+import { NEEDLE_TYPE, AI_GENERATION_TOTAL_COUNT, PATTERN_PAGE } from '@/lib/constants/pattern';
 import { patternInput } from '@/lib/pattern';
 import { generateTextPattern } from '@/service/pattern';
+import { useAiGenerationRemainingCount } from '@/store/remainingPatternCount';
 import { TCraftTypeKr, TNeedle, TTextPatternInstruction } from '@/types/pattern';
 import { useState } from 'react';
 
@@ -20,6 +21,8 @@ const TextPatternForm: React.FC = () => {
   const [craft, setCraft] = useState<TCraftTypeKr>();
   const [detail, seDetail] = useTextInput<HTMLTextAreaElement>('');
   const [isPending, setIsPending] = useState<boolean>(false);
+
+  const { count, subCount } = useAiGenerationRemainingCount();
 
   const setPatterType = useSetPatternTypeContext();
   const patternContext = usePatternContext();
@@ -37,9 +40,15 @@ const TextPatternForm: React.FC = () => {
     };
 
     setIsPending(true);
-    const data = await generateTextPattern(body);
-    patternContext.setTextPattern({ description: data.description, expectedImage: data.expectedImage });
-    setPatterType(PATTERN_PAGE.TEXT_RESULT);
+    try {
+      const data = await generateTextPattern(body);
+      patternContext.setTextPattern({ description: data.description, expectedImage: data.expectedImage });
+      subCount();
+      setPatterType(PATTERN_PAGE.TEXT_RESULT);
+    } catch (e) {
+      alert('도안 생성 중 문제가 발생했습니다.\n잠시 후 다시 시도해주세요.');
+      setIsPending(false);
+    }
   };
 
   return isPending ? (
@@ -57,7 +66,9 @@ const TextPatternForm: React.FC = () => {
         <Button type='outlined' onClick={() => setPatterType(PATTERN_PAGE.SELECT)}>
           이전
         </Button>
-        <Button onClick={submit}>생성 (3/3)</Button>
+        <Button onClick={submit}>
+          생성 ({count}/{AI_GENERATION_TOTAL_COUNT})
+        </Button>
       </div>
     </form>
   );

@@ -11,6 +11,11 @@ export const generateTextPattern = async (): Promise<StrictResponse<TResponseDat
     message: '서술형 도안 생성',
     data: textPattern,
   });
+  // return HttpResponse.json({
+  //   status: 'fail',
+  //   message: '실패',
+  //   data: textPattern,
+  // });
 };
 
 export const generateDotPattern = async (): Promise<StrictResponse<TResponseData<TDotPattern>>> => {
@@ -21,4 +26,9 @@ export const generateDotPattern = async (): Promise<StrictResponse<TResponseData
     message: '도트 도안 생성',
     data: { dotPattern: base64img },
   });
+  // return HttpResponse.json({
+  //   status: 'fail',
+  //   message: '도트 도안 생성 실패',
+  //   data: { dotPattern: base64img },
+  // });
 };
