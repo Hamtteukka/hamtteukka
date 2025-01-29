@@ -3,19 +3,17 @@
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/button/Button';
 import Image from 'next/image';
+import { KAKAO_AUTHORIZE_URL } from '@/lib/constants/service';
 
-const KaKaoAuthButton: React.FC = () => {
+const KakaoAuthButton: React.FC = () => {
   const router = useRouter();
 
-  const handleKaKaoLogin = () => {
-    router.push('/signup');
-
-    // TODO: 카카오 로그인 API 요청
-    // router.push(`${process.env.NEXT_PUBLIC_KAKAO_API_URL}/auth/kakao`);
+  const handleKakaoLogin = () => {
+    router.push(KAKAO_AUTHORIZE_URL);
   };
 
   return (
-    <Button className='bg-kakao border-none' onClick={handleKaKaoLogin}>
+    <Button className='border-none bg-kakao' onClick={handleKakaoLogin}>
       <div className='flex items-center gap-2'>
         <Image src='/image/kakao.png' alt='kakao login' width={16} height={16} />
         <span className='text-detail text-black'>로그인</span>
@@ -24,4 +22,4 @@ const KaKaoAuthButton: React.FC = () => {
   );
 };
 
-export default KaKaoAuthButton;
+export default KakaoAuthButton;

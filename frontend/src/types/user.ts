@@ -4,7 +4,10 @@ type TRole = (typeof VIDEO_USER_ROLE)[keyof typeof VIDEO_USER_ROLE];
 
 export interface TUser {
   userId: string;
-  role: TRole;
   nickname: string;
   imageUrl: string;
+}
+
+export interface TVideoUser extends TUser {
+  role: TRole;
 }
