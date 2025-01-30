@@ -1,5 +1,5 @@
 import { TDotPattern, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
-import { TResponseData } from '@/types/service';
+import { TCursorData, TResponseData } from '@/types/service';
 import { TUser } from '@/types/user';
 
 export const pattern = {
@@ -25,10 +25,23 @@ export const auth = {
     });
   },
 
-  signUp: (body: TUser): Promise<TResponseData<TUser>> => {
+  signUp: async (body: TUser): Promise<TResponseData<TUser>> => {
     return fetch('/api/auth/signup', {
       method: 'POST',
       body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+};
+
+export const archive = {
+  getStoredPostList: async (cursorId: number, limit: number): Promise<TResponseData<TCursorData<TPostPreview>>> => {
+    const params = new URLSearchParams({
+      cursorId: cursorId === -1 ? '' : cursorId.toString(),
+      limit: limit.toString(),
+    });
+    return fetch(`/api/feeds/saved-list?${params}`, {
+      cache: 'no-store',
+      credentials: 'same-origin',
     }).then((res) => res.json());
   },
 };
