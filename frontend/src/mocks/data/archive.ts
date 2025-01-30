@@ -76,9 +76,11 @@ export const MSubscriptionList: Array<TSubscriptionProfile> = [
   },
 ];
 
-export const MStoredPostList: Array<TPostPreview> = Array.from({ length: 40 }, (_, index) => ({
+const imgArr = ['/image/kakao.png', '/image/profile.png', '/image/video_preview.png', '/logo/logo.png'];
+
+export const MStoredPostList: Array<TPostPreview> = Array.from({ length: 100 }, (_, index) => ({
   feedId: index,
   title: '제목 ' + index,
-  thumbnail: faker.image.url(),
-  userProfile: faker.image.avatar(),
+  thumbnail: imgArr[parseInt((Math.random() * 4).toString())],
+  userProfile: '',
 }));

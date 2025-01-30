@@ -3,7 +3,7 @@ import { MStoredPostList } from '@/mocks/data/archive';
 import { TMockRequest } from '@/types/msw';
 import { TCursorData, TResponseData } from '@/types/service';
 import { isNaturalNumber } from '@/util/number';
-import { HttpResponse, StrictResponse } from 'msw';
+import { delay, HttpResponse, StrictResponse } from 'msw';
 
 export const getMStoredPostList = async ({
   request,
@@ -19,6 +19,8 @@ export const getMStoredPostList = async ({
 
   const hasNextItems = endIndex < MStoredPostList.length;
   const nextCursorId = hasNextItems ? endIndex : -1;
+
+  await delay(1000);
 
   return HttpResponse.json({
     status: 'success',
