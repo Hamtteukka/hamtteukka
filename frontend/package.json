@@ -19,6 +19,7 @@
     "heic2any": "^0.0.4",
     "lucide-react": "^0.473.0",
     "next": "14.2.23",
+    "openvidu-browser": "^2.31.0",
     "react": "^18",
     "react-dom": "^18",
     "react-image-file-resizer": "^0.4.8",

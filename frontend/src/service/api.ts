@@ -17,6 +17,21 @@ export const pattern = {
   },
 };
 
+export const openvidu = {
+  createSession: (formData: FormData): Promise<TResponseData<string>> => {
+    return fetch('/api/openvidu/sessions', {
+      method: 'POST',
+      body: formData,
+    }).then((res) => res.json());
+  },
+
+  createToken: (sessionId: string): Promise<TResponseData<string>> => {
+    return fetch(`/api/openvidu/sessions/${sessionId}/connections`, {
+      cache: 'no-store',
+    }).then((res) => res.json());
+  },
+};
+
 export const auth = {
   getKakaoToken: (code: string): Promise<Response> => {
     return fetch(`/api/auth/kakao`, {

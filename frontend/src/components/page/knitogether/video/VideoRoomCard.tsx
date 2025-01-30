@@ -3,7 +3,7 @@ import Avatar from '@/components/ui/Avatar';
 import People from '/public/svg/peopleIcon.svg';
 
 interface PVideoRoomCard {
-  videoRoomPreview: TVideoRoomPreview;
+  videoRoomPreview: TVideoRoom;
 }
 
 const VideoRoomCard: React.FC<PVideoRoomCard> = ({
