@@ -18,3 +18,7 @@ export interface TCursorData<T> {
   hasNextItems: boolean;
   nextCursorId: number;
 }
+
+export interface TAuthRedirectUrl {
+  url: string;
+}

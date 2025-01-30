@@ -1,5 +1,5 @@
 import { TDotPattern, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
-import { TCursorData, TResponseData } from '@/types/service';
+import { TAuthRedirectUrl, TCursorData, TResponseData } from '@/types/service';
 import { TUser } from '@/types/user';
 
 export const pattern = {
@@ -18,14 +18,14 @@ export const pattern = {
 };
 
 export const openvidu = {
-  createSession: (formData: FormData): Promise<TResponseData<string>> => {
+  createSession: async (formData: FormData): Promise<TResponseData<string>> => {
     return fetch('/api/openvidu/sessions', {
       method: 'POST',
       body: formData,
     }).then((res) => res.json());
   },
 
-  createToken: (sessionId: string): Promise<TResponseData<string>> => {
+  createToken: async (sessionId: string): Promise<TResponseData<string>> => {
     return fetch(`/api/openvidu/sessions/${sessionId}/connections`, {
       cache: 'no-store',
     }).then((res) => res.json());
@@ -33,17 +33,17 @@ export const openvidu = {
 };
 
 export const auth = {
-  getKakaoToken: (code: string): Promise<Response> => {
-    return fetch(`/api/auth/kakao`, {
+  getKakaoToken: async (code: string): Promise<TResponseData<TAuthRedirectUrl>> => {
+    return fetch('/api/auth/kakao', {
       method: 'POST',
       body: JSON.stringify({ code }),
-    });
+    }).then((res) => res.json());
   },
 
-  signUp: async (body: TUser): Promise<TResponseData<TUser>> => {
+  signUp: async (formData: FormData): Promise<TResponseData<TUser>> => {
     return fetch('/api/auth/signup', {
       method: 'POST',
-      body: JSON.stringify(body),
+      body: formData,
     }).then((res) => res.json());
   },
 };
