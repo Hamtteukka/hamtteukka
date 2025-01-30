@@ -1,5 +1,5 @@
-interface TVideoRoomPreview {
-  id: string;
+interface TVideoRoom {
+  sessionId: string;
   title: string;
   hostName: string;
   hostImg: string;

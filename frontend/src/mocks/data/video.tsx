@@ -1,5 +1,5 @@
-export const MVideoRoomList: TVideoRoomPreview[] = Array.from({ length: 16 }, () => ({
-  id: `${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+export const MVideoRoomList: TVideoRoom[] = Array.from({ length: 16 }, () => ({
+  sessionId: `${Date.now()}-${Math.floor(Math.random() * 10000)}`,
   title: '같이 조용히 뜨개질해요',
   hostName: '설핢',
   hostImg: '/image/profile.png',
