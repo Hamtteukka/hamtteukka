@@ -8,3 +8,10 @@ export const getStoredPostList = async (cursorId: number, limit: number): Promis
 
   return data;
 };
+
+export const getStoredPatternList = async (cursorId: number, limit: number): Promise<TCursorData<TPostPreview>> => {
+  const { status, message, data } = await archive.getStoredPatternList(cursorId, limit);
+  if (status !== SUCCESS) throw new Error(message);
+
+  return data;
+};

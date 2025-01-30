@@ -59,4 +59,14 @@ export const archive = {
       credentials: 'same-origin',
     }).then((res) => res.json());
   },
+  getStoredPatternList: async (cursorId: number, limit: number): Promise<TResponseData<TCursorData<TPostPreview>>> => {
+    const params = new URLSearchParams({
+      cursorId: cursorId === -1 ? '' : cursorId.toString(),
+      limit: limit.toString(),
+    });
+    return fetch(`/api/feeds/saved-ai-list?${params}`, {
+      cache: 'no-store',
+      credentials: 'same-origin',
+    }).then((res) => res.json());
+  },
 };
