@@ -7,8 +7,12 @@ import SyncLoader from 'react-spinners/SyncLoader';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
 
-const StoredPostList: React.FC = () => {
-  const { data, isFetching, fetchNextPage, hasNextPage } = useGetStoredPostList();
+interface PPreviewList {
+  type: 'post' | 'pattern';
+}
+
+const PreviewList: React.FC<PPreviewList> = ({ type }) => {
+  const { data, isFetching, fetchNextPage, hasNextPage } = useGetStoredPostList(type);
 
   const { ref, inView } = useInView();
 
@@ -32,4 +36,4 @@ const StoredPostList: React.FC = () => {
   );
 };
 
-export default StoredPostList;
+export default PreviewList;
