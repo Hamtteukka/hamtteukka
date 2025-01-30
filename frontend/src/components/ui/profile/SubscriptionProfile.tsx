@@ -9,7 +9,7 @@ interface PSubscriptionProfile {
 }
 
 const SubscriptionProfile: React.FC<PSubscriptionProfile> = ({
-  info: { nickname, subscriber, imageUrl },
+  info: { nickname, subscriber, profileImage },
   className = '',
 }) => {
   return (
@@ -17,7 +17,7 @@ const SubscriptionProfile: React.FC<PSubscriptionProfile> = ({
       <div className='relative w-full pb-[100%]'>
         <Image
           className='rounded-full object-cover'
-          src={imageUrl === '' ? defaultImg : imageUrl}
+          src={profileImage === '' ? defaultImg : profileImage}
           alt='프로필 이미지'
           fill
         />
