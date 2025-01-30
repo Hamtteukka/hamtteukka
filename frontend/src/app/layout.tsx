@@ -3,6 +3,7 @@ import { Nanum_Gothic } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import { MSWProvider } from '@/components/msw/MSWWrapper';
+import { ReactQueryProviders } from '@/components/ReactQuery';
 
 if (process.env.NEXT_RUNTIME === 'nodejs' && process.env.NODE_ENV !== 'production') {
   const { server } = require('@/mocks/http');
@@ -25,9 +26,11 @@ export default function RootLayout({
     <html lang='kr'>
       <body className={`${nanumGothic.className} flex antialiased`}>
         <MSWProvider>
-          <Navbar />
-          <main className='min-w-0 flex-1 py-12'>{children}</main>
-          <div id='modal-container' />
+          <ReactQueryProviders>
+            <Navbar />
+            <main className='min-w-0 flex-1 py-12'>{children}</main>
+            <div id='modal-container' />
+          </ReactQueryProviders>
         </MSWProvider>
       </body>
     </html>

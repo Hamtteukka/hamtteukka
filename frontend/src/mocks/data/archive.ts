@@ -1,4 +1,5 @@
 import { TSubscriptionProfile } from '@/types/archive';
+import { faker } from '@faker-js/faker';
 
 export const MSubscriptionList: Array<TSubscriptionProfile> = [
   {
@@ -74,3 +75,10 @@ export const MSubscriptionList: Array<TSubscriptionProfile> = [
     imageUrl: '',
   },
 ];
+
+export const MStoredPostList: Array<TPostPreview> = Array.from({ length: 40 }, (_, index) => ({
+  feedId: index,
+  title: '제목 ' + index,
+  thumbnail: faker.image.url(),
+  userProfile: faker.image.avatar(),
+}));

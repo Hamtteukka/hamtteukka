@@ -3,6 +3,7 @@ import path from 'path';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 import reactPlugin from 'eslint-plugin-react';
 import importPlugin from 'eslint-plugin-import';
+import queryPlugin from '@tanstack/eslint-plugin-query';
 import parser from '@typescript-eslint/parser';
 
 const compat = new FlatCompat({
@@ -26,6 +27,7 @@ export default [
       '@typescript-eslint': tsPlugin,
       react: reactPlugin,
       import: importPlugin,
+      '@tanstack/query': queryPlugin,
     },
     rules: {
       'import/extensions': [
@@ -43,6 +45,7 @@ export default [
       'no-var': 'error',
       'no-multiple-empty-lines': 'error',
       'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
+      '@tanstack/query/exhaustive-deps': 'error',
     },
     settings: {
       react: {

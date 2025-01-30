@@ -12,3 +12,9 @@ export interface TResponse {
 export interface TResponseData<T> extends TResponse {
   data: T;
 }
+
+export interface TCursorData<T> {
+  items: Array<T>;
+  hasNextItems: boolean;
+  nextCursorId: number;
+}
