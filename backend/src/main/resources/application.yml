@@ -19,11 +19,25 @@ spring:
         format_sql: true
 
 #        show_sql: true
-
   config:
     import: application-secret.yml
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
+#server:
+#  port: ${SERVER_PORT}
+#  ssl:
+#    enabled: false
+
+OPENVIDU_URL: ${OPENVIDU_URL}
+OPENVIDU_SECRET: ${OPENVIDU_SECRET}
 
 logging:
   level:
     org.hibernate.SQL: debug
+
+
 
