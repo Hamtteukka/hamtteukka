@@ -4,7 +4,7 @@ import { TUser, TVideoUser } from '@/types/user';
 export const MUser: TUser = {
   userId: '1',
   nickname: '설핢',
-  profileImage: '/image/profile.png',
+  profileId: '/image/profile.png',
 };
 
 export const MVideoUser: TVideoUser = {

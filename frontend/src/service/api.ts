@@ -1,6 +1,6 @@
 import { TDotPattern, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
 import { TAuthRedirectUrl, TCursorData, TResponseData } from '@/types/service';
-import { TUser } from '@/types/user';
+import { TUserRedirectUrl } from '@/types/user';
 
 export const pattern = {
   generateTextPattern: async (body: TTextPatternInstruction): Promise<TResponseData<TTextPattern>> => {
@@ -35,15 +35,20 @@ export const openvidu = {
 export const auth = {
   getKakaoToken: async (code: string): Promise<TResponseData<TAuthRedirectUrl>> => {
     return fetch('/api/auth/kakao', {
+      headers: {
+        'Content-Type': `application/json`,
+      },
       method: 'POST',
       body: JSON.stringify({ code }),
+      credentials: 'include',
     }).then((res) => res.json());
   },
 
-  signUp: async (formData: FormData): Promise<TResponseData<TUser>> => {
+  signUp: async (formData: FormData): Promise<TResponseData<TUserRedirectUrl>> => {
     return fetch('/api/auth/signup', {
       method: 'POST',
       body: formData,
+      credentials: 'include',
     }).then((res) => res.json());
   },
 };
