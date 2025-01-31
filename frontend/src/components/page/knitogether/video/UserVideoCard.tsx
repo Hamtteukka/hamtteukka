@@ -11,13 +11,13 @@ interface PUserVideoCard {
   user: TVideoUser;
 }
 
-const UserVideoCard: React.FC<PUserVideoCard> = ({ user: { role, nickname, profileImage } }) => {
+const UserVideoCard: React.FC<PUserVideoCard> = ({ user: { role, nickname, profileId } }) => {
   return (
     <div className='relative overflow-hidden rounded-sm'>
       <UserVideo />
       <div className='absolute bottom-0 flex w-full justify-between bg-modal p-2'>
         <div className='flex items-center gap-2'>
-          <Avatar src={profileImage} />
+          <Avatar src={profileId} />
           <span className='text-detail font-bold text-white'>{nickname}</span>
           {role === VIDEO_USER_ROLE.HOST && <Crown />}
         </div>
