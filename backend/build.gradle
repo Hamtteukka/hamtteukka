@@ -42,6 +42,9 @@ dependencies {
 
 	// WebClient
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	// S3
+	implementation 'software.amazon.awssdk:s3:2.20.141'
+	implementation 'software.amazon.awssdk:auth:2.20.141'
 
 	// Open Vidu
 	implementation 'io.openvidu:openvidu-java-client:2.31.0'

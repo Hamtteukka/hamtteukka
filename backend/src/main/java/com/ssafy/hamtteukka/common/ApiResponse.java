@@ -8,9 +8,9 @@ import org.springframework.http.ResponseEntity;
  * @param <T> 응답 데이터의 타입
  */
 public class ApiResponse<T> {
-    private final String status; // "success" or "fail"
-    private final String message; // 응답 메시지
-    private final T data; // 응답 데이터
+    private final String status;
+    private final String message;
+    private final T data;
 
     public ApiResponse(String status, String message, T data) {
         this.status = status;
