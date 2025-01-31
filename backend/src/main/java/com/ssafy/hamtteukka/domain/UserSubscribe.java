@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
+
 public class UserSubscribe {
 
     @Id
@@ -20,4 +21,8 @@ public class UserSubscribe {
     @JoinColumn(name = "subscriber_id", nullable = false)
     private User subscriber;
 
+    public UserSubscribe(User provider, User subscriber) {
+        this.provider = provider;
+        this.subscriber = subscriber;
+    }
 }
