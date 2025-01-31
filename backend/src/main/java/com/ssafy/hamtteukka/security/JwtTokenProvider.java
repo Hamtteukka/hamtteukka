@@ -41,7 +41,7 @@
                 Jwts.parserBuilder()
                         .setSigningKey(secretKey)
                         .build()
-                        .parseClaimsJws(resolveToken(token));
+                        .parseClaimsJws(token);
                 return true;
             } catch (Exception e) {
                 return false;
@@ -57,7 +57,7 @@
             return Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
-                    .parseClaimsJws(resolveToken(token))
+                    .parseClaimsJws(token)
                     .getBody();
         }
 
@@ -71,11 +71,18 @@
             return claims.get("id", Long.class);
         }
 
-        private String resolveToken(String token) {
-            if (token != null && token.startsWith("Bearer ")) {
-                return token.substring(7);
-            }
-            return null;
+        /**
+         * 토큰에서 만료 시간을 추출
+         * @param token JWT 토큰
+         * @return 만료 시간 (밀리초)
+         */
+        public long getExpiration(String token) {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            return claims.getExpiration().getTime();
         }
 
         /**

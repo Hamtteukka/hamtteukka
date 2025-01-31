@@ -3,11 +3,14 @@ package com.ssafy.hamtteukka.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.hamtteukka.domain.User;
 import com.ssafy.hamtteukka.dto.KakaoInfo;
 import com.ssafy.hamtteukka.repository.UserRepository;
 import com.ssafy.hamtteukka.security.JwtTokenProvider;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +21,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Map;
+import java.util.Optional;
+
+@Slf4j
 @Service
 public class OAuthService {
     @Value("${KAKAO_CLIENT_ID}")
@@ -30,24 +37,17 @@ public class OAuthService {
     private String domain;
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final TokenBlacklistService tokenBlacklistService;
     private final UserRepository userRepository;
 
     public OAuthService(
             JwtTokenProvider jwtTokenProvider,
+            TokenBlacklistService tokenBlacklistService,
             UserRepository userRepository
     ) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.tokenBlacklistService = tokenBlacklistService;
         this.userRepository = userRepository;
-    }
-
-    public String getKakaoConnectUrl() {
-        StringBuffer url = new StringBuffer();
-        url.append("https://kauth.kakao.com/oauth/authorize?");
-        url.append("client_id=" + clientId);
-        url.append("&redirect_uri=" + redirectUri);
-        url.append("&response_type=code");
-        url.append("&prompt=select_account");
-        return "redirect:" + url.toString();
     }
 
     /**
@@ -114,27 +114,49 @@ public class OAuthService {
         return new KakaoInfo(id, nickname, profileImage);
     }
 
-    public String handleKakaoLogin(long id, HttpServletResponse response) {
-        if (userRepository.findById(id).isEmpty()) {
+    /**
+     * 카카오 로그인 처리 메서드
+     *
+     * @param id        카카오 로그인으로 받은 사용자 ID
+     * @param response  HTTP 응답 객체: 쿠키를 설정하기 위해 사용
+     * @return          사용자의 회원 여부에 따라 리디렉션할 URL을 포함하는 Map 객체
+     *
+     * 1. 비회원인 경우
+     *    - 5분 유효기간의 `idToken`을 생성하고 httpOnly 쿠키로 설정
+     *    - 회원가입 페이지 URL을 리턴
+     * 2. 회원인 경우
+     *    - 1시간 유효기간의 `accessToken`을 생성하고 httpOnly 쿠키로 설정
+     *    - 7일 유효기간의 `refreshToken`을 생성하고 httpOnly 쿠키로 설정
+     *    - 메인 페이지 URL을 리턴
+     */
+    public Map<String,Object> handleKakaoLogin(long id, HttpServletResponse response) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty()) {
+            String idToken = jwtTokenProvider.generateJwt(id,5);
+            log.info("idToken: " + idToken);
             response.addCookie(generateCookie(
-                    "userId",
-                    String.valueOf(id),
-                    false,
+                    "idToken",
+                    idToken,
+                    true,
                     false,
                     5 * 60
             ));
-            return "redirect:" + frontUri + "signup";
+            return Map.of(
+                    "url", "/auth/signup"
+            );
         }
         String accessToken = jwtTokenProvider.generateJwt(id, 60);
+        log.info("accessToken: " + accessToken);
         response.addCookie(generateCookie(
                 "accessToken",
                 accessToken,
+                true,
                 false,
-                false,
-                5 * 60
+                60 * 60
         ));
 
         String refreshToken = jwtTokenProvider.generateJwt(id, 30*24*60);
+        log.info("refreshToken: " + refreshToken);
         response.addCookie(generateCookie(
                 "refreshToken",
                 refreshToken,
@@ -142,7 +164,62 @@ public class OAuthService {
                 false,
                 7 * 24 * 60 * 60
         ));
-        return "redirect:" + frontUri;
+        return Map.of(
+                "url", "/",
+                "nickname",user.get().getNickname(),
+                "profileId",user.get().getProfileId()
+        );
+    }
+
+    /**
+     * 로그아웃 처리
+     * - accessToken, refreshToken 블랙리스트 추가 및 쿠키 삭제
+     * @param request
+     * @param response
+     */
+    public void logout(HttpServletRequest request,HttpServletResponse response) {
+        String accessToken = getCookie(request, "accessToken");
+        if (accessToken != null && jwtTokenProvider.validToken(accessToken)) {
+            long expirationTime = jwtTokenProvider.getExpiration(accessToken);
+            tokenBlacklistService.addToBlacklist(accessToken, expirationTime);
+        }
+
+        String refreshToken = getCookie(request, "refreshToken");
+        if (refreshToken != null && jwtTokenProvider.validToken(refreshToken)) {
+            long refreshTokenExpiration = jwtTokenProvider.getExpiration(refreshToken);
+            tokenBlacklistService.addToBlacklist(refreshToken, refreshTokenExpiration);
+        }
+        response.addCookie(generateCookie(
+                "accessToken",
+                null,
+                true,
+                false,
+                0
+        ));
+        response.addCookie(generateCookie(
+                "refreshToken",
+                null,
+                true,
+                false,
+                0
+        ));
+    }
+
+    public void createNewAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = getCookie(request, "refreshToken");
+        if (refreshToken == null || !jwtTokenProvider.validToken(refreshToken)) {
+            throw new IllegalArgumentException("no refreshToken or invalid refreshToken");
+        }
+        long id = jwtTokenProvider.getIdFromToken(refreshToken);
+        String accessToken = jwtTokenProvider.generateJwt(id, 60);
+        log.info("new accessToken: " + accessToken);
+        response.addCookie(generateCookie(
+                "accessToken",
+                accessToken,
+                true,
+                false,
+                60 * 60
+        ));
     }
 
     /**
@@ -160,9 +237,24 @@ public class OAuthService {
         cookie.setHttpOnly(httpOnly);
         cookie.setSecure(secure);
         cookie.setPath("/");
-        cookie.setDomain(domain);
         cookie.setMaxAge(maxAge);
         return cookie;
     }
 
+    /**
+     * 쿠키 값 가져오는 메서드
+     * @param request
+     * @param name 가지고올 쿠키 이름
+     * @return 쿠키 값
+     */
+    private String getCookie(HttpServletRequest request, String name) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (name.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
 }
