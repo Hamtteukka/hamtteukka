@@ -18,17 +18,15 @@ export const pattern = {
 };
 
 export const openvidu = {
-  createSession: async (formData: FormData): Promise<TResponseData<string>> => {
+  createSession: (formData: FormData): Promise<TResponseData<string>> => {
     return fetch('/api/openvidu/sessions', {
       method: 'POST',
       body: formData,
     }).then((res) => res.json());
   },
 
-  createToken: async (sessionId: string): Promise<TResponseData<string>> => {
-    return fetch(`/api/openvidu/sessions/${sessionId}/connections`, {
-      cache: 'no-store',
-    }).then((res) => res.json());
+  createToken: (sessionId: string): Promise<TResponseData<string>> => {
+    return fetch(`/api/openvidu/sessions/${sessionId}/connections`).then((res) => res.json());
   },
 };
 

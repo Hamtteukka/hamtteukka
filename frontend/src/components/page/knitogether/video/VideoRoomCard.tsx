@@ -1,16 +1,22 @@
 import Image from 'next/image';
 import Avatar from '@/components/ui/Avatar';
 import People from '/public/svg/peopleIcon.svg';
+import { useRouter } from 'next/navigation';
 
 interface PVideoRoomCard {
   videoRoomPreview: TVideoRoom;
 }
 
 const VideoRoomCard: React.FC<PVideoRoomCard> = ({
-  videoRoomPreview: { title, hostName, hostImg, videoImg, currentUsers, maxUsers },
+  videoRoomPreview: { sessionId, title, hostName, hostImg, videoImg, currentUsers, maxUsers },
 }) => {
+  const router = useRouter();
+  const handleVideoRoomCardClick = () => {
+    router.push(`/knitogether/room/${sessionId}`);
+  };
+
   return (
-    <div className='cursor-pointer text-detail'>
+    <div className='cursor-pointer text-detail' onClick={handleVideoRoomCardClick}>
       <div className='relative w-full pb-[75%]'>
         <Image src={videoImg} fill alt='비디오 이미지' className='rounded-md object-cover' />
       </div>
