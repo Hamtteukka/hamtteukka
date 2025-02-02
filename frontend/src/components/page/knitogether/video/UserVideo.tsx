@@ -1,27 +1,18 @@
 'use client';
 
-import { useVideoRef } from '@/hooks/useVideoRef';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getDeviceId, setupCamera } from '@/util/mediaUtils';
+import useOpenVidu from '@/hooks/useOpenVidu';
 
 const UserVideo: React.FC = () => {
-  const { videoRef, setStream } = useVideoRef();
-
-  const initializeCamera = async () => {
-    const videoDeviceId = await getDeviceId();
-    if (videoDeviceId) {
-      const stream = await setupCamera(videoDeviceId);
-      if (stream) {
-        setStream(stream);
-      }
-    }
-  };
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const { myStream, initOpenVidu } = useOpenVidu();
 
   useEffect(() => {
-    initializeCamera();
+    initOpenVidu();
   }, []);
 
-  return <video ref={videoRef} autoPlay muted playsInline className='w-full rounded-sm' />;
+  return <video ref={videoRef} id={myStream?.id} autoPlay muted playsInline className='w-full rounded-sm' />;
 };
 
 export default UserVideo;

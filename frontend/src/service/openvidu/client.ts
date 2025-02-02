@@ -10,36 +10,55 @@ import { TUser } from '@/types/user';
 
 interface PSessionInfo {
   userInfo: TUser;
-  roomInfo: FormData;
   ov: OpenVidu;
   session: Session;
   eventHandlers: SessionEventHandler<keyof SessionEventMap>[];
   publisherProperties: PublisherProperties;
-  sessionId?: string;
+}
+
+interface PCreateSessionInfo extends PSessionInfo {
+  roomInfo: FormData;
+}
+
+interface PJoinSessionInfo extends PSessionInfo {
+  sessionId: string;
 }
 
 /**
- * 모각뜨 방 생성 혹은 참가
- * @param PSessionInfo
+ * 모각뜨 방 참가
+ * @param joinSessionInfo
  * @returns Promise<Publisher>
  */
 export const joinVideoRoom = async ({
   userInfo,
-  roomInfo,
   ov,
   session,
   eventHandlers,
   publisherProperties,
   sessionId,
-}: PSessionInfo): Promise<Publisher> => {
-  if (!sessionId) {
-    sessionId = await createOpenViduSession(roomInfo);
-  }
-
+}: PJoinSessionInfo): Promise<Publisher> => {
   const token = await createOpenViduConnection(sessionId);
   await addSessionEventListeners(session, eventHandlers);
   await connectToSession(session, token, userInfo);
   const publisher = await initPublisher(ov, session, publisherProperties);
+  return publisher;
+};
+
+/**
+ * 모각뜨 방 생성
+ * @param createSessionInfo
+ * @returns Promise<Publisher>
+ */
+export const createVideoRoom = async ({
+  userInfo,
+  ov,
+  session,
+  eventHandlers,
+  publisherProperties,
+  roomInfo,
+}: PCreateSessionInfo): Promise<Publisher> => {
+  const sessionId = await createOpenViduSession(roomInfo);
+  const publisher = await joinVideoRoom({ userInfo, ov, session, eventHandlers, publisherProperties, sessionId });
   return publisher;
 };
 
