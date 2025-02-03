@@ -1,10 +1,11 @@
 package com.ssafy.hamtteukka.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -38,5 +39,10 @@ public class Feed {
     @Column(columnDefinition = "TINYINT", nullable = false)
     private int feedType; // 피드타입(0: 일반 피드, 1:뜨개도안 피드)
 
+    @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SavedFeed> savedFeeds = new ArrayList<>();
+
+    @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 }
 

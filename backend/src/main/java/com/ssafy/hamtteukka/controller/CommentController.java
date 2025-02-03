@@ -1,0 +1,99 @@
+package com.ssafy.hamtteukka.controller;
+
+import com.ssafy.hamtteukka.common.ApiResponse;
+import com.ssafy.hamtteukka.domain.Comment;
+import com.ssafy.hamtteukka.dto.CommentRequest;
+import com.ssafy.hamtteukka.dto.CommentResponse;
+import com.ssafy.hamtteukka.dto.CommentUpdateRequest;
+import com.ssafy.hamtteukka.service.CommentService;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/comments")
+public class CommentController {
+    private final CommentService commentService;
+
+    /**
+     * 댓글 작성
+     */
+    @PostMapping("")
+    public ResponseEntity<?> createComment(
+            @RequestBody CommentRequest request,
+            Authentication authentication
+    ) {
+        try {
+            Long userId = (Long) authentication.getPrincipal();
+            Comment savedComment = commentService.createComment(
+                    userId,
+                    request.getFeedId(),
+                    request.getContent(),
+                    request.getParentCommentId()
+            );
+
+            CommentResponse response = new CommentResponse(savedComment.getId());
+            return ApiResponse.success(HttpStatus.CREATED, "댓글 작성 성공", response);
+
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.fail(HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
+        }
+    }
+
+    /**
+     * 댓글 목록 조회
+     */
+
+    /**
+     * 댓글 수정(후순위)
+     */
+    @PutMapping("/{commentId}")
+    public ResponseEntity<?> updateComment(
+            @PathVariable("commentId") Long commentId,
+            @RequestBody CommentUpdateRequest request,
+            Authentication authentication
+    ) {
+        try {
+            Long userId = (Long) authentication.getPrincipal();
+            commentService.updateComment(userId, commentId, request.getContent());
+            return ApiResponse.success(HttpStatus.OK, "댓글 수정 성공");
+
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.fail(HttpStatus.FORBIDDEN, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
+        }
+    }
+
+    /**
+     * 댓글 삭제
+     */
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<?> deleteComment(
+            @PathVariable("commentId") Long commentId,
+            Authentication authentication
+    ) {
+        try {
+            Long userId = (Long) authentication.getPrincipal();
+            commentService.deleteComment(userId, commentId);
+            return ApiResponse.success(HttpStatus.OK, "댓글 삭제 성공");
+
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.fail(HttpStatus.FORBIDDEN, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
+        }
+    }
+}
