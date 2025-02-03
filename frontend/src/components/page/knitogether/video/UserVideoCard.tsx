@@ -6,15 +6,17 @@ import Expand from '/public/svg/expandIcon.svg';
 import Crown from '/public/svg/crownIcon.svg';
 import { TVideoUser } from '@/types/user';
 import { VIDEO_USER_ROLE } from '@/lib/constants/knitogether';
+import { Publisher } from 'openvidu-browser';
 
 interface PUserVideoCard {
   user: TVideoUser;
+  stream: Publisher;
 }
 
-const UserVideoCard: React.FC<PUserVideoCard> = ({ user: { role, nickname, profileId } }) => {
+const UserVideoCard: React.FC<PUserVideoCard> = ({ user: { role, nickname, profileId }, stream }) => {
   return (
     <div className='relative overflow-hidden rounded-sm'>
-      <UserVideo />
+      <UserVideo stream={stream} />
       <div className='absolute bottom-0 flex w-full justify-between bg-modal p-2'>
         <div className='flex items-center gap-2'>
           <Avatar src={profileId} />

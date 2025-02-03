@@ -8,7 +8,7 @@ interface PVideoRoomCard {
 }
 
 const VideoRoomCard: React.FC<PVideoRoomCard> = ({
-  videoRoomPreview: { sessionId, title, hostName, hostImg, videoImg, currentUsers, maxUsers },
+  videoRoomPreview: { sessionId, title, hostNickname, hostProfileImg, videoImg, presentPeople, capacity },
 }) => {
   const router = useRouter();
   const handleVideoRoomCardClick = () => {
@@ -24,13 +24,13 @@ const VideoRoomCard: React.FC<PVideoRoomCard> = ({
         <span className='font-bold'>{title}</span>
         <div className='flex justify-between'>
           <div className='flex items-center gap-2'>
-            <Avatar src={hostImg} />
-            <span>{hostName}</span>
+            <Avatar src={hostProfileImg} />
+            <span>{hostNickname}</span>
           </div>
           <div className='flex gap-2'>
             <People />
             <span>
-              {currentUsers} / {maxUsers}
+              {presentPeople} / {capacity}
             </span>
           </div>
         </div>

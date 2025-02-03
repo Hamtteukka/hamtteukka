@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
-import { OpenVidu, Publisher, Session, SessionEventMap, StreamManager } from 'openvidu-browser';
+import { useState } from 'react';
+import { OpenVidu, Publisher, Session, StreamManager } from 'openvidu-browser';
 import { joinVideoRoom } from '@/service/openvidu/client';
 import { useLoginUser } from '@/store/loginUser';
 import { SessionEventHandler } from '@/types/openvidu';
 import { publisherProperties } from '@/lib/openvidu';
-import { useParams } from 'next/navigation';
 
 const useOpenVidu = () => {
   const [ov, setOv] = useState<OpenVidu>();
@@ -13,8 +12,6 @@ const useOpenVidu = () => {
   const [subscribers, setSubscribers] = useState<StreamManager[]>([]);
 
   const userInfo = useLoginUser();
-
-  const { sessionId } = useParams<{ sessionId: string }>();
 
   /**
    * 새로운 유저가 방에 들어왔을 때 동작하는 이벤트 핸들러
@@ -40,17 +37,16 @@ const useOpenVidu = () => {
 
   const eventHandlers: SessionEventHandler<any>[] = [handleStreamCreated, handleConnectionDestroyed];
 
-  const initOpenVidu = async () => {
+  const initOpenVidu = async (token: string) => {
     const ov = new OpenVidu();
     const session = ov.initSession();
-
     const publisher = await joinVideoRoom({
+      token,
       userInfo,
       ov,
       session,
       eventHandlers,
       publisherProperties,
-      sessionId,
     });
 
     setOv(ov);

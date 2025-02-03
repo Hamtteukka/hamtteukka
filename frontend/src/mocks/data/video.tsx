@@ -1,9 +1,14 @@
 export const MVideoRoomList: TVideoRoom[] = Array.from({ length: 16 }, () => ({
-  sessionId: `${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+  token: '1',
+  sessionId: '1',
   title: '같이 조용히 뜨개질해요',
-  hostName: '설핢',
-  hostImg: '/image/profile.png',
+  hostNickname: '설핢',
+  hostProfileImg: '/image/profile.png',
   videoImg: '/image/video_preview.png',
-  currentUsers: 4,
-  maxUsers: 8,
+  presentPeople: 4,
+  capacity: 8,
 }));
+
+export const MSessionId: TSessionId = {
+  sessionId: '1',
+};
