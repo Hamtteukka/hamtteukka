@@ -31,7 +31,7 @@ const TextResult: React.FC = () => {
           input={
             <Image
               className='rounded-sm'
-              src={patternContext.textPattern.expectedImage}
+              src={`data:image/png;base64,${patternContext.textPattern.expectedImage}`}
               alt='예상 결과'
               width={500}
               height={500}

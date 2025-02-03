@@ -5,6 +5,9 @@ import { TUserRedirectUrl } from '@/types/user';
 export const pattern = {
   generateTextPattern: async (body: TTextPatternInstruction): Promise<TResponseData<TTextPattern>> => {
     return fetch('/api/ai/description', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
       method: 'POST',
       body: JSON.stringify(body),
     }).then((res) => res.json());
@@ -34,7 +37,7 @@ export const auth = {
   getKakaoToken: async (code: string): Promise<TResponseData<TAuthRedirectUrl>> => {
     return fetch('/api/auth/kakao', {
       headers: {
-        'Content-Type': `application/json`,
+        'Content-Type': 'application/json',
       },
       method: 'POST',
       body: JSON.stringify({ code }),

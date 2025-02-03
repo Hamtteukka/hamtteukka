@@ -18,7 +18,7 @@ export interface TTextPattern {
   expectedImage: string;
 }
 export interface TDotPattern {
-  dotPattern: string;
+  dotImage: string;
 }
 
 // TODO: 도안 게시할 때

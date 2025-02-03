@@ -1,4 +1,4 @@
-import { base64img, textPattern } from '@/mocks/data/pattern';
+import { defalutBase64, textPattern } from '@/mocks/data/pattern';
 import { TDotPattern, TTextPattern } from '@/types/pattern';
 import { TResponseData } from '@/types/service';
 import { HttpResponse, StrictResponse, delay } from 'msw';
@@ -24,7 +24,7 @@ export const generateDotPattern = async (): Promise<StrictResponse<TResponseData
   return HttpResponse.json({
     status: 'success',
     message: '도트 도안 생성',
-    data: { dotPattern: base64img },
+    data: { dotImage: defalutBase64 },
   });
   // return HttpResponse.json({
   //   status: 'fail',
