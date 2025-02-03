@@ -1,10 +1,13 @@
 'use client';
 
 import Button from '@/components/ui/button/Button';
+import { useRouter } from 'next/navigation';
 
 const LeaveRoomButton: React.FC = () => {
+  const router = useRouter();
+
   const handleButtonClick = () => {
-    console.log('버튼 클릭');
+    router.push('/knitogether');
   };
 
   return (

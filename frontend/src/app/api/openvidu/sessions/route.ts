@@ -5,10 +5,12 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
 
-    const result = await fetch(`${BASE_URL}/openvidu/sessions`, {
+    const response = await fetch(`${BASE_URL}/openvidu/sessions`, {
       method: 'POST',
       body: formData,
     });
+
+    const result = await response.json();
 
     return NextResponse.json(result);
   } catch (error) {

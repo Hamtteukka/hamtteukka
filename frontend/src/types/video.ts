@@ -1,9 +1,13 @@
-interface TVideoRoom {
+interface TSessionId {
   sessionId: string;
+}
+
+interface TVideoRoom extends TSessionId {
+  token: string;
   title: string;
-  hostName: string;
-  hostImg: string;
+  hostNickname: string;
+  hostProfileImg: string;
   videoImg: string;
-  currentUsers: number;
-  maxUsers: number;
+  presentPeople: number;
+  capacity: number;
 }

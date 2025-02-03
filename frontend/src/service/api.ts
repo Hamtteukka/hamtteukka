@@ -21,14 +21,14 @@ export const pattern = {
 };
 
 export const openvidu = {
-  createSession: (formData: FormData): Promise<TResponseData<string>> => {
+  createSession: async (formData: FormData): Promise<TResponseData<TSessionId>> => {
     return fetch('/api/openvidu/sessions', {
       method: 'POST',
       body: formData,
     }).then((res) => res.json());
   },
 
-  createToken: (sessionId: string): Promise<TResponseData<string>> => {
+  createToken: async (sessionId: string): Promise<TResponseData<TVideoRoom>> => {
     return fetch(`/api/openvidu/sessions/${sessionId}/connections`).then((res) => res.json());
   },
 };
