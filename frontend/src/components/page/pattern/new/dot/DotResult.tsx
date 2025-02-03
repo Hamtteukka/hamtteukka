@@ -28,7 +28,7 @@ const DotResult: React.FC = () => {
           input={
             <Image
               className='rounded-sm'
-              src={patternContext.dotPattern.dotPattern}
+              src={`data:image/png;base64,${patternContext.dotPattern.dotImage}`}
               alt='도트 도안'
               width={500}
               height={500}
@@ -42,7 +42,7 @@ const DotResult: React.FC = () => {
           <Button onClick={openModal}>도안 게시</Button>
         </div>
       </section>
-      {isOpen && <PostPattern base64img={patternContext.dotPattern.dotPattern} />}
+      {isOpen && <PostPattern base64img={patternContext.dotPattern.dotImage} />}
     </>
   );
 };

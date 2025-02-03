@@ -44,7 +44,7 @@ const DotPatternForm: React.FC = () => {
     setIsPending(true);
     try {
       const data = await generateDotPattern(formData);
-      patternContext.setDotPattern({ dotPattern: data.dotPattern });
+      patternContext.setDotPattern({ dotImage: data.dotImage });
       subCount();
       setPatterType(PATTERN_PAGE.DOT_RESULT);
     } catch (e) {

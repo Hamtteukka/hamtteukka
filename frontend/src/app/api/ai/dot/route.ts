@@ -6,10 +6,12 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
 
-    const result = await fetch(`${baseUrl}/ai/dot`, {
+    const response = await fetch(`${baseUrl}/ai/dot`, {
       method: 'POST',
       body: formData,
     });
+
+    const result = await response.json();
 
     return NextResponse.json(result);
   } catch (error) {

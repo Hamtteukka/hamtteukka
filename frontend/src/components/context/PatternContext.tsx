@@ -14,7 +14,7 @@ export const PatternContext = createContext<PPattern | undefined>(undefined);
 
 export const PatternProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [textPattern, setTextPattern] = useState<TTextPattern>({ description: '', expectedImage: '' });
-  const [dotPattern, setDotPattern] = useState<TDotPattern>({ dotPattern: '' });
+  const [dotPattern, setDotPattern] = useState<TDotPattern>({ dotImage: '' });
 
   return (
     <PatternContext.Provider value={{ textPattern, setTextPattern, dotPattern, setDotPattern }}>

@@ -5,10 +5,15 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
 
   try {
-    const result = await fetch(`${baseUrl}/ai/description`, {
+    const response = await fetch(`${baseUrl}/ai/description`, {
+      headers: {
+        'Content-Type': `application/json`,
+      },
       method: 'POST',
-      body,
+      body: JSON.stringify(body),
     });
+
+    const result = await response.json();
 
     return NextResponse.json(result);
   } catch (error) {
