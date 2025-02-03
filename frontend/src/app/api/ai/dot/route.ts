@@ -1,12 +1,12 @@
+import { BASE_URL } from '@/lib/constants/service';
 import { NextRequest, NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
-export async function POST(req: NextRequest) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+export async function POST(request: NextRequest) {
   try {
-    const formData = await req.formData();
+    const formData = await request.formData();
 
-    const response = await fetch(`${baseUrl}/ai/dot`, {
+    const response = await fetch(`${BASE_URL}/ai/dot`, {
       method: 'POST',
       body: formData,
     });
@@ -15,7 +15,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error(error);
     return new Response('Internal Server Error', {
       status: 500,
     });

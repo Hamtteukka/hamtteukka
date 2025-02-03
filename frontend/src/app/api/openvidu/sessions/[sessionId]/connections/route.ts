@@ -1,7 +1,7 @@
 import { BASE_URL } from '@/lib/constants/service';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ sessionId: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ sessionId: string }> }) {
   try {
     const sessionId = (await params).sessionId;
     const response = await fetch(`${BASE_URL}/sessions/${sessionId}/connections`, {

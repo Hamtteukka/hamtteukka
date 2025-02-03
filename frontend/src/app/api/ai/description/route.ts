@@ -1,11 +1,11 @@
+import { BASE_URL } from '@/lib/constants/service';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(req: NextRequest) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  const body = await req.json();
+export async function POST(request: NextRequest) {
+  const body = await request.json();
 
   try {
-    const response = await fetch(`${baseUrl}/ai/description`, {
+    const response = await fetch(`${BASE_URL}/ai/description`, {
       headers: {
         'Content-Type': `application/json`,
       },
@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error(error);
     return new Response('Internal Server Error', {
       status: 500,
     });

@@ -1,9 +1,9 @@
 import { BASE_URL } from '@/lib/constants/service';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const formData = await req.formData();
+    const formData = await request.formData();
 
     const response = await fetch(`${BASE_URL}/openvidu/sessions`, {
       method: 'POST',
