@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,16 +41,21 @@ public class RoomController {
     @PostMapping(value = "/sessions", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "모각뜨 방 생성하기")
     public ResponseEntity<?> makeRoom(
-            @RequestBody(required = false) Map<String, Object> params,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value="capacity", required = false) Integer capacity,
             @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
             Authentication auth) {
-
         try {
+            System.out.println("이거 뜨냐? 뜨면 여기까진 들어옴"); // 안찍힘
             if (auth == null || auth.getPrincipal() == null) {
                 return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
             }
+            Map<String, Object> params = new HashMap<>();
 
             Long userId = (Long) auth.getPrincipal();
+            System.out.println("방 만들 때 넘어오는 USER_id : " + userId);
+            params.put("title", title);
+            params.put("capacity", capacity);
             params.put("captainId", userId); // 방 만드는 유저 (방장)
             params.put("thumbnail", thumbnail);
 
@@ -77,15 +83,19 @@ public class RoomController {
     @Operation(summary = "모각뜨 방 참여하기")
     public ResponseEntity<?> enterRoom(@PathVariable("sessionId") String sessionId, Authentication auth) {
         try {
+            System.out.println("방 참여에 들어온 것");
             if (auth == null || auth.getPrincipal() == null) {
                 return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
             }
 
-            Object principal = auth.getPrincipal();
-            Long userId = (Long) principal;
+            Long userId = (Long) auth.getPrincipal();
+            System.out.println("userId: " + userId);
 
             Session session = roomService.getActiveSession(sessionId);
             Connection connection = session.createConnection();
+            if(connection == null) {
+                return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "연결이 이루어지지 않음");
+            }
             RoomEnterResponseDto roomResponseDto = roomService.joinRoom(sessionId, userId, connection.getToken());
 
             return ApiResponse.success(HttpStatus.OK, "모각뜨 방 입장 성공", roomResponseDto);

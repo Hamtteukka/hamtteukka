@@ -12,7 +12,7 @@ import java.util.List;
 
 @RedisHash("room")
 @AllArgsConstructor
-@NoArgsConstructor // 레디스에서 자바 객체로 역직렬화 할 때 기본 생성자 필요
+@NoArgsConstructor
 @Getter
 public class Room implements Serializable {
     @Id
@@ -29,6 +29,10 @@ public class Room implements Serializable {
         this.presentPeople++;
     }
     public void addPerson(Long personId) {
+        if (this.people == null) {
+            this.people = new ArrayList<>();
+        }
         this.people.add(personId);
     }
+
 }
