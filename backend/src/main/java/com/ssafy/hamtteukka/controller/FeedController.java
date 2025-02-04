@@ -5,7 +5,6 @@ import com.ssafy.hamtteukka.dto.SavedFeedPaginationResponseDto;
 import com.ssafy.hamtteukka.security.JwtTokenProvider;
 import com.ssafy.hamtteukka.service.FeedService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,23 +21,25 @@ public class FeedController {
 
     @GetMapping("/saved-list")
     public ResponseEntity<ApiResponse<SavedFeedPaginationResponseDto>> getSavedFeeds(
-            HttpServletRequest request,
+            Authentication authentication,
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = "20") int limit) {
 
         try{
-            // JWT 토큰을 쿠키에서 가져오기
-            //String token = jwtTokenProvider.getJwtFromCookie(request);
-            //Long userId = jwtTokenProvider.getIdFromToken(token);
-            Long userId = 1L;
+
+            Long userId = (Long) authentication.getPrincipal();
 
             return ApiResponse.success(
                     HttpStatus.OK,
                     "User saved feeds retrieved successfully",
                     feedService.getSavedFeeds(userId, cursor, limit)
             );
-        } catch (Exception ex){
-            return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "Invalid or expired access token");
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.fail(HttpStatus.FORBIDDEN, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
         }
     }
 

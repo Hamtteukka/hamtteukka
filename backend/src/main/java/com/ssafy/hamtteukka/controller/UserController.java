@@ -3,11 +3,13 @@ package com.ssafy.hamtteukka.controller;
 import com.ssafy.hamtteukka.common.ApiResponse;
 import com.ssafy.hamtteukka.dto.NicknameRequestDto;
 import com.ssafy.hamtteukka.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -65,7 +67,7 @@ public class UserController {
     }
 
     @PostMapping("/subscribe")
-    public ResponseEntity<?> subscribe(@RequestBody NicknameRequestDto dto, HttpServletRequest request){
+    public ResponseEntity<?> subscribe(@RequestBody NicknameRequestDto dto, Authentication authentication){
         try {
             Optional<Long> providerId = userService.getUserIdByNickname(dto.getNickname());
 
@@ -77,10 +79,7 @@ public class UserController {
                 );
             }
 
-            // 토큰에서 구독하는 사람 ID 받아오기
-            // String token = jwtTokenProvider.getJwtFromCookie(request);
-            Long subscribeId =3L;
-            // Long subscribeId = jwtTokenProvider.getIdFromToken(token);
+            Long subscribeId = (Long) authentication.getPrincipal();
 
             return ApiResponse.success(
                     HttpStatus.OK,
@@ -88,13 +87,17 @@ public class UserController {
                     Map.of("isSubscribe",userService.subscribe(providerId.get(), subscribeId))
 
             );
-        } catch (Exception ex){
-            return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "Invalid or expired access token");
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.fail(HttpStatus.FORBIDDEN, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
         }
     }
 
     @DeleteMapping("/subscribe")
-    public ResponseEntity<?> subscribeCancle(@RequestBody NicknameRequestDto dto, HttpServletRequest request){
+    public ResponseEntity<?> subscribeCancle(@RequestBody NicknameRequestDto dto, Authentication authentication){
         try {
             Optional<Long> providerId = userService.getUserIdByNickname(dto.getNickname());
 
@@ -106,10 +109,7 @@ public class UserController {
                 );
             }
 
-            // 토큰에서 구독하는 사람 ID 받아오기
-            // String token = jwtTokenProvider.getJwtFromCookie(request);
-            Long subscribeId =3L;
-            // Long subscribeId = jwtTokenProvider.getIdFromToken(token);
+            Long subscribeId = (Long) authentication.getPrincipal();
 
             return ApiResponse.success(
                     HttpStatus.OK,
@@ -119,8 +119,12 @@ public class UserController {
             );
         } catch(NullPointerException ex){
             return ApiResponse.fail(HttpStatus.NOT_FOUND, "삭제하는 대상이 없습니다.");
-        } catch (Exception ex){
-            return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "Invalid or expired access token");
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.fail(HttpStatus.FORBIDDEN, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
         }
     }
 
