@@ -28,7 +28,7 @@ const CreateRoomDialog: React.FC = () => {
     }
 
     const formData = new FormData();
-    formData.append('image', image);
+    formData.append('thumbnail', image);
     formData.append('title', title);
     formData.append('capacity', maxUsers);
 

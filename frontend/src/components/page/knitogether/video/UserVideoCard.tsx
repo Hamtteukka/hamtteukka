@@ -6,11 +6,11 @@ import Expand from '/public/svg/expandIcon.svg';
 import Crown from '/public/svg/crownIcon.svg';
 import { TVideoUser } from '@/types/user';
 import { VIDEO_USER_ROLE } from '@/lib/constants/knitogether';
-import { Publisher } from 'openvidu-browser';
+import { Publisher, StreamManager } from 'openvidu-browser';
 
 interface PUserVideoCard {
   user: TVideoUser;
-  stream: Publisher;
+  stream: Publisher | StreamManager;
 }
 
 const UserVideoCard: React.FC<PUserVideoCard> = ({ user: { role, nickname, profileId }, stream }) => {

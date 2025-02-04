@@ -13,8 +13,4 @@ export interface TVideoUser extends TUser {
   role: TRole;
 }
 
-export interface TVideoUser extends TUser {
-  role: TRole;
-}
-
 export type TUserRedirectUrl = TUser & TAuthRedirectUrl;

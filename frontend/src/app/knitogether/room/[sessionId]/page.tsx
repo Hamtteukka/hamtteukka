@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 
 const KnitogetherRoom: React.FC = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
-  const { myStream, initOpenVidu } = useOpenVidu();
+  const { myStream, subscribers, initOpenVidu, cleanUpOpenVidu } = useOpenVidu();
   const [videoRoom, setVideoRoom] = useState<TVideoRoom>();
 
   useEffect(() => {
@@ -23,6 +23,10 @@ const KnitogetherRoom: React.FC = () => {
     };
 
     startOpenVidu();
+
+    return () => {
+      cleanUpOpenVidu();
+    };
   }, []);
 
   return (
@@ -32,6 +36,9 @@ const KnitogetherRoom: React.FC = () => {
         <LeaveRoomButton />
       </header>
       {myStream && <UserVideoCard user={MVideoUser} stream={myStream} />}
+      {subscribers.map((subscriber) => (
+        <UserVideoCard user={MVideoUser} stream={subscriber} />
+      ))}
       <div className='flex justify-center gap-3'>
         <CameraToggleButton />
         <MikeToggleButton />
