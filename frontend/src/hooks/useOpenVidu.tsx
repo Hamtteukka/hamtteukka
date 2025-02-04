@@ -13,33 +13,40 @@ const useOpenVidu = () => {
 
   const userInfo = useLoginUser();
 
-  /**
-   * 새로운 유저가 방에 들어왔을 때 동작하는 이벤트 핸들러
-   */
-  const handleStreamCreated: SessionEventHandler<'streamCreated'> = {
-    type: 'streamCreated',
-    handler: (event) => {
-      const subscriber = session!.subscribe(event.stream, undefined);
-      setSubscribers((prev) => [...prev, subscriber]);
-    },
-  };
+  const getOpenViduEventHandlers = (session: Session): SessionEventHandler<any>[] => {
+    /**
+     * 새로운 유저가 방에 들어왔을 때 동작하는 이벤트 핸들러
+     */
+    const handleStreamCreated: SessionEventHandler<'streamCreated'> = {
+      type: 'streamCreated',
+      handler: (event) => {
+        const subscriber = session.subscribe(event.stream, undefined);
+        setSubscribers((prev) => [...prev, subscriber]);
+      },
+    };
 
-  /**
-   * 어떤 유저가 방을 퇴장했을 때 동작하는 이벤트 핸들러
-   */
-  const handleConnectionDestroyed: SessionEventHandler<'connectionDestroyed'> = {
-    type: 'connectionDestroyed',
-    handler: (event) => {
-      const connectionId = event.connection.connectionId;
-      setSubscribers((prev) => prev.filter((subscriber) => subscriber.stream.connection.connectionId !== connectionId));
-    },
-  };
+    /**
+     * 어떤 유저가 방을 퇴장했을 때 동작하는 이벤트 핸들러
+     */
+    const handleConnectionDestroyed: SessionEventHandler<'connectionDestroyed'> = {
+      type: 'connectionDestroyed',
+      handler: (event) => {
+        const connectionId = event.connection.connectionId;
+        setSubscribers((prev) =>
+          prev.filter((subscriber) => subscriber.stream.connection.connectionId !== connectionId),
+        );
+      },
+    };
 
-  const eventHandlers: SessionEventHandler<any>[] = [handleStreamCreated, handleConnectionDestroyed];
+    const eventHandlers: SessionEventHandler<any>[] = [handleStreamCreated, handleConnectionDestroyed];
+    return eventHandlers;
+  };
 
   const initOpenVidu = async (token: string) => {
     const ov = new OpenVidu();
     const session = ov.initSession();
+    const eventHandlers = getOpenViduEventHandlers(session);
+
     const publisher = await joinVideoRoom({
       token,
       userInfo,
@@ -54,7 +61,14 @@ const useOpenVidu = () => {
     setMyStream(publisher);
   };
 
-  return { myStream, initOpenVidu };
+  const cleanUpOpenVidu = () => {
+    setOv(undefined);
+    setSession(undefined);
+    setMyStream(undefined);
+    setSubscribers([]);
+  };
+
+  return { myStream, subscribers, initOpenVidu, cleanUpOpenVidu };
 };
 
 export default useOpenVidu;
