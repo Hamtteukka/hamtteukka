@@ -26,13 +26,44 @@ public class FeedController {
             @RequestParam(defaultValue = "20") int limit) {
 
         try{
-
+            
             Long userId = (Long) authentication.getPrincipal();
+
+            if (userId == 0L) {
+                return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
+            }
 
             return ApiResponse.success(
                     HttpStatus.OK,
                     "User saved feeds retrieved successfully",
                     feedService.getSavedFeeds(userId, cursor, limit)
+            );
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.fail(HttpStatus.FORBIDDEN, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
+        }
+    }
+
+    @GetMapping("/saved-ai-list")
+    public ResponseEntity<ApiResponse<SavedFeedPaginationResponseDto>> getSavedAiFeeds(
+            Authentication authentication,
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "20") int limit) {
+
+        try{
+            Long userId = (Long) authentication.getPrincipal();
+
+            if (userId == 0L) {
+                return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
+            }
+
+            return ApiResponse.success(
+                    HttpStatus.OK,
+                    "User saved feeds retrieved successfully",
+                    feedService.getSavedAiFeeds(userId, cursor, limit)
             );
         } catch (EntityNotFoundException e) {
             return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());

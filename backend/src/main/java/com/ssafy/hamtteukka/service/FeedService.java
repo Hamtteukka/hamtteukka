@@ -44,6 +44,31 @@ public class FeedService {
         return new SavedFeedPaginationResponseDto(feeds, hasNextFeed, nextCursorId);
     }
 
+    /**
+     * 저장된 AI 도안 가져오기 메서드
+     *
+     * @param userId
+     * @param cursor
+     * @param limit
+     * @return
+     */
+    public SavedFeedPaginationResponseDto getSavedAiFeeds(Long userId, Long cursor, Integer limit) {
+        int pageSize = (limit != null) ? limit : 20;
+
+        Slice<SavedFeedResponseDto> slice = feedRepository.findSavedAiFeedsWithPagination(
+                userId,
+                cursor,
+                PageRequest.of(0, pageSize)
+        );
+
+        List<SavedFeedResponseDto> feeds = slice.getContent();
+        boolean hasNextFeed = slice.hasNext();
+        Long nextCursorId = hasNextFeed ? feeds.get(feeds.size() - 1).getSavedFeedId() : null;
+
+        return new SavedFeedPaginationResponseDto(feeds, hasNextFeed, nextCursorId);
+    }
+
+
     //피드 삭제
     @Transactional
     public void deleteFeed(Long userId, Long feedId) {
