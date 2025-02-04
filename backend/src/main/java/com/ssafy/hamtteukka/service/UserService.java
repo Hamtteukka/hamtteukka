@@ -2,6 +2,8 @@ package com.ssafy.hamtteukka.service;
 
 import com.ssafy.hamtteukka.common.S3FileLoader;
 import com.ssafy.hamtteukka.domain.User;
+import com.ssafy.hamtteukka.domain.UserSubscribe;
+import com.ssafy.hamtteukka.repository.SubscribeRepository;
 import com.ssafy.hamtteukka.repository.UserRepository;
 import com.ssafy.hamtteukka.security.JwtTokenProvider;
 import jakarta.servlet.http.Cookie;
@@ -15,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -25,15 +28,18 @@ public class UserService {
     private final UserRepository userRepository;
     private final S3FileLoader s3FileLoader;
     private final JwtTokenProvider jwtTokenProvider;
+    private final SubscribeRepository subscribeRepository;
 
     public UserService(
             UserRepository userRepository,
             S3FileLoader s3FileLoader,
-            JwtTokenProvider jwtTokenProvider
+            JwtTokenProvider jwtTokenProvider,
+            SubscribeRepository subscribeRepository
     ) {
         this.userRepository = userRepository;
         this.s3FileLoader = s3FileLoader;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.subscribeRepository = subscribeRepository;
     }
 
     /**
@@ -141,5 +147,57 @@ public class UserService {
         cookie.setPath("/");
         cookie.setMaxAge(maxAge);
         return cookie;
+    }
+
+    /**
+     * 닉네임으로 유저아이디 받아오기 메서드
+     *
+     * @param nickname
+     */
+    public Optional<Long> getUserIdByNickname(String nickname){;
+        return userRepository.findIdByNickname(nickname);
+    }
+
+    /**
+     * 구독 메서드
+     *
+     * @param providerId
+     * @param subscribeId
+     * @return
+     */
+    public boolean subscribe(Long providerId, Long subscribeId){
+
+        User providerUser = userRepository.getReferenceById(providerId);
+        User subscribeUser = userRepository.getReferenceById(subscribeId);
+
+        UserSubscribe savedSubscribe = subscribeRepository.save(new UserSubscribe(providerUser,subscribeUser));
+
+        return true;
+    }
+
+
+    /**
+     * 구독 해제 메서드
+     *
+     * @param providerId
+     * @param subscribeId
+     * @return
+     */
+    public boolean subscribeCancle(Long providerId, Long subscribeId){
+
+        User providerUser = userRepository.getReferenceById(providerId);
+        User subscribeUser = userRepository.getReferenceById(subscribeId);
+
+
+        Optional<Long> userSubscribeId = subscribeRepository.findIdByProviderAndSubscriber(providerUser,subscribeUser);
+
+
+        if(userSubscribeId.isEmpty()){
+            throw new NullPointerException("구독 데이터가 없습니다");
+        }
+
+        subscribeRepository.deleteById(userSubscribeId.get());
+
+        return true;
     }
 }
