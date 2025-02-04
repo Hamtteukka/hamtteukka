@@ -1,8 +1,6 @@
 package com.ssafy.hamtteukka.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,8 +8,9 @@ import lombok.Setter;
 @Getter
 public class User {
 
-    @Id //GeneratedValue x
+    @Id
     @Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 100, nullable = false)
@@ -19,11 +18,14 @@ public class User {
 
     private String profileId;
 
+    private Long kakaoId;
+
     protected User() {}
 
-    public User(Long id, String nickname, String profileId) {
+    public User(Long id, String nickname, String profileId, Long kakaoId) {
         this.id = id;
         this.nickname = nickname;
         this.profileId = profileId;
+        this.kakaoId = kakaoId;
     }
 }

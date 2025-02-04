@@ -50,6 +50,17 @@ public class OAuthService {
         this.userRepository = userRepository;
     }
 
+    public String kakaoLoginUrl() {
+        StringBuffer url = new StringBuffer();
+        url.append("https://kauth.kakao.com/oauth/authorize?");
+        url.append("client_id="+clientId);
+        url.append("&redirect_uri="+redirectUri);
+        url.append("&response_type=code");
+        url.append("&prompt=select_account");
+        return url.toString();
+    }
+
+
     /**
      * kakao Authorization code 체크 후 accessToken 발급 요청 method
      *

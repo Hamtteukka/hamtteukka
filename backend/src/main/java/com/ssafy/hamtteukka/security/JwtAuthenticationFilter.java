@@ -70,12 +70,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (UnauthorizedException e) {
-            // 토큰 겁증 실패 로직 처리
             HttpStatus status = e.getMessage().equals("Token is blacklisted. Access is forbidden.")?HttpStatus.FORBIDDEN:HttpStatus.UNAUTHORIZED;
             response.setStatus(status.value());
             response.getWriter().write(e.getMessage());
         } catch (Exception e) {
-            // 처리 에러 부분
             log.error(e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             response.getWriter().write("Internal Server Error");
