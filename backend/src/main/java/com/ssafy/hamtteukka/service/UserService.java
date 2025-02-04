@@ -2,6 +2,8 @@ package com.ssafy.hamtteukka.service;
 
 import com.ssafy.hamtteukka.common.S3FileLoader;
 import com.ssafy.hamtteukka.domain.User;
+import com.ssafy.hamtteukka.dto.UserInfoResponseDto;
+import com.ssafy.hamtteukka.dto.UserResponseDto;
 import com.ssafy.hamtteukka.domain.UserSubscribe;
 import com.ssafy.hamtteukka.repository.SubscribeRepository;
 import com.ssafy.hamtteukka.repository.UserRepository;
@@ -16,8 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Optional;
+import java.security.SignatureException;
 
 @Slf4j
 @Service
@@ -61,7 +63,7 @@ public class UserService {
      * @return DB에 등록된 사용자 엔티티
      */
     @Transactional
-    public Map<String,String> registerUser(String nickname, MultipartFile profileImage, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public UserResponseDto registerUser(String nickname, MultipartFile profileImage, HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isNicknameDuplicate(nickname)) {
             throw new IllegalArgumentException("nickname already exists");
         }
@@ -71,7 +73,7 @@ public class UserService {
             throw new IllegalArgumentException("no idCookie or invalid idToken");
         }
         log.info("idToken {}", idToken);
-        long userId = jwtTokenProvider.getIdFromToken(idToken);
+        long kakaoId = jwtTokenProvider.getIdFromToken(idToken);
         response.addCookie(generateCookie(
                 "idToken",
                 null,
@@ -82,13 +84,14 @@ public class UserService {
         String profileId = s3FileLoader.uploadFile(profileImage);
 
         User user = new User(
-                userId,
+                0L,
                 nickname,
-                profileId
-        );
+                profileId,
+                kakaoId
+                );
 
         user = userRepository.save(user);
-        String accessToken = jwtTokenProvider.generateJwt(userId, 60);
+        String accessToken = jwtTokenProvider.generateJwt(user.getId(), 60);
         log.info("accessToken: " + accessToken);
         response.addCookie(generateCookie(
                 "accessToken",
@@ -98,7 +101,7 @@ public class UserService {
                 60 * 60
         ));
 
-        String refreshToken = jwtTokenProvider.generateJwt(userId, 30*24*60);
+        String refreshToken = jwtTokenProvider.generateJwt(user.getId(), 30*24*60);
         log.info("refreshToken: " + refreshToken);
         response.addCookie(generateCookie(
                 "refreshToken",
@@ -107,10 +110,44 @@ public class UserService {
                 false,
                 7 * 24 * 60 * 60
         ));
-        return Map.of(
-                "nickname",nickname,
-                profileId,s3FileLoader.getFileUrl(profileId)
+        return new UserResponseDto(
+                user.getId(),
+                nickname,
+                s3FileLoader.getFileUrl(profileId)
         );
+    }
+
+    @Transactional
+    public UserResponseDto modifyUser(Long userId, String nickname, MultipartFile profileImage) throws SignatureException, IOException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new SignatureException("Invalid or expired access token"));
+        if (isNicknameDuplicate(nickname)) throw new IllegalArgumentException("nickname already exists");
+
+        s3FileLoader.deleteFile(user.getProfileId());
+        String newProfileId = s3FileLoader.uploadFile(profileImage);
+
+        userRepository.updateUser(userId, nickname, newProfileId);
+        return new UserResponseDto(
+                user.getId(),
+                nickname,
+                s3FileLoader.getFileUrl(newProfileId)
+        );
+    }
+
+    /**
+     * 타 유저 정보 요청 메서드
+     *
+     * @param userId
+     * @param signInId
+     * @return
+     * @throws IllegalArgumentException userId에 해당하는 유저가 없을때 발생
+     */
+    public UserInfoResponseDto getUserInfo(long userId, Long signInId) {
+        Optional<User> signUser = userRepository.findById(signInId);
+        long signUserId = signUser.isPresent()? signUser.get().getId():0;
+        UserInfoResponseDto userInfo = userRepository.findUserInfo(userId, signUserId);
+        if(userInfo == null) throw new IllegalArgumentException("user not found");
+        return userRepository.findUserInfo(userId, signUserId);
     }
 
     /**

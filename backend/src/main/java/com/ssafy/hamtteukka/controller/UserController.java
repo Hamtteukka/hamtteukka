@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.SignatureException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -66,6 +67,56 @@ public class UserController {
         }
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUserInfo(
+            @PathVariable long userId,
+            Authentication authentication
+    ) {
+        Long signInId = (Long) authentication.getPrincipal();
+        try {
+            return ApiResponse.success(
+                    HttpStatus.OK,
+                    "User information retrieved successfully",
+                    userService.getUserInfo(userId,signInId)
+            );
+        }catch (IllegalArgumentException ie) {
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, ie.getMessage());
+        }catch (Exception ex) {
+            return ApiResponse.fail(HttpStatus.BAD_REQUEST, "Bad Request");
+        }
+    }
+
+    /**
+     * 사용자 정보 수정 API
+     * @param nickname
+     * @param profileImage
+     * @param authentication
+     * @return 닉네임 및 프로필 이미지 변경 성공 시 성공 응답, 실패 시 적절한 오류 응답
+     * @throws IllegalArgumentException 닉네임 중복
+     * @throws SignatureException 인증 정보가 유효하지 않은 경우
+     * @throws Exception 기타 예외 발생 시
+     */
+    @PutMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> modifyMyInfo(
+            @RequestPart("nickname") String nickname,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
+            Authentication authentication
+    ){
+        Long userId = (Long) authentication.getPrincipal();
+        try {
+            return ApiResponse.success(
+                    HttpStatus.OK,
+                    "User information modification completed",
+                    userService.modifyUser(userId, nickname, profileImage)
+            );
+        } catch (IllegalArgumentException ex) {
+            return ApiResponse.fail(HttpStatus.CONFLICT,ex.getMessage());
+        } catch (SignatureException se) {
+            return ApiResponse.fail(HttpStatus.UNAUTHORIZED, se.getMessage());
+        } catch (Exception ex) {
+            return ApiResponse.fail(HttpStatus.BAD_REQUEST, "Bad Request");
+        }
+    }
     @PostMapping("/subscribe")
     public ResponseEntity<?> subscribe(@RequestBody NicknameRequestDto dto, Authentication authentication){
         try {
