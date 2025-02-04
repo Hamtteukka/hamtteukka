@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class UserSubscribe {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_subscribe_id", columnDefinition = "INT UNSIGNED")
     private Long id;
 

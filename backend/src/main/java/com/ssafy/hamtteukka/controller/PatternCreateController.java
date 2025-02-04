@@ -30,7 +30,7 @@ public class PatternCreateController {
         return patternCreateService.createDotPattern(request)
                 .map(response -> {
                     Map<String, Object> successResponse = new LinkedHashMap<>();
-                    successResponse.put("status", "200");
+                    successResponse.put("status", "success");
                     successResponse.put("message", "도트 도안 생성 성공");
                     successResponse.put("data", response); // DotPatternCreateResponse 객체 포함
                     return ResponseEntity.ok(successResponse);
@@ -50,7 +50,7 @@ public class PatternCreateController {
         patternCreateService.createDescription(request)
                 .subscribe(response -> {
                     Map<String, Object> successResponse = new LinkedHashMap<>();
-                    successResponse.put("status", "200");
+                    successResponse.put("status", "success");
                     successResponse.put("message", "서술형 도안 생성 성공");
                     successResponse.put("data", response); // DescriptionPatternCreateResponse 객체 포함
                     output.setResult(ResponseEntity.ok(successResponse));

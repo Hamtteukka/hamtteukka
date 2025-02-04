@@ -1,6 +1,7 @@
 package com.ssafy.hamtteukka.controller;
 
 import com.ssafy.hamtteukka.common.ApiResponse;
+import com.ssafy.hamtteukka.dto.NicknameRequestDto;
 import com.ssafy.hamtteukka.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -59,6 +61,66 @@ public class UserController {
             );
         }catch (Exception ex) {
             return ApiResponse.fail(HttpStatus.BAD_REQUEST, "Bad Request");
+        }
+    }
+
+    @PostMapping("/subscribe")
+    public ResponseEntity<?> subscribe(@RequestBody NicknameRequestDto dto, HttpServletRequest request){
+        try {
+            Optional<Long> providerId = userService.getUserIdByNickname(dto.getNickname());
+
+            // 유저가 존재하지 않는 경우 처리
+            if (providerId.isEmpty()) {
+                return ApiResponse.fail(
+                        HttpStatus.NOT_FOUND,
+                        "유저 닉네임을 찾을 수 없습니다"
+                );
+            }
+
+            // 토큰에서 구독하는 사람 ID 받아오기
+            // String token = jwtTokenProvider.getJwtFromCookie(request);
+            Long subscribeId =3L;
+            // Long subscribeId = jwtTokenProvider.getIdFromToken(token);
+
+            return ApiResponse.success(
+                    HttpStatus.OK,
+                    "구독하기 성공",
+                    Map.of("isSubscribe",userService.subscribe(providerId.get(), subscribeId))
+
+            );
+        } catch (Exception ex){
+            return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "Invalid or expired access token");
+        }
+    }
+
+    @DeleteMapping("/subscribe")
+    public ResponseEntity<?> subscribeCancle(@RequestBody NicknameRequestDto dto, HttpServletRequest request){
+        try {
+            Optional<Long> providerId = userService.getUserIdByNickname(dto.getNickname());
+
+            // 유저가 존재하지 않는 경우 처리
+            if (providerId.isEmpty()) {
+                return ApiResponse.fail(
+                        HttpStatus.NOT_FOUND,
+                        "유저 닉네임을 찾을 수 없습니다"
+                );
+            }
+
+            // 토큰에서 구독하는 사람 ID 받아오기
+            // String token = jwtTokenProvider.getJwtFromCookie(request);
+            Long subscribeId =3L;
+            // Long subscribeId = jwtTokenProvider.getIdFromToken(token);
+
+            return ApiResponse.success(
+                    HttpStatus.OK,
+                    "구독 취소하기 성공",
+                    Map.of("isSubscribeCancle",userService.subscribeCancle(providerId.get(), subscribeId))
+
+            );
+        } catch(NullPointerException ex){
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, "삭제하는 대상이 없습니다.");
+        } catch (Exception ex){
+            return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "Invalid or expired access token");
         }
     }
 

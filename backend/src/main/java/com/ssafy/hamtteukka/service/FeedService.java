@@ -1,12 +1,17 @@
 package com.ssafy.hamtteukka.service;
 
 import com.ssafy.hamtteukka.domain.Feed;
+import com.ssafy.hamtteukka.dto.SavedFeedPaginationResponseDto;
+import com.ssafy.hamtteukka.dto.SavedFeedResponseDto;
 import com.ssafy.hamtteukka.repository.FeedRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -14,6 +19,30 @@ import org.springframework.transaction.annotation.Transactional;
 public class FeedService {
 
     private final FeedRepository feedRepository;
+
+    /**
+     * 저장된 게시물 가져오기 메서드
+     *
+     * @param userId
+     * @param cursor
+     * @param limit
+     * @return
+     */
+    public SavedFeedPaginationResponseDto getSavedFeeds(Long userId, Long cursor, Integer limit) {
+        int pageSize = (limit != null) ? limit : 20;
+
+        Slice<SavedFeedResponseDto> slice = feedRepository.findSavedFeedsWithPagination(
+                userId,
+                cursor,
+                PageRequest.of(0, pageSize)
+        );
+
+        List<SavedFeedResponseDto> feeds = slice.getContent();
+        boolean hasNextFeed = slice.hasNext();
+        Long nextCursorId = hasNextFeed ? feeds.get(feeds.size() - 1).getSavedFeedId() : null;
+
+        return new SavedFeedPaginationResponseDto(feeds, hasNextFeed, nextCursorId);
+    }
 
     //피드 삭제
     @Transactional
@@ -30,5 +59,4 @@ public class FeedService {
         // 3. 피드 삭제 (연관된 댓글, 저장된 피드도 함께 삭제)
         feedRepository.delete(feed);
     }
-
 }
