@@ -11,7 +11,7 @@ public class RoomEnterResponseDto {
     private String title;
     private int presentPeople;
     private int capacity;
-    //   private String videoImg;
+    private String videoImg;
     private String hostNickName;
-    //   private String hostProfileImg; // 바뀔 수 있다.
+    private String hostProfileImg; // 바뀔 수 있다.
 }

@@ -67,4 +67,22 @@ public class S3FileLoader {
     private String generateFileName(MultipartFile file) {
         return UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
     }
+
+    /**
+     * S3에서 파일 삭제
+     *
+     * @param fileName 삭제할 파일명
+     */
+    public void deleteFile(String fileName) {
+        try {
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .build();
+
+            s3Client.deleteObject(deleteObjectRequest);
+        } catch (S3Exception e) {
+            throw new RuntimeException("S3 파일 삭제 실패: " + e.getMessage(), e);
+        }
+    }
 }
