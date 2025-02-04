@@ -85,22 +85,4 @@ public class JwtTokenProvider {
         return claims.getExpiration().getTime();
     }
 
-    /**
-     * Cookie에서 Token 추출 메서드
-     * @param request
-     * @return 쿠키에서 추출한 jwt 토큰
-     */
-
-    public String getJwtFromCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if(cookies != null) {
-            for (Cookie cookie : cookies) {
-                if("accessToken".equals(cookie.getName())) {
-                    return cookie.getValue(); // jwt 토큰 반환
-                }
-            }
-        }
-        return null;
-    }
-
 }

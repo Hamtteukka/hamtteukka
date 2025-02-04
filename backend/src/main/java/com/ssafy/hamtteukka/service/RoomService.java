@@ -1,5 +1,6 @@
 package com.ssafy.hamtteukka.service;
 
+import com.ssafy.hamtteukka.common.S3FileLoader;
 import com.ssafy.hamtteukka.domain.Room;
 import com.ssafy.hamtteukka.domain.User;
 import com.ssafy.hamtteukka.dto.RoomEnterResponseDto;
@@ -15,7 +16,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,6 +29,7 @@ import java.util.Optional;
 public class RoomService extends OpenVidu {
     private static final String ROOM_PREFIX = "room";
     private final UserRepository userRepository;
+    private final S3FileLoader s3FileLoader;
 
     @Autowired
     @Qualifier("roomRedisTemplate")
@@ -35,9 +39,10 @@ public class RoomService extends OpenVidu {
     private RedisTemplate roomRedisTemplate;
 
     @Autowired
-    public RoomService(@Value("${OPENVIDU_URL}")String hostname, @Value("${OPENVIDU_SECRET}") String secret, UserRepository userRepository) {
+    public RoomService(@Value("${OPENVIDU_URL}")String hostname, @Value("${OPENVIDU_SECRET}") String secret, UserRepository userRepository, S3FileLoader s3FileLoader) {
         super(hostname, secret);
         this.userRepository = userRepository;
+        this.s3FileLoader = s3FileLoader;
     }
 
     public Session createSession(SessionProperties properties) throws OpenViduJavaClientException, OpenViduHttpException {
@@ -46,20 +51,29 @@ public class RoomService extends OpenVidu {
     }
 
 
-    public RoomResponseDto createRoom(String sessionId, Map<String, Object> params) {
+    public RoomResponseDto createRoom(String sessionId, Map<String, Object> params) throws IOException {
         String nickname = null;
+        String userProfile = null;
+        List<Long> peopleIds = null;
+        String thumbnailName = null;
+
         String title = (String) params.get("title");
         int capacity = (Integer) params.get("capacity");
         Long userId = (Long) params.get("captainId");
+        MultipartFile thumbnail = (MultipartFile) params.get("thumbnail");
+
+        thumbnailName = s3FileLoader.uploadFile(thumbnail); // filename
 
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             nickname = user.get().getNickname();
+            userProfile = s3FileLoader.getFileUrl(user.get().getProfileId());
+            peopleIds.add(userId);
         }
 
-        Room room = new Room(sessionId, title, 1, capacity, "sample");
+        Room room = new Room(sessionId, title, 1, capacity, thumbnailName, nickname, userProfile, peopleIds);
         redisTemplate.opsForHash().put(ROOM_PREFIX, sessionId, room);
-        RoomResponseDto roomResponseDto = new RoomResponseDto(sessionId, title, 1, capacity, "sample");
+        RoomResponseDto roomResponseDto = new RoomResponseDto(sessionId);
 
         return roomResponseDto;
     }
@@ -74,7 +88,13 @@ public class RoomService extends OpenVidu {
         room.incrementPresentPeople();
 
         roomRedisTemplate.opsForHash().put(ROOM_PREFIX, sessionId, room);
-        RoomEnterResponseDto roomResponseDto = new RoomEnterResponseDto(tokens, sessionId, room.getTitle(), room.getPresentPeople(), room.getCapacity(), room.getHostNickName());
+
+        String thumbNailName = room.getThumbnailName();
+        String thumbNailUrl = s3FileLoader.getFileUrl(thumbNailName); // 프론트에 URL 넘겨주기
+
+        RoomEnterResponseDto roomResponseDto = new RoomEnterResponseDto(tokens, sessionId, room.getTitle(), room.getPresentPeople(),
+                room.getCapacity(), thumbNailUrl, room.getHostNickName() ,room.getHostProfileImg());
+
         return roomResponseDto;
     }
 
@@ -88,14 +108,17 @@ public class RoomService extends OpenVidu {
         return room;
     }
 
-    public void exitRoom(String sessionId, Long socialId) {
+    public void exitRoom(String sessionId, Long userId) {
         Room room = getRoom(sessionId);
         List<Long> people = room.getPeople();
+        Optional<Long> roomHostId = userRepository.findIdByNickname(room.getHostNickName());
 
-        people.remove(socialId);
+        people.remove(userId);
 
-        if(people.size() == 0) {
+        if(people.size() == 0 || roomHostId.equals(userId)) {
             redisTemplate.opsForHash().delete(ROOM_PREFIX, sessionId);
+            s3FileLoader.deleteFile(room.getThumbnailName());
+
         } else {
             redisTemplate.opsForHash().put(ROOM_PREFIX, sessionId, people);
         }

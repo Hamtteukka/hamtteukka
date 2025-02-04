@@ -20,18 +20,10 @@ public class Room implements Serializable {
     private String title;
     private int presentPeople;
     private int capacity;
-   // private String videoImg;
+    private String thumbnailName;
     private String hostNickName;
-   // private String hostProfileImg; // 바뀔 수 있다.
+    private String hostProfileImg; // 바뀔 수 있다.
     private List<Long> people = new ArrayList<>();
-
-    public Room(String sessionId, String title, int presentPeople, int capacity, String hostNickName) {
-        this.sessionId = sessionId;
-        this.title = title;
-        this.presentPeople = presentPeople;
-        this.capacity = capacity;
-        this.hostNickName = hostNickName;
-    }
 
     public void incrementPresentPeople() {
         this.presentPeople++;
