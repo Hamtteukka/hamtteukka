@@ -1,4 +1,5 @@
 import { BASE_URL } from '@/lib/constants/service';
+import { getAuthCookies } from '@/util/cookies';
 import { NextRequest, NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
@@ -12,7 +13,15 @@ export async function GET(req: NextRequest) {
       limit,
     });
 
+    const cookiesHeader = getAuthCookies();
+    if (!cookiesHeader) {
+      throw new Error('Unauthorized: Missing cookies');
+    }
+
     const result = await fetch(`${BASE_URL}/feeds/saved-ai-list?${params}`, {
+      headers: {
+        Cookie: cookiesHeader,
+      },
       cache: 'no-store',
       credentials: 'same-origin',
     });
