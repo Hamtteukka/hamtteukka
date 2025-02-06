@@ -141,7 +141,7 @@ public class OAuthService {
      *    - 메인 페이지 URL을 리턴
      */
     public Map<String,Object> handleKakaoLogin(long id, HttpServletResponse response) {
-        Optional<User> user = userRepository.findById(id);
+        Optional<User> user = userRepository.findByKakaoId(id);
         if (user.isEmpty()) {
             String idToken = jwtTokenProvider.generateJwt(id,5);
             log.info("idToken: " + idToken);

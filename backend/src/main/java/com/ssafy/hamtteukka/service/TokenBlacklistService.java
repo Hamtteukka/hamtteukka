@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class TokenBlacklistService {
-    private final String BLACKLIST_REDIS_KEY = "blacklist";
+    private final String BLACKLIST_REDIS_KEY = "blacklist:";
     private final RedisTemplate<String, String> redisTemplate;
 
     public TokenBlacklistService(@Qualifier("userRedisTemplate") RedisTemplate<String, String> redisTemplate) {

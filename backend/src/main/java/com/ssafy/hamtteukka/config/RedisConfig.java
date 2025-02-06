@@ -21,7 +21,6 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        System.out.println(host + ":" + port);
         return new LettuceConnectionFactory(host, port);
     }
 
@@ -40,14 +39,12 @@ public class RedisConfig {
 
     @Bean
     @Qualifier("userRedisTemplate")
-    public RedisTemplate<?,?> userRedisTemplate() {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+    public RedisTemplate<?, ?> userRedisTemplate() {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory());
 
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Room.class));
-        redisTemplate.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(Room.class));
-        return redisTemplate;
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+        return template;
     }
 }
