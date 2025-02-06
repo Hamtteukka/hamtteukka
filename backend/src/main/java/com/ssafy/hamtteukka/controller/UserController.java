@@ -209,4 +209,13 @@ public class UserController {
         );
     }
 
+    @GetMapping("/myinfo")
+    public ResponseEntity<?> getMyInfo(Authentication authentication){
+        try {
+            Long userId = (Long) authentication.getPrincipal();
+            return ApiResponse.success(HttpStatus.OK,"",userService.getUserInfo(userId,userId));
+        }catch (IllegalArgumentException ie){
+            return ApiResponse.fail(HttpStatus.UNAUTHORIZED, ie.getMessage());
+        }catch (Exception e){return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "Invalid or expired access token");}
+    }
 }
