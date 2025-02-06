@@ -5,6 +5,7 @@ import com.ssafy.hamtteukka.domain.User;
 import com.ssafy.hamtteukka.dto.UserInfoResponseDto;
 import com.ssafy.hamtteukka.dto.UserResponseDto;
 import com.ssafy.hamtteukka.domain.UserSubscribe;
+import com.ssafy.hamtteukka.dto.UserSubscriptionResponseDto;
 import com.ssafy.hamtteukka.repository.SubscribeRepository;
 import com.ssafy.hamtteukka.repository.UserRepository;
 import com.ssafy.hamtteukka.security.JwtTokenProvider;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.security.SignatureException;
 
@@ -236,5 +238,32 @@ public class UserService {
         subscribeRepository.deleteById(userSubscribeId.get());
 
         return true;
+    }
+
+    /**
+     * 구독 목록 가져오기 메서드
+     *
+     * @param userId
+     * @return
+     */
+    public List<UserSubscriptionResponseDto> getSubscription(Long userId){
+        User subscriber = userRepository.getReferenceById(userId);
+
+        List<User> subscribedUsers = subscribeRepository.findProvider(subscriber);
+
+        return subscribedUsers.stream()
+                .map(user -> new UserSubscriptionResponseDto(user.getNickname(),user.getProfileId(),getSubscriberCount(user)))
+                .toList();
+
+    };
+
+    /**
+     * 구독자 수 가져오기 메서드
+     *
+     * @param user
+     * @return
+     */
+    private int getSubscriberCount(User user){
+        return subscribeRepository.countByProvider(user);
     }
 }

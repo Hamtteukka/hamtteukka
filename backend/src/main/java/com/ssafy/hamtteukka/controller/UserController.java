@@ -2,7 +2,9 @@ package com.ssafy.hamtteukka.controller;
 
 import com.ssafy.hamtteukka.common.ApiResponse;
 import com.ssafy.hamtteukka.dto.NicknameRequestDto;
+import com.ssafy.hamtteukka.dto.UserSubscriptionResponseDto;
 import com.ssafy.hamtteukka.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.SignatureException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -118,19 +121,23 @@ public class UserController {
         }
     }
     @PostMapping("/subscribe")
+    @Operation(summary = "구독하기")
     public ResponseEntity<?> subscribe(@RequestBody NicknameRequestDto dto, Authentication authentication){
         try {
             Optional<Long> providerId = userService.getUserIdByNickname(dto.getNickname());
 
-            // 유저가 존재하지 않는 경우 처리
             if (providerId.isEmpty()) {
                 return ApiResponse.fail(
                         HttpStatus.NOT_FOUND,
-                        "유저 닉네임을 찾을 수 없습니다"
+                        "구독할 사람을 찾을 수 없습니다"
                 );
             }
 
             Long subscribeId = (Long) authentication.getPrincipal();
+
+            if (subscribeId == 0L) {
+                return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
+            }
 
             return ApiResponse.success(
                     HttpStatus.OK,
@@ -148,19 +155,23 @@ public class UserController {
     }
 
     @DeleteMapping("/subscribe")
+    @Operation(summary = "구독 취소하기")
     public ResponseEntity<?> subscribeCancle(@RequestBody NicknameRequestDto dto, Authentication authentication){
         try {
             Optional<Long> providerId = userService.getUserIdByNickname(dto.getNickname());
 
-            // 유저가 존재하지 않는 경우 처리
             if (providerId.isEmpty()) {
                 return ApiResponse.fail(
                         HttpStatus.NOT_FOUND,
-                        "유저 닉네임을 찾을 수 없습니다"
+                        "구독할 사람을 찾을 수 없습니다"
                 );
             }
 
             Long subscribeId = (Long) authentication.getPrincipal();
+
+            if (subscribeId == 0L) {
+                return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
+            }
 
             return ApiResponse.success(
                     HttpStatus.OK,
@@ -177,6 +188,25 @@ public class UserController {
         } catch (Exception e) {
             return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
         }
+    }
+
+
+    @GetMapping("/subscription")
+    @Operation(summary = "구독한 유저 리스트 불러오기")
+    public ResponseEntity<?> getSubscribedUsers(Authentication authentication) {
+        Long subscribeId = (Long) authentication.getPrincipal();
+
+        if (subscribeId == 0L) {
+            return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
+        }
+
+        List<UserSubscriptionResponseDto> response = userService.getSubscription(subscribeId);
+
+        return ApiResponse.success(
+                HttpStatus.OK,
+                "구독 유저 받아오기 완료",
+                Map.of("subscribers",response)
+        );
     }
 
 }
