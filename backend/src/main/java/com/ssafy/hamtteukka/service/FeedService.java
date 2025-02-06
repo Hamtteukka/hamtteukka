@@ -3,6 +3,8 @@ package com.ssafy.hamtteukka.service;
 import com.ssafy.hamtteukka.common.S3FileLoader;
 import com.ssafy.hamtteukka.domain.Category;
 import com.ssafy.hamtteukka.domain.Feed;
+import com.ssafy.hamtteukka.dto.FeedPaginationResponseDto;
+import com.ssafy.hamtteukka.dto.FeedResponseDto;
 import com.ssafy.hamtteukka.domain.FeedImage;
 import com.ssafy.hamtteukka.domain.User;
 import com.ssafy.hamtteukka.dto.FeedCreateRequest;
@@ -104,6 +106,26 @@ public class FeedService {
 
         // 3. 피드 삭제 (연관된 댓글, 저장된 피드도 함께 삭제)
         feedRepository.delete(feed);
+    }
+
+    public FeedPaginationResponseDto getFeedsByUserId(Long userId, Long cursor, int limit) {
+        Slice<FeedResponseDto> feeds = feedRepository.findFeedsByUserIdWithCursor(
+                userId, cursor, PageRequest.of(0, limit)
+        );
+        return new FeedPaginationResponseDto(
+                feeds.getContent(), feeds.hasNext(),
+                feeds.hasNext() ? feeds.getContent().get(feeds.getContent().size() - 1).getFeedId() : null
+        );
+    }
+
+    public FeedPaginationResponseDto getAIFeedsByUserId(Long userId, Long cursor, int limit) {
+        Slice<FeedResponseDto> feeds = feedRepository.findAIFeedsByUserIdWithCursor(
+                userId, cursor, PageRequest.of(0, limit)
+        );
+        return new FeedPaginationResponseDto(
+                feeds.getContent(), feeds.hasNext(),
+                feeds.hasNext() ? feeds.getContent().get(feeds.getContent().size() - 1).getFeedId() : null
+        );
     }
 
     /**

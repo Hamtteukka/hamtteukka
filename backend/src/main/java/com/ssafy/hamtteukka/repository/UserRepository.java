@@ -13,9 +13,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByKakaoId(Long id);
     Optional<User> findById(Long id);
 
-    boolean existsByNickname(String nickname);
+    Optional<User> findByKakaoId(Long kakaoId);
 
+    boolean existsByNickname(String nickname);
     // 닉네임으로 유저아이디 받아오기
+
     @Query("SELECT u.id FROM User u WHERE u.nickname = :nickname")
     Optional<Long> findIdByNickname(@Param("nickname") String nickname);
 

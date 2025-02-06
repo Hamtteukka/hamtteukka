@@ -12,19 +12,26 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class PatternCreateService {
-
     private final WebClient webClient;
+    private final RateLimiterService rateLimiterService;
 
-    public PatternCreateService(WebClient.Builder webClientBuilder, @Value("${AI_URL}")String aiUrl) {
+    public PatternCreateService(
+            WebClient.Builder webClientBuilder,
+            @Value("${AI_URL}")String aiUrl,
+            RateLimiterService rateLimiterService
+    ) {
         this.webClient = webClientBuilder
                 .baseUrl(aiUrl)
                 .codecs(configurer -> configurer
                         .defaultCodecs()
                         .maxInMemorySize(10 * 1024 * 1024))
                 .build();
+        this.rateLimiterService = rateLimiterService;
     }
 
-    public Mono<DotPatternCreateResponse> createDotPattern(DotPatternCreateRequest request) {
+    public Mono<DotPatternCreateResponse> createDotPattern(DotPatternCreateRequest request,Long userId) {
+        if(userId == 0) throw new IllegalArgumentException("Invalid or expired access token");
+        if(!rateLimiterService.isRequestAllowed(userId)) throw new UnsupportedOperationException("today request not allowed");
         MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
         bodyBuilder.part("file", request.getFile().getResource())
                 .filename(request.getFile().getOriginalFilename());
@@ -40,7 +47,9 @@ public class PatternCreateService {
                 .bodyToMono(DotPatternCreateResponse.class);
     }
 
-    public Mono<DescriptionPatternCreateResponse> createDescription(DescriptionPatternCreateRequest request){
+    public Mono<DescriptionPatternCreateResponse> createDescription(DescriptionPatternCreateRequest request,Long userId) {
+        if(userId == 0) throw new IllegalArgumentException("Invalid or expired access token");
+        if(!rateLimiterService.isRequestAllowed(userId)) throw new UnsupportedOperationException("today request not allowed");
         return webClient.post()
                 .uri("/ai/description")
                 .body(Mono.just(request), DescriptionPatternCreateRequest.class)
