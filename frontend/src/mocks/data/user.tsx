@@ -5,6 +5,7 @@ export const MUser: TUser = {
   userId: '1',
   nickname: '설핢',
   profileId: '/image/profile.png',
+  dailyCreationLimit: 3,
 };
 
 export const MVideoUser: TVideoUser = {

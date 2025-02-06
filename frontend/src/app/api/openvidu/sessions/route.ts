@@ -1,18 +1,23 @@
 import { BASE_URL } from '@/lib/constants/service';
-import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+import { getAuthCookies } from '@/util/cookies';
 
+/**
+ * 방 생성 API 요청
+ */
 export async function POST(request: NextRequest) {
-  const cookieStore = cookies();
-  const accessToken = cookieStore.get('accessToken')?.value;
-  const refreshToken = cookieStore.get('refreshToken')?.value;
-
   try {
     const formData = await request.formData();
 
+    // 쿠키 헤더 가져오기
+    const cookiesHeader = getAuthCookies();
+    if (!cookiesHeader) {
+      throw new Error('Unauthorized: Missing cookies');
+    }
+
     const response = await fetch(`${BASE_URL}/openvidu/sessions`, {
       headers: {
-        Cookie: `accessToken=${accessToken};refreshToken=${refreshToken};`,
+        Cookie: cookiesHeader,
       },
       method: 'POST',
       body: formData,
@@ -23,6 +28,45 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
   } catch (error) {
     console.error(error);
+
+    if (error instanceof Error) {
+      return new Response(error.message, { status: 500 });
+    }
+
+    return new Response('Internal Server Error', {
+      status: 500,
+    });
+  }
+}
+
+/**
+ * 방 목록 조회 API 요청
+ */
+export async function GET() {
+  try {
+    // 쿠키 헤더 가져오기
+    const cookiesHeader = getAuthCookies();
+    if (!cookiesHeader) {
+      throw new Error('Unauthorized: Missing cookies');
+    }
+
+    const response = await fetch(`${BASE_URL}/openvidu/sessions`, {
+      headers: {
+        Cookie: cookiesHeader,
+      },
+      cache: 'no-store',
+    });
+
+    const result = await response.json();
+
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error(error);
+
+    if (error instanceof Error) {
+      return new Response(error.message, { status: 500 });
+    }
+
     return new Response('Internal Server Error', {
       status: 500,
     });

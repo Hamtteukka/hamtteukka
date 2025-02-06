@@ -10,12 +10,14 @@ export const pattern = {
       },
       method: 'POST',
       body: JSON.stringify(body),
+      credentials: 'include',
     }).then((res) => res.json());
   },
   generateDotPattern: async (formData: FormData): Promise<TResponseData<TDotPattern>> => {
     return fetch('/api/ai/dot', {
       method: 'POST',
       body: formData,
+      credentials: 'include',
     }).then((res) => res.json());
   },
 };
@@ -25,11 +27,27 @@ export const openvidu = {
     return fetch('/api/openvidu/sessions', {
       method: 'POST',
       body: formData,
+      credentials: 'include',
     }).then((res) => res.json());
   },
 
   createToken: async (sessionId: string): Promise<TResponseData<TVideoRoom>> => {
-    return fetch(`/api/openvidu/sessions/${sessionId}/connections`).then((res) => res.json());
+    return fetch(`/api/openvidu/sessions/${sessionId}/connections`, {
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
+  getVideoRoomList: async (): Promise<TResponseData<TVideoRoom[]>> => {
+    return fetch('/api/openvidu/sessions', {
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
+  leaveVideoRoom: async (sessionId: string) => {
+    return fetch(`/api/openvidu/sessions/${sessionId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    }).then((res) => res.json());
   },
 };
 

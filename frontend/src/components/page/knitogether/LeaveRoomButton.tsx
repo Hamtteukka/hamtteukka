@@ -1,12 +1,15 @@
 'use client';
 
 import Button from '@/components/ui/button/Button';
-import { useRouter } from 'next/navigation';
+import { leaveVideoRoom } from '@/service/openvidu';
+import { useParams, useRouter } from 'next/navigation';
 
 const LeaveRoomButton: React.FC = () => {
   const router = useRouter();
+  const { sessionId } = useParams<{ sessionId: string }>();
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
+    await leaveVideoRoom(sessionId);
     router.push('/knitogether');
   };
 
