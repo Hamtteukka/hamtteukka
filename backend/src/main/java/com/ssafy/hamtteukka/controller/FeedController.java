@@ -4,6 +4,7 @@ import com.ssafy.hamtteukka.common.ApiResponse;
 import com.ssafy.hamtteukka.dto.SavedFeedPaginationResponseDto;
 import com.ssafy.hamtteukka.security.JwtTokenProvider;
 import com.ssafy.hamtteukka.service.FeedService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ public class FeedController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("/saved-list")
+    @Operation(summary = "저장된 게시물 불러오기")
     public ResponseEntity<ApiResponse<SavedFeedPaginationResponseDto>> getSavedFeeds(
             Authentication authentication,
             @RequestParam(required = false) Long cursor,
@@ -48,6 +50,7 @@ public class FeedController {
     }
 
     @GetMapping("/saved-ai-list")
+    @Operation(summary = "저장된 AI 도안 불러오기")
     public ResponseEntity<ApiResponse<SavedFeedPaginationResponseDto>> getSavedAiFeeds(
             Authentication authentication,
             @RequestParam(required = false) Long cursor,
