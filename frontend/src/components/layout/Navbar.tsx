@@ -3,7 +3,7 @@ import AlertIcon from '/public/svg/alertIcon.svg';
 import logo from '/public/logo/logo.png';
 import { navigationList } from '@/lib/navigation';
 import NavItem from './NavItem';
-import KakaoAuthButton from '@/components/page/auth/KaKaoAuthButton';
+import KakaoAuthButton from '@/components/page/auth/KakaoAuthButton';
 
 const Navbar: React.FC = () => {
   const isLogin = false;

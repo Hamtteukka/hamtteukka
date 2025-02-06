@@ -14,3 +14,15 @@ export const createOpenViduConnection = async (sessionId: string): Promise<TVide
 
   return data;
 };
+
+export const getVideoRoomList = async (): Promise<TVideoRoom[]> => {
+  const { status, message, data } = await openvidu.getVideoRoomList();
+  if (status !== SUCCESS) throw new Error(message);
+
+  return data;
+};
+
+export const leaveVideoRoom = async (sessionId: string) => {
+  const { status, message } = await openvidu.leaveVideoRoom(sessionId);
+  if (status !== SUCCESS) throw new Error(message);
+};

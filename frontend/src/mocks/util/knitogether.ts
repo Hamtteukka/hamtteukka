@@ -1,5 +1,5 @@
 import { HttpResponse, StrictResponse, delay } from 'msw';
-import { TResponseData } from '@/types/service';
+import { TResponse, TResponseData } from '@/types/service';
 import { MSessionId, MVideoRoomList } from '@/mocks/data/video';
 
 export const createOpenViduSession = async (): Promise<StrictResponse<TResponseData<TSessionId>>> => {
@@ -19,5 +19,24 @@ export const createOpenViduConnection = async (): Promise<StrictResponse<TRespon
     status: 'success',
     message: '성공적으로 방에 접속하였습니다.',
     data: MVideoRoomList[0],
+  });
+};
+
+export const getVideoRoomList = async (): Promise<StrictResponse<TResponseData<TVideoRoom[]>>> => {
+  await delay(3000);
+
+  return HttpResponse.json({
+    status: 'success',
+    message: '비디오 방 목록을 성공적으로 가져왔습니다.',
+    data: MVideoRoomList,
+  });
+};
+
+export const leaveVideoRoom = async (): Promise<StrictResponse<TResponse>> => {
+  await delay(3000);
+
+  return HttpResponse.json({
+    status: 'success',
+    message: '성공적으로 방을 퇴장하였습니다.',
   });
 };

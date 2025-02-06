@@ -28,11 +28,15 @@ export const joinVideoRoom = async ({
   session,
   eventHandlers,
   publisherProperties,
-}: PSessionInfo): Promise<Publisher> => {
-  await addSessionEventListeners(session, eventHandlers);
-  await connectToSession(session, token, userInfo);
-  const publisher = await initPublisher(ov, session, publisherProperties);
-  return publisher;
+}: PSessionInfo): Promise<any> => {
+  try {
+    await addSessionEventListeners(session, eventHandlers);
+    await connectToSession(session, token, userInfo);
+    const publisher = await initPublisher(ov, session, publisherProperties);
+    return publisher;
+  } catch (e) {
+    console.error('실시간 연결 에러: ' + e);
+  }
 };
 
 /**
@@ -56,6 +60,7 @@ const addSessionEventListeners = async (
  * @param userInfo
  */
 const connectToSession = async (session: Session, token: string, userInfo: TUser) => {
+  console.error('connectToSession 함수입니다!!');
   await session.connect(token, userInfo);
 };
 

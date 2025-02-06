@@ -6,10 +6,12 @@ import Button from '@/components/ui/button/Button';
 import TextInput from '@/components/ui/input/TextInput';
 import { useState } from 'react';
 import { signUp } from '@/service/auth';
+import { useRouter } from 'next/navigation';
 
 const SignUpForm: React.FC = () => {
   const [image, setImage] = useState<File | null>(null);
   const [nickname, setNickname] = useState<string>();
+  const router = useRouter();
 
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value);
@@ -27,6 +29,7 @@ const SignUpForm: React.FC = () => {
 
     try {
       await signUp(formData);
+      router.replace('/');
     } catch (e) {
       alert('회원가입 중 문제가 발생했습니다.');
     }
