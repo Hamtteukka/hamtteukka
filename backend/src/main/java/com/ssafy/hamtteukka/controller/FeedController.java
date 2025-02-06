@@ -123,4 +123,30 @@ public class FeedController {
     /**
      * 피드 수정(후순위)
      */
+
+    @GetMapping("/{userId}/list")
+    public ResponseEntity<?> getFeedsByUserId(
+            @PathVariable("userId") Long userId,
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "20") int limit){
+        try {
+            return ApiResponse.success(HttpStatus.OK,"User feeds retrieved successfully",
+                    feedService.getFeedsByUserId(userId,cursor,limit));
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.BAD_REQUEST, "Bad request");
+        }
+    }
+
+    @GetMapping("/{userId}/ai-list")
+    public ResponseEntity<?> getAIFeedsByUserId(
+            @PathVariable("userId") Long userId,
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "20") int limit){
+        try {
+            return ApiResponse.success(HttpStatus.OK,"User ai feeds retrieved successfully",
+                    feedService.getAIFeedsByUserId(userId,cursor,limit));
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.BAD_REQUEST, "Bad request");
+        }
+    }
 }
