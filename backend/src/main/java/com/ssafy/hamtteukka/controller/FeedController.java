@@ -1,16 +1,22 @@
 package com.ssafy.hamtteukka.controller;
 
 import com.ssafy.hamtteukka.common.ApiResponse;
+import com.ssafy.hamtteukka.dto.FeedCreateRequest;
+import com.ssafy.hamtteukka.dto.FeedCreateResponse;
 import com.ssafy.hamtteukka.dto.SavedFeedPaginationResponseDto;
-import com.ssafy.hamtteukka.security.JwtTokenProvider;
 import com.ssafy.hamtteukka.service.FeedService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/feeds")
@@ -18,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 public class FeedController {
 
     private final FeedService feedService;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("/saved-list")
     @Operation(summary = "저장된 게시물 불러오기")
@@ -28,7 +33,7 @@ public class FeedController {
             @RequestParam(defaultValue = "20") int limit) {
 
         try{
-            
+
             Long userId = (Long) authentication.getPrincipal();
 
             if (userId == 0L) {
@@ -78,6 +83,7 @@ public class FeedController {
     }
 
     @DeleteMapping("/{feedId}")
+    @Operation(summary = "피드 삭제하기")
     public ResponseEntity<?> deleteFeed(
             @PathVariable("feedId") Long feedId,
             Authentication authentication
@@ -96,9 +102,23 @@ public class FeedController {
         }
     }
 
-    /**
-     * 피드 저장(on/off)
-     */
+    @PostMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @Operation(summary = "피드 생성하기")
+    public ResponseEntity<?> createFeed(
+            @Valid @ModelAttribute FeedCreateRequest request,
+            Authentication authentication
+    ) {
+        try {
+            Long userId = (Long) authentication.getPrincipal();
+            FeedCreateResponse response = feedService.createFeed(userId, request);
+            return ApiResponse.success(HttpStatus.CREATED, "피드 생성 성공", response);
+
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.fail(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
+        }
+    }
 
     /**
      * 피드 수정(후순위)
