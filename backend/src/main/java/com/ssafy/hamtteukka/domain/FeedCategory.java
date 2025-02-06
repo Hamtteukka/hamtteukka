@@ -21,4 +21,10 @@ public class FeedCategory {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    protected FeedCategory() {}
+
+    public FeedCategory(Feed feed, Category category) {
+        this.feed = feed;
+        this.category = category;
+    }
 }

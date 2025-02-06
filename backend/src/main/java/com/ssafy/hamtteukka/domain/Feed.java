@@ -12,7 +12,7 @@ import java.util.List;
 public class Feed {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feed_id", columnDefinition = "INT UNSIGNED")
     private Long id; //피드ID
 
@@ -44,5 +44,25 @@ public class Feed {
 
     @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FeedCategory> feedCategories = new ArrayList<>();
+
+    protected Feed() {
+    }
+
+    public Feed(User user, String title, String content, int feedType, List<Category> categories) {
+        this.user = user;
+        this.title = title;
+        this.content = content;
+        this.feedType = feedType;
+        this.createDate = LocalDateTime.now();
+        this.updateDate = LocalDateTime.now();
+
+        for (Category category : categories) {
+            FeedCategory feedCategory = new FeedCategory(this, category);
+            this.feedCategories.add(feedCategory);
+        }
+    }
 }
 
