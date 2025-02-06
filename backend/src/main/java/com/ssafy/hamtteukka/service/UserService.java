@@ -14,7 +14,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,24 +28,24 @@ import java.security.SignatureException;
 @Slf4j
 @Service
 public class UserService {
-    @Value("${DOMAIN}")
-    private String domain;
-
     private final UserRepository userRepository;
     private final S3FileLoader s3FileLoader;
     private final JwtTokenProvider jwtTokenProvider;
     private final SubscribeRepository subscribeRepository;
+    private final RateLimiterService rateLimiterService;
 
     public UserService(
             UserRepository userRepository,
             S3FileLoader s3FileLoader,
             JwtTokenProvider jwtTokenProvider,
-            SubscribeRepository subscribeRepository
+            SubscribeRepository subscribeRepository,
+            RateLimiterService rateLimiterService
     ) {
         this.userRepository = userRepository;
         this.s3FileLoader = s3FileLoader;
         this.jwtTokenProvider = jwtTokenProvider;
         this.subscribeRepository = subscribeRepository;
+        this.rateLimiterService = rateLimiterService;
     }
 
     /**
@@ -70,8 +72,8 @@ public class UserService {
             throw new IllegalArgumentException("nickname already exists");
         }
         log.info("Registering user {}", nickname);
-        String idToken = getCookie(request,"idToken");
-        if (idToken == null|| !jwtTokenProvider.validToken(idToken)) {
+        String idToken = getCookie(request, "idToken");
+        if (idToken == null || !jwtTokenProvider.validToken(idToken)) {
             throw new IllegalArgumentException("no idCookie or invalid idToken");
         }
         log.info("idToken {}", idToken);
@@ -90,7 +92,7 @@ public class UserService {
                 nickname,
                 profileId,
                 kakaoId
-                );
+        );
 
         user = userRepository.save(user);
         String accessToken = jwtTokenProvider.generateJwt(user.getId(), 60);
@@ -103,7 +105,7 @@ public class UserService {
                 60 * 60
         ));
 
-        String refreshToken = jwtTokenProvider.generateJwt(user.getId(), 30*24*60);
+        String refreshToken = jwtTokenProvider.generateJwt(user.getId(), 30 * 24 * 60);
         log.info("refreshToken: " + refreshToken);
         response.addCookie(generateCookie(
                 "refreshToken",
@@ -115,7 +117,8 @@ public class UserService {
         return new UserResponseDto(
                 user.getId(),
                 nickname,
-                s3FileLoader.getFileUrl(profileId)
+                s3FileLoader.getFileUrl(profileId),
+                rateLimiterService.getRequestCount(user.getId())
         );
     }
 
@@ -146,16 +149,17 @@ public class UserService {
      */
     public UserInfoResponseDto getUserInfo(long userId, Long signInId) {
         Optional<User> signUser = userRepository.findById(signInId);
-        long signUserId = signUser.isPresent()? signUser.get().getId():0;
+        long signUserId = signUser.isPresent() ? signUser.get().getId() : 0;
         UserInfoResponseDto userInfo = userRepository.findUserInfo(userId, signUserId);
-        if(userInfo == null) throw new IllegalArgumentException("user not found");
+        if (userInfo == null) throw new IllegalArgumentException("user not found");
         return userRepository.findUserInfo(userId, signUserId);
     }
 
     /**
      * 쿠키 값 가져오는 메서드
+     *
      * @param request
-     * @param name 가지고올 쿠키 이름
+     * @param name    가지고올 쿠키 이름
      * @return 쿠키 값
      */
     private String getCookie(HttpServletRequest request, String name) {
@@ -176,7 +180,7 @@ public class UserService {
      * @param value
      * @param httpOnly
      * @param secure
-     * @param maxAge 초단위
+     * @param maxAge   초단위
      * @return
      */
     private Cookie generateCookie(String name, String value, boolean httpOnly, boolean secure, int maxAge) {
@@ -193,7 +197,8 @@ public class UserService {
      *
      * @param nickname
      */
-    public Optional<Long> getUserIdByNickname(String nickname){;
+    public Optional<Long> getUserIdByNickname(String nickname) {
+        ;
         return userRepository.findIdByNickname(nickname);
     }
 
@@ -204,12 +209,12 @@ public class UserService {
      * @param subscribeId
      * @return
      */
-    public boolean subscribe(Long providerId, Long subscribeId){
+    public boolean subscribe(Long providerId, Long subscribeId) {
 
         User providerUser = userRepository.getReferenceById(providerId);
         User subscribeUser = userRepository.getReferenceById(subscribeId);
 
-        UserSubscribe savedSubscribe = subscribeRepository.save(new UserSubscribe(providerUser,subscribeUser));
+        UserSubscribe savedSubscribe = subscribeRepository.save(new UserSubscribe(providerUser, subscribeUser));
 
         return true;
     }
@@ -222,16 +227,16 @@ public class UserService {
      * @param subscribeId
      * @return
      */
-    public boolean subscribeCancle(Long providerId, Long subscribeId){
+    public boolean subscribeCancle(Long providerId, Long subscribeId) {
 
         User providerUser = userRepository.getReferenceById(providerId);
         User subscribeUser = userRepository.getReferenceById(subscribeId);
 
 
-        Optional<Long> userSubscribeId = subscribeRepository.findIdByProviderAndSubscriber(providerUser,subscribeUser);
+        Optional<Long> userSubscribeId = subscribeRepository.findIdByProviderAndSubscriber(providerUser, subscribeUser);
 
 
-        if(userSubscribeId.isEmpty()){
+        if (userSubscribeId.isEmpty()) {
             throw new NullPointerException("구독 데이터가 없습니다");
         }
 
@@ -246,16 +251,18 @@ public class UserService {
      * @param userId
      * @return
      */
-    public List<UserSubscriptionResponseDto> getSubscription(Long userId){
+    public List<UserSubscriptionResponseDto> getSubscription(Long userId) {
         User subscriber = userRepository.getReferenceById(userId);
 
         List<User> subscribedUsers = subscribeRepository.findProvider(subscriber);
 
         return subscribedUsers.stream()
-                .map(user -> new UserSubscriptionResponseDto(user.getNickname(),user.getProfileId(),getSubscriberCount(user)))
+                .map(user -> new UserSubscriptionResponseDto(user.getNickname(), user.getProfileId(), getSubscriberCount(user)))
                 .toList();
 
-    };
+    }
+
+    ;
 
     /**
      * 구독자 수 가져오기 메서드
@@ -263,7 +270,7 @@ public class UserService {
      * @param user
      * @return
      */
-    private int getSubscriberCount(User user){
+    private int getSubscriberCount(User user) {
         return subscribeRepository.countByProvider(user);
     }
 }

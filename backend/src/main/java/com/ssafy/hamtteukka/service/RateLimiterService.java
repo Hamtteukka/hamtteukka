@@ -40,6 +40,14 @@ public class RateLimiterService {
         return true;
     }
 
+    public int getRequestCount(Long userId) {
+        String key = REQUEST_REDIS_KEY + userId;
+        ValueOperations<String, Integer> ops = redisTemplate.opsForValue();
+
+        Integer currentCount = ops.get(key);
+        return currentCount == null ? REQUEST_LIMIT : REQUEST_LIMIT-currentCount;
+    }
+
     /**
      * 현재 시점부터 내일 0시까지 남은 초를 계산
      * @return 남은 시간(초)

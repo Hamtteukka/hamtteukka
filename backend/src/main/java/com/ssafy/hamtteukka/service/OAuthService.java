@@ -31,23 +31,22 @@ public class OAuthService {
     private String clientId;
     @Value("${KAKAO_REDIRECT_URI}")
     private String redirectUri;
-    @Value("${FRONT_URI}")
-    private String frontUri;
-    @Value("${DOMAIN}")
-    private String domain;
 
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenBlacklistService tokenBlacklistService;
     private final UserRepository userRepository;
+    private final RateLimiterService rateLimiterService;
 
     public OAuthService(
             JwtTokenProvider jwtTokenProvider,
             TokenBlacklistService tokenBlacklistService,
-            UserRepository userRepository
+            UserRepository userRepository,
+            RateLimiterService rateLimiterService
     ) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.tokenBlacklistService = tokenBlacklistService;
         this.userRepository = userRepository;
+        this.rateLimiterService = rateLimiterService;
     }
 
     public String kakaoLoginUrl() {
@@ -178,7 +177,8 @@ public class OAuthService {
         return Map.of(
                 "url", "/",
                 "nickname",user.get().getNickname(),
-                "profileId",user.get().getProfileId()
+                "profileId",user.get().getProfileId(),
+                "dailyCreationLimit",rateLimiterService.getRequestCount(user.get().getId())
         );
     }
 
