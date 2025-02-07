@@ -26,8 +26,8 @@ public class FeedCreateRequest {
     @Size(min = 1, message = "카테고리는 필수 입력값입니다")
     private List<Integer> categoryIds;
 
-    private Integer aiPatternId; //선택
+    private Long knittingPatternsFeedId; // 선택 (임베드된 "뜨개도안 feed")
 
     @NotNull(message = "피드 타입은 필수 입력값입니다")
-    private FeedType feedType;
+    private FeedType feedType; // "NORMAL" : 일반 feed, "PATTERN" : 뜨개도안 feed
 }
