@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -54,15 +55,14 @@ public class RoomService extends OpenVidu {
     public RoomResponseDto createRoom(String sessionId, Map<String, Object> params) throws IOException {
         String nickname = null;
         String userProfile = null;
-        List<Long> peopleIds = null;
-        String thumbnailName = null;
+        List<Long> peopleIds = new ArrayList<>();
 
         String title = (String) params.get("title");
         int capacity = (Integer) params.get("capacity");
         Long userId = (Long) params.get("captainId");
         MultipartFile thumbnail = (MultipartFile) params.get("thumbnail");
 
-        thumbnailName = s3FileLoader.uploadFile(thumbnail); // filename
+        String thumbnailName = s3FileLoader.uploadFile(thumbnail); // filename
 
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {

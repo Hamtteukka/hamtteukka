@@ -32,4 +32,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
                         ) FROM User u LEFT JOIN UserSubscribe s ON u.id = s.provider.id WHERE u.id = :userId
             """)
     UserInfoResponseDto findUserInfo(@Param("userId") Long userId, @Param("signInUserId") Long signInUserId);
+
 }
