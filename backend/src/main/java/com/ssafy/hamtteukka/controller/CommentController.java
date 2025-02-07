@@ -6,6 +6,7 @@ import com.ssafy.hamtteukka.dto.CommentRequest;
 import com.ssafy.hamtteukka.dto.CommentResponse;
 import com.ssafy.hamtteukka.dto.CommentUpdateRequest;
 import com.ssafy.hamtteukka.service.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,11 +19,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/comments")
 public class CommentController {
     private final CommentService commentService;
-
-    /**
-     * 댓글 작성
-     */
+    
     @PostMapping("")
+    @Operation(summary = "댓글 작성하기")
     public ResponseEntity<?> createComment(
             @RequestBody CommentRequest request,
             Authentication authentication
@@ -56,6 +55,7 @@ public class CommentController {
      * 댓글 수정(후순위)
      */
     @PutMapping("/{commentId}")
+    @Operation(summary = "댓글 수정하기")
     public ResponseEntity<?> updateComment(
             @PathVariable("commentId") Long commentId,
             @RequestBody CommentUpdateRequest request,
@@ -75,10 +75,8 @@ public class CommentController {
         }
     }
 
-    /**
-     * 댓글 삭제
-     */
     @DeleteMapping("/{commentId}")
+    @Operation(summary = "댓글 삭제하기")
     public ResponseEntity<?> deleteComment(
             @PathVariable("commentId") Long commentId,
             Authentication authentication

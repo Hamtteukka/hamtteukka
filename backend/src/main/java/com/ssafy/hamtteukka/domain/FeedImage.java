@@ -15,10 +15,15 @@ public class FeedImage {
     @JoinColumn(name = "feed_id", nullable = false)
     private Feed feed; //피드ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user; //유저ID
-
     @Column(columnDefinition = "TINYINT", nullable = false)
     private int imageType; //이미지타입(0:대표이미지, 1:서브이미지)
+
+    protected FeedImage() {
+    }
+
+    public FeedImage(String id, Feed feed, int imageType) {
+        this.id = id;
+        this.feed = feed;
+        this.imageType = imageType;
+    }
 }

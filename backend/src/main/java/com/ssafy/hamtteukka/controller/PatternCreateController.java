@@ -30,8 +30,7 @@ public class PatternCreateController {
             @ModelAttribute DotPatternCreateRequest request,
             Authentication authentication) {
         Long userId = (Long) authentication.getPrincipal();
-        System.out.println("이거 들어오면 되는거 ");
-        return patternCreateService.createDotPattern(request)
+        return patternCreateService.createDotPattern(request, userId)
                 .map(response ->
                         ApiResponse.success(HttpStatus.OK, "도트 도안 생성 성공", response)
                 )
@@ -41,8 +40,11 @@ public class PatternCreateController {
                 .onErrorResume(EntityNotFoundException.class, e ->
                         Mono.just(ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage()))
                 )
+                .onErrorResume(UnsupportedOperationException.class, e ->
+                        Mono.just(ApiResponse.fail(HttpStatus.TOO_MANY_REQUESTS, e.getMessage()))
+                )
                 .onErrorResume(IllegalArgumentException.class, e ->
-                        Mono.just(ApiResponse.fail(HttpStatus.FORBIDDEN, e.getMessage()))
+                        Mono.just(ApiResponse.fail(HttpStatus.UNAUTHORIZED, e.getMessage()))
                 )
                 .onErrorResume(Exception.class, e ->
                         Mono.just(ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다"))
@@ -60,7 +62,7 @@ public class PatternCreateController {
         DeferredResult<ResponseEntity<ApiResponse<DescriptionPatternCreateResponse>>> output =
                 new DeferredResult<>(300000L);
 
-        patternCreateService.createDescription(request)
+        patternCreateService.createDescription(request,userId)
                 .subscribe(
                         response -> {
                             output.setResult(ApiResponse.success(HttpStatus.OK, "서술형 도안 생성 성공", response));
@@ -69,7 +71,9 @@ public class PatternCreateController {
                             if (error instanceof EntityNotFoundException) {
                                 output.setResult(ApiResponse.fail(HttpStatus.NOT_FOUND, error.getMessage()));
                             } else if (error instanceof IllegalArgumentException) {
-                                output.setResult(ApiResponse.fail(HttpStatus.FORBIDDEN, error.getMessage()));
+                                output.setResult(ApiResponse.fail(HttpStatus.UNAUTHORIZED, error.getMessage()));
+                            }  else if (error instanceof UnsupportedOperationException) {
+                                output.setResult(ApiResponse.fail(HttpStatus.TOO_MANY_REQUESTS, error.getMessage()));
                             } else {
                                 output.setResult(ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서술형 도안 생성 실패"));
                             }
