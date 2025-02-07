@@ -17,9 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 import reactor.core.publisher.Mono;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 @RestController
 @RequestMapping("/ai")
 @RequiredArgsConstructor
@@ -32,9 +29,8 @@ public class PatternCreateController {
     public Mono<ResponseEntity<ApiResponse<DotPatternCreateResponse>>> generateDotPattern(
             @ModelAttribute DotPatternCreateRequest request,
             Authentication authentication) {
-
         Long userId = (Long) authentication.getPrincipal();
-
+        System.out.println("이거 들어오면 되는거 ");
         return patternCreateService.createDotPattern(request)
                 .map(response ->
                         ApiResponse.success(HttpStatus.OK, "도트 도안 생성 성공", response)

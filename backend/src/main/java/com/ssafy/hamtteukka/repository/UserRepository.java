@@ -32,5 +32,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
             """)
     UserInfoResponseDto findUserInfo(@Param("userId") Long userId, @Param("signInUserId") Long signInUserId);
 
-    Optional<User> findByKakaoId(Long id);
 }
