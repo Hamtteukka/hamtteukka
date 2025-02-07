@@ -3,14 +3,10 @@ package com.ssafy.hamtteukka.service;
 import com.ssafy.hamtteukka.common.S3FileLoader;
 import com.ssafy.hamtteukka.domain.Category;
 import com.ssafy.hamtteukka.domain.Feed;
-import com.ssafy.hamtteukka.dto.FeedPaginationResponseDto;
-import com.ssafy.hamtteukka.dto.FeedResponseDto;
+
+import com.ssafy.hamtteukka.dto.*;
 import com.ssafy.hamtteukka.domain.FeedImage;
 import com.ssafy.hamtteukka.domain.User;
-import com.ssafy.hamtteukka.dto.FeedCreateRequest;
-import com.ssafy.hamtteukka.dto.FeedCreateResponse;
-import com.ssafy.hamtteukka.dto.SavedFeedPaginationResponseDto;
-import com.ssafy.hamtteukka.dto.SavedFeedResponseDto;
 import com.ssafy.hamtteukka.repository.CategoryRepository;
 import com.ssafy.hamtteukka.repository.FeedImageRepository;
 import com.ssafy.hamtteukka.repository.FeedRepository;
@@ -156,13 +152,27 @@ public class FeedService {
                         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다")))
                 .collect(Collectors.toList());
 
+        // 도안 피드 임베드 검증
+        Feed knittingPatternsFeed = null;
+        if (request.getFeedType() == FeedType.NORMAL && request.getKnittingPatternsFeedId() != null) {
+            // 임베드하려는 도안피드가 존재하는지 검증
+            knittingPatternsFeed = feedRepository.findById(request.getKnittingPatternsFeedId())
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 도안입니다"));
+
+            // 임베드하려는 피드가 도안 피드인지 검증
+            if (knittingPatternsFeed.getFeedType() != FeedType.PATTERN.getValue()) {
+                throw new IllegalArgumentException("도안 피드만 임베드할 수 있습니다");
+            }
+        }
+
         // 피드 생성 및 저장
         Feed feed = new Feed(
                 user,
                 request.getTitle(),
                 request.getContent(),
                 request.getFeedType().getValue(),
-                categories
+                categories,
+                knittingPatternsFeed
         );
 
         Feed savedFeed = feedRepository.save(feed);

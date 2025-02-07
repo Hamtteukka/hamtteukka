@@ -51,11 +51,12 @@ public class Feed {
     protected Feed() {
     }
 
-    public Feed(User user, String title, String content, int feedType, List<Category> categories) {
+    public Feed(User user, String title, String content, int feedType, List<Category> categories, Feed knittingPatternsFeed) {
         this.user = user;
         this.title = title;
         this.content = content;
         this.feedType = feedType;
+        this.knittingPatternsFeed = knittingPatternsFeed;
         this.createDate = LocalDateTime.now();
         this.updateDate = LocalDateTime.now();
 
