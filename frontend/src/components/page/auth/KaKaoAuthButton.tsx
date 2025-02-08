@@ -14,7 +14,7 @@ const KakaoAuthButton: React.FC = () => {
 
   return (
     <Button className='border-none bg-kakao' onClick={handleKakaoLogin}>
-      <div className='flex items-center gap-2'>
+      <div className='flex items-center gap-1'>
         <Image src='/image/kakao.png' alt='kakao login' width={16} height={16} />
         <span className='text-detail text-black'>로그인</span>
       </div>

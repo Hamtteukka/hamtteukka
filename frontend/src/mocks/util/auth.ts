@@ -6,7 +6,7 @@ import { TUser } from '@/types/user';
 export const getKakaoToken = async (): Promise<StrictResponse<TResponseData<TAuthRedirectUrl>>> => {
   const redirectUrl = 'http://localhost:3000/auth/signup';
 
-  await delay(3000);
+  await delay(1000);
 
   return HttpResponse.json({
     status: 'success',
@@ -16,7 +16,7 @@ export const getKakaoToken = async (): Promise<StrictResponse<TResponseData<TAut
 };
 
 export const signUp = async (): Promise<StrictResponse<TResponseData<TUser>>> => {
-  await delay(3000);
+  await delay(1000);
 
   return HttpResponse.json({
     status: 'success',

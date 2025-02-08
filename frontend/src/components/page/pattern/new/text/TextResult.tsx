@@ -20,7 +20,7 @@ const TextResult: React.FC = () => {
   const { isOpen, openModal } = useModal();
 
   const reGenerate = () => {
-    if (confirm('도안을 다시 생성 하시겠습니까?\n현재 도안은 사라집니다.')) setPatternTypeContext(PATTERN_PAGE.SELECT);
+    if (confirm('도안을 다시 생성하시겠습니까?\n현재 도안은 사라집니다.')) setPatternTypeContext(PATTERN_PAGE.SELECT);
   };
 
   return (
