@@ -76,7 +76,7 @@ export const MSubscriptionList: Array<TSubscriptionProfile> = [
   },
 ];
 
-const imgArr = ['/image/kakao.png', '/image/profile.png', '/image/video_preview.png', '/logo/logo.png'];
+const imgArr = ['/image/temp/short.png', '/image/temp/medium.png', '/image/temp/long.png', '/image/temp/long_long.png'];
 
 export const MStoredPostList: Array<TPostPreview> = Array.from({ length: 100 }, (_, index) => ({
   feedId: index,

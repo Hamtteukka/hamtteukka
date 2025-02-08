@@ -3,7 +3,7 @@ import { TResponse, TResponseData } from '@/types/service';
 import { MSessionId, MVideoRoomList } from '@/mocks/data/video';
 
 export const createOpenViduSession = async (): Promise<StrictResponse<TResponseData<TSessionId>>> => {
-  await delay(3000);
+  await delay(1000);
 
   return HttpResponse.json({
     status: 'success',
@@ -13,7 +13,7 @@ export const createOpenViduSession = async (): Promise<StrictResponse<TResponseD
 };
 
 export const createOpenViduConnection = async (): Promise<StrictResponse<TResponseData<TVideoRoom>>> => {
-  await delay(3000);
+  await delay(1000);
 
   return HttpResponse.json({
     status: 'success',
@@ -23,7 +23,7 @@ export const createOpenViduConnection = async (): Promise<StrictResponse<TRespon
 };
 
 export const getVideoRoomList = async (): Promise<StrictResponse<TResponseData<TVideoRoom[]>>> => {
-  await delay(3000);
+  await delay(1000);
 
   return HttpResponse.json({
     status: 'success',
@@ -33,7 +33,7 @@ export const getVideoRoomList = async (): Promise<StrictResponse<TResponseData<T
 };
 
 export const leaveVideoRoom = async (): Promise<StrictResponse<TResponse>> => {
-  await delay(3000);
+  await delay(1000);
 
   return HttpResponse.json({
     status: 'success',

@@ -26,7 +26,7 @@ const NewPatternForm = () => {
           <>
             <p className='font-bold text-deepgray'>어떤 도안을 생성하고 싶으신가요?</p>
             {patternType === PATTERN_PAGE.SELECT ? (
-              <section className='flex h-full grow items-center justify-between'>
+              <section className='flex h-full grow items-center justify-evenly gap-4 py-8'>
                 <button onClick={() => setPatternType(PATTERN_PAGE.TEXT)}>
                   <SelectCard type={PATTERN_PAGE.TEXT} />
                 </button>

@@ -31,7 +31,7 @@ const Tabs: React.FC<PTabs> = ({ tabList, tabPanels }) => {
             {({ selected }) => (
               <button
                 className={clsx(
-                  'relative grow text-heading3 font-bold after:absolute after:-bottom-1 after:left-1/2 after:h-1 after:w-9 after:-translate-x-1/2 after:content-[""] focus:outline-none active:outline-none',
+                  'relative grow text-heading3 font-bold after:absolute after:-bottom-1 after:left-1/2 after:h-1 after:w-12 after:-translate-x-1/2 after:content-[""] focus:outline-none active:outline-none',
                   selected && 'after:bg-primary',
                 )}
               >

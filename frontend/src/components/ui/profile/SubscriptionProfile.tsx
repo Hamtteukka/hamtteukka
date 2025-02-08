@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import defaultImg from '/public/logo/logo.png';
+import defaultImg from '/public/image/profile.png';
 import { cn } from '@/lib/utils';
 import { TSubscriptionProfile } from '@/types/archive';
 
@@ -13,7 +13,7 @@ const SubscriptionProfile: React.FC<PSubscriptionProfile> = ({
   className = '',
 }) => {
   return (
-    <div className={cn('flex w-full flex-col items-center gap-2.5', className)}>
+    <div className={cn('flex grow flex-col items-center gap-2.5', className)}>
       <div className='relative w-full pb-[100%]'>
         <Image
           className='rounded-full object-cover'

@@ -1,8 +1,17 @@
 import { TUser } from '@/types/user';
 import { create } from 'zustand';
 
-// TODO: 로그인, 로그아웃 기능 관리
-export const useLoginUser = create<TUser>((set) => ({
-  nickname: '서로',
+interface PLoginUserState extends TUser {
+  isLogin: boolean;
+  login: (user: TUser) => void;
+  logout: () => void;
+}
+
+export const useLoginUser = create<PLoginUserState>((set) => ({
+  nickname: '',
   profileId: '',
+  isLogin: false,
+
+  login: (user: TUser) => set({ nickname: user.nickname, profileId: user.profileId, isLogin: true }),
+  logout: () => set({ nickname: '', profileId: '', isLogin: false }),
 }));

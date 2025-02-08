@@ -17,7 +17,7 @@ const page: React.FC = async () => {
   const dehydratedState = dehydrate(queryClient);
 
   return (
-    <div className='mx-auto flex h-full w-base flex-col gap-4'>
+    <div className='mx-auto flex flex-col gap-8 px-10'>
       <H1>아카이브</H1>
       <Hydrate state={dehydratedState}>
         <Archive />
