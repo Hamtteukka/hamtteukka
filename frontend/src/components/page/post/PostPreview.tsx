@@ -1,5 +1,4 @@
 import Avatar from '@/components/ui/Avatar';
-import Image from 'next/image';
 import Link from 'next/link';
 
 interface PPostPreview {
