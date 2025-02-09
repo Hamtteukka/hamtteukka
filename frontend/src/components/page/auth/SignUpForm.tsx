@@ -34,7 +34,7 @@ const SignUpForm: React.FC = () => {
       login(user);
       router.replace('/');
     } catch (e) {
-      alert('회원가입 중 문제가 발생했습니다.');
+      console.error(e);
     }
   };
 

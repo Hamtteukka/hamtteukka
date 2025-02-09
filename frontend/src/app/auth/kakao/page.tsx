@@ -10,9 +10,13 @@ const AuthCallback: React.FC = () => {
   const code = searchParams.get('code');
 
   const handleKakaoLogin = async () => {
-    if (!code) throw new Error('카카오 인가 코드가 존재하지 않습니다.');
-    const { url } = await getKakaoToken(code);
-    router.replace(url);
+    try {
+      if (!code) throw new Error('카카오 인가 코드가 존재하지 않습니다.');
+      const { url } = await getKakaoToken(code);
+      router.replace(url);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   useEffect(() => {

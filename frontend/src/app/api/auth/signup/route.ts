@@ -33,8 +33,9 @@ export async function POST(request: NextRequest) {
     return resWithCookie;
   } catch (error) {
     console.error(error);
-    return new Response('Internal Server Error', {
-      status: 500,
+    return NextResponse.json({
+      status: 'fail',
+      message: error instanceof Error ? error.message : 'Unknown error occurred',
     });
   }
 }

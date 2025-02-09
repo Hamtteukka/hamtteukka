@@ -24,14 +24,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error(error);
-
-    if (error instanceof Error) {
-      return new Response(error.message, { status: 500 });
-    }
-
-    return new Response('Internal Server Error', {
-      status: 500,
+    return NextResponse.json({
+      status: 'fail',
+      message: error instanceof Error ? error.message : 'Unknown error occurred',
     });
   }
 }
