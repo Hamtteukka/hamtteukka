@@ -72,6 +72,19 @@ export const auth = {
   },
 };
 
+export const home = {
+  getPostList: async (cursorId: number, limit: number): Promise<TResponseData<TCursorData<TPostPreview>>> => {
+    const params = new URLSearchParams({
+      cursorId: cursorId === -1 ? '' : cursorId.toString(),
+      limit: limit.toString(),
+    });
+    return fetch(`/api/feeds?${params}`, {
+      cache: 'no-store',
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+};
+
 export const archive = {
   getStoredPostList: async (cursorId: number, limit: number): Promise<TResponseData<TCursorData<TPostPreview>>> => {
     const params = new URLSearchParams({
