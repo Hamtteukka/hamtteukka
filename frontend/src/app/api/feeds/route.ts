@@ -18,12 +18,13 @@ export async function GET(req: NextRequest) {
       throw new Error('Unauthorized: Missing cookies');
     }
 
-    const result = await fetch(`${BASE_URL}/feeds/saved-ai-list?${params}`, {
+    // TODO: 엔드포인트 변경
+    const result = await fetch(`${BASE_URL}/feeds/saved-list?${params}`, {
       headers: {
         Cookie: cookiesHeader,
       },
       cache: 'no-store',
-      credentials: 'same-origin',
+      credentials: 'include',
     });
 
     return NextResponse.json(result);
