@@ -38,7 +38,7 @@ public class UserController {
             HttpServletRequest request,
             HttpServletResponse response
     ){
-        log.info("back signUp api")
+        log.info("back signUp api");
         try {
             return ApiResponse.success(
                     HttpStatus.CREATED,
