@@ -42,20 +42,27 @@ public class FeedService {
      * @param limit
      * @return
      */
-    public SavedFeedPaginationResponseDto getSavedFeeds(Long userId, Long cursor, Integer limit) {
+    public FeedPaginationResponseDto getSavedFeeds(Long userId, Long cursor, Integer limit) {
         int pageSize = (limit != null) ? limit : 20;
 
-        Slice<SavedFeedResponseDto> slice = feedRepository.findSavedFeedsWithPagination(
+        Slice<FeedResponseDto> slice = feedRepository.findSavedFeedsWithPagination(
                 userId,
                 cursor,
                 PageRequest.of(0, pageSize)
         );
 
-        List<SavedFeedResponseDto> feeds = slice.getContent();
+        List<FeedResponseDto> feeds = slice.stream()
+                .map(feed -> new FeedResponseDto(
+                        feed.getFeedId(),
+                        s3FileLoader.getFileUrl(feed.getThumbnail()),
+                        feed.getTitle(),
+                        s3FileLoader.getFileUrl(feed.getUserProfile())
+                ))
+                .collect(Collectors.toList());
         boolean hasNextFeed = slice.hasNext();
-        Long nextCursorId = hasNextFeed ? feeds.get(feeds.size() - 1).getSavedFeedId() : null;
+        Long nextCursorId = hasNextFeed ? feeds.get(feeds.size() - 1).getFeedId() : null;
 
-        return new SavedFeedPaginationResponseDto(feeds, hasNextFeed, nextCursorId);
+        return new FeedPaginationResponseDto(feeds, hasNextFeed, nextCursorId);
     }
 
     /**
@@ -66,20 +73,27 @@ public class FeedService {
      * @param limit
      * @return
      */
-    public SavedFeedPaginationResponseDto getSavedAiFeeds(Long userId, Long cursor, Integer limit) {
+    public FeedPaginationResponseDto getSavedAiFeeds(Long userId, Long cursor, Integer limit) {
         int pageSize = (limit != null) ? limit : 20;
 
-        Slice<SavedFeedResponseDto> slice = feedRepository.findSavedAiFeedsWithPagination(
+        Slice<FeedResponseDto> slice = feedRepository.findSavedFeedsWithPagination(
                 userId,
                 cursor,
                 PageRequest.of(0, pageSize)
         );
 
-        List<SavedFeedResponseDto> feeds = slice.getContent();
+        List<FeedResponseDto> feeds = slice.stream()
+                .map(feed -> new FeedResponseDto(
+                        feed.getFeedId(),
+                        s3FileLoader.getFileUrl(feed.getThumbnail()),
+                        feed.getTitle(),
+                        s3FileLoader.getFileUrl(feed.getUserProfile())
+                ))
+                .collect(Collectors.toList());
         boolean hasNextFeed = slice.hasNext();
-        Long nextCursorId = hasNextFeed ? feeds.get(feeds.size() - 1).getSavedFeedId() : null;
+        Long nextCursorId = hasNextFeed ? feeds.get(feeds.size() - 1).getFeedId() : null;
 
-        return new SavedFeedPaginationResponseDto(feeds, hasNextFeed, nextCursorId);
+        return new FeedPaginationResponseDto(feeds, hasNextFeed, nextCursorId);
     }
 
 

@@ -3,7 +3,6 @@ package com.ssafy.hamtteukka.controller;
 import com.ssafy.hamtteukka.common.ApiResponse;
 import com.ssafy.hamtteukka.dto.FeedCreateRequest;
 import com.ssafy.hamtteukka.dto.FeedCreateResponse;
-import com.ssafy.hamtteukka.dto.SavedFeedPaginationResponseDto;
 import com.ssafy.hamtteukka.service.FeedService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,9 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/feeds")
@@ -27,7 +23,7 @@ public class FeedController {
 
     @GetMapping("/saved-list")
     @Operation(summary = "저장된 게시물 불러오기")
-    public ResponseEntity<ApiResponse<SavedFeedPaginationResponseDto>> getSavedFeeds(
+    public ResponseEntity<?> getSavedFeeds(
             Authentication authentication,
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = "20") int limit) {
@@ -35,7 +31,7 @@ public class FeedController {
         try{
 
             Long userId = (Long) authentication.getPrincipal();
-
+            System.out.println(userId);
             if (userId == 0L) {
                 return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
             }
@@ -56,7 +52,7 @@ public class FeedController {
 
     @GetMapping("/saved-ai-list")
     @Operation(summary = "저장된 AI 도안 불러오기")
-    public ResponseEntity<ApiResponse<SavedFeedPaginationResponseDto>> getSavedAiFeeds(
+    public ResponseEntity<?> getSavedAiFeeds(
             Authentication authentication,
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = "20") int limit) {

@@ -48,6 +48,9 @@ public class Feed {
     @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FeedCategory> feedCategories = new ArrayList<>();
 
+    @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FeedImage> feedImages = new ArrayList<>();
+
     protected Feed() {
     }
 
@@ -66,4 +69,3 @@ public class Feed {
         }
     }
 }
-
