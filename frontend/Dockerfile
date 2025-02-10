@@ -53,4 +53,4 @@ USER nextjs
 # 컨테이너 포트 노출
 EXPOSE 3000
 # 프로덕션 서버 실행 (package.json의 start 스크립트: "next start")
-CMD ["npm", "start"]
+CMD ["yarn", "start"]
