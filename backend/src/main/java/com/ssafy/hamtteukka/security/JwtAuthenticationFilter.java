@@ -71,10 +71,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (UnauthorizedException e) {
+            log.error("JwtAuthenticationFilter: Token is blacklisted. Access is forbidden.");
             HttpStatus status = e.getMessage().equals("Token is blacklisted. Access is forbidden.")?HttpStatus.FORBIDDEN:HttpStatus.UNAUTHORIZED;
             response.setStatus(status.value());
             response.getWriter().write(e.getMessage());
         } catch (Exception e) {
+            log.error("JwtAuthenticationFilter: Internal Server Error");
             log.error(e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             response.getWriter().write("Internal Server Error");
