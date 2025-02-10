@@ -1,4 +1,5 @@
 import { DefaultBodyType, PathParams, StrictRequest } from 'msw';
+import { TUser } from '@/types/user';
 
 export interface TMockRequest {
   request: StrictRequest<DefaultBodyType>;
@@ -21,4 +22,5 @@ export interface TCursorData<T> {
 
 export interface TAuthRedirectUrl {
   url: string;
+  user?: TUser;
 }

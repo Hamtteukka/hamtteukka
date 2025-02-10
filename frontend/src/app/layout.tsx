@@ -28,7 +28,7 @@ export default function RootLayout({
         <MSWProvider>
           <ReactQueryProviders>
             <Navbar />
-            <main className='min-w-0 flex-1 py-12'>{children}</main>
+            <main className='min-w-0 flex-1'>{children}</main>
             <div id='modal-container' />
           </ReactQueryProviders>
         </MSWProvider>

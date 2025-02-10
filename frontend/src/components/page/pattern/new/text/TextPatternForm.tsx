@@ -19,7 +19,7 @@ import { useState } from 'react';
 const TextPatternForm: React.FC = () => {
   const [needle, setNeedle] = useState<TNeedle>(NEEDLE_TYPE.knitting);
   const [craft, setCraft] = useState<TCraftTypeKr>();
-  const [detail, seDetail] = useTextInput<HTMLTextAreaElement>('');
+  const [detail, setDetail] = useTextInput<HTMLTextAreaElement>('');
   const [isPending, setIsPending] = useState<boolean>(false);
 
   const { count, subCount } = useAiGenerationRemainingCount();
@@ -60,7 +60,7 @@ const TextPatternForm: React.FC = () => {
       <LabeledInput
         label={patternInput.detail.label}
         help={patternInput.detail.help}
-        input={<DetailInput onChange={seDetail} />}
+        input={<DetailInput onChange={setDetail} />}
       />
       <div className='flex gap-2.5 self-end'>
         <Button type='outlined' onClick={() => setPatterType(PATTERN_PAGE.SELECT)}>

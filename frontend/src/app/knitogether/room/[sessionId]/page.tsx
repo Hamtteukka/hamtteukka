@@ -30,7 +30,7 @@ const KnitogetherRoom: React.FC = () => {
   }, []);
 
   return (
-    <div className='flex flex-col gap-8 px-10'>
+    <div className='flex flex-col gap-8 px-10 py-10'>
       <header className='flex items-center justify-between text-heading1 font-bold'>
         {videoRoom && <span className='truncate'>{videoRoom.title}</span>}
         <LeaveRoomButton />

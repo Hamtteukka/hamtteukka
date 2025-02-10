@@ -1,6 +1,6 @@
 import { TDotPattern, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
 import { TAuthRedirectUrl, TCursorData, TResponseData } from '@/types/service';
-import { TUserRedirectUrl } from '@/types/user';
+import { TUser } from '@/types/user';
 
 export const pattern = {
   generateTextPattern: async (body: TTextPatternInstruction): Promise<TResponseData<TTextPattern>> => {
@@ -63,7 +63,7 @@ export const auth = {
     }).then((res) => res.json());
   },
 
-  signUp: async (formData: FormData): Promise<TResponseData<TUserRedirectUrl>> => {
+  signUp: async (formData: FormData): Promise<TResponseData<TUser>> => {
     return fetch('/api/auth/signup', {
       method: 'POST',
       body: formData,

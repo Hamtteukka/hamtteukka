@@ -29,7 +29,13 @@ const PostPattern: React.FC<PPostPattern> = ({ base64img, content = '' }) => {
     <ConfirmDialog onConfirm={post} confirmText='게시'>
       <div className='mx-2 flex flex-col gap-4'>
         <H4>게시물의 제목을 입력해주세요.</H4>
-        <Image className='w-[20rem]' src={base64img} alt='도안 이미지' width={320} height={320} />
+        <Image
+          className='w-[20rem]'
+          src={`data:image/png;base64,${base64img}`}
+          alt='도안 이미지'
+          width={320}
+          height={320}
+        />
         <TextInput placeholder='게시물 제목' onChange={setTitle} />
       </div>
     </ConfirmDialog>

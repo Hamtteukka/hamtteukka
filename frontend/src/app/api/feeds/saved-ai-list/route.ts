@@ -26,7 +26,9 @@ export async function GET(req: NextRequest) {
       credentials: 'same-origin',
     });
 
-    return NextResponse.json(result);
+    const data = await result.json();
+
+    return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({
       status: 'fail',

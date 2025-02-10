@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    domains: ['common-project-s3.s3.us-east-2.amazonaws.com'],
+  },
   webpack: (config) => {
     config.module.rules.push({
       test: /\.svg$/,

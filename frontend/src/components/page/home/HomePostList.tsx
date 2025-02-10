@@ -24,7 +24,7 @@ const HomePostList: React.FC = () => {
   }, []);
 
   return (
-    <div className='flex flex-col px-2.5'>
+    <div className='flex flex-col px-2.5 py-10'>
       {isClient && (
         <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3, 1200: 4, 1500: 5 }}>
           <Masonry>
