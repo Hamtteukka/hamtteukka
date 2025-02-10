@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hamtteukka.domain.User;
 import com.ssafy.hamtteukka.dto.KakaoInfo;
+import com.ssafy.hamtteukka.dto.UserResponseDto;
 import com.ssafy.hamtteukka.repository.UserRepository;
 import com.ssafy.hamtteukka.security.JwtTokenProvider;
 import jakarta.servlet.http.Cookie;
@@ -176,9 +177,12 @@ public class OAuthService {
         ));
         return Map.of(
                 "url", "/",
-                "nickname",user.get().getNickname(),
-                "profileId",user.get().getProfileId(),
-                "dailyCreationLimit",rateLimiterService.getRequestCount(user.get().getId())
+                "user", new UserResponseDto(
+                        0,
+                        user.get().getNickname(),
+                        user.get().getProfileId(),
+                        rateLimiterService.getRequestCount(user.get().getId())
+                )
         );
     }
 
