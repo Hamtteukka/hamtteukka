@@ -56,6 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws IOException {
         try {
+            log.info("api path:"+request.getRequestURI());
             String token = getCookie(request, "accessToken");
 
             if(!checkPath(request)) {
