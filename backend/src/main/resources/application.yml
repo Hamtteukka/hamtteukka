@@ -18,6 +18,10 @@ spring:
       hibernate:
         format_sql: true
 
+  #        show_sql: true
+  config:
+    import: application-secret.yml
+
   data:
     redis:
       host: ${REDIS_HOST}
@@ -38,27 +42,6 @@ spring:
 OPENVIDU_URL: ${OPENVIDU_URL}
 OPENVIDU_SECRET: ${OPENVIDU_SECRET}
 
-KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID}
-KAKAO_REDIRECT_URI: ${KAKAO_REDIRECT_URI}
-
-FRONT_URI: ${FRONT_URI}
-
-JWT_SECRETKEY: ${JWT_SECRETKEY}
-
-AI_URL: ${AI_URL}
-
-S3_BUCKET_NAME: ${S3_BUCKET_NAME}
-S3_BUCKET_URL: ${S3_BUCKET_URL}
-REGION: ${REGION}
-IAM_ACCESSKEY: ${IAM_ACCESSKEY}
-IAM_SECRETKEY: ${IAM_SECRETKEY}
-
-REDIS_HOST: ${REDIS_HOST}
-REDIS_PORT: ${REDIS_PORT}
-
 logging:
   level:
     org.hibernate.SQL: debug
-
-
-
