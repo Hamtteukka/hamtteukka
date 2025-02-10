@@ -155,7 +155,7 @@ public class OAuthService {
                     "url", "/auth/signup"
             );
         }
-        String accessToken = jwtTokenProvider.generateJwt(id, 60);
+        String accessToken = jwtTokenProvider.generateJwt(user.get().getId(), 60);
         log.info("accessToken: " + accessToken);
         response.addCookie(generateCookie(
                 "accessToken",
@@ -165,7 +165,7 @@ public class OAuthService {
                 60 * 60
         ));
 
-        String refreshToken = jwtTokenProvider.generateJwt(id, 30*24*60);
+        String refreshToken = jwtTokenProvider.generateJwt(user.get().getId(), 30*24*60);
         log.info("refreshToken: " + refreshToken);
         response.addCookie(generateCookie(
                 "refreshToken",
