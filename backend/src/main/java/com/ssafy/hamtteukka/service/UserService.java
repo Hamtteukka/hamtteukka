@@ -68,6 +68,7 @@ public class UserService {
      */
     @Transactional
     public UserResponseDto registerUser(String nickname, MultipartFile profileImage, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        log.info("😂😂😂😂😂😂");
         if (isNicknameDuplicate(nickname)) {
             throw new IllegalArgumentException("nickname already exists");
         }
