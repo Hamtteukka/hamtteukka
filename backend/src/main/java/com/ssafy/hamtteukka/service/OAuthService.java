@@ -152,8 +152,8 @@ public class OAuthService {
                     false,
                     5 * 60
             ));
+            log.info("👍👍👍👍👍👍👍👍");
             return Map.of(
-                    log.info("👍👍👍👍👍👍👍👍");
                     "url", "/auth/signup"
             );
         }
