@@ -5,7 +5,7 @@ import { H1 } from '@/components/typography/Heading';
 
 const Knitogether: React.FC = () => {
   return (
-    <div className='flex flex-col gap-8 px-10'>
+    <div className='flex flex-col gap-8 p-10'>
       <header className='flex items-center justify-between'>
         <H1>모각뜨</H1>
         <ModalProvider>
