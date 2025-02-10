@@ -46,10 +46,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(List.of(
-//                "http://localhost:3000", "http://127.0.0.1:3000",frontUri
-//        )); // 허용할 Origin 추가
-        configuration.setAllowedOrigins(List.of("https://hamtteukka.site"));
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:3000", "http://127.0.0.1:3000",frontUri
+        )); // 허용할 Origin 추가
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of(
