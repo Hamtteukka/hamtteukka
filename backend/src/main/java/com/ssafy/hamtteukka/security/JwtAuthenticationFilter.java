@@ -39,8 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/users",
             "/openvidu",
             "/auth",
-            "/test/",
-            "/api"
+            "/test/"
     );
 
     protected boolean checkPath(HttpServletRequest request) {
