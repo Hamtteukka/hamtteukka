@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -37,6 +38,7 @@ public class UserController {
             HttpServletRequest request,
             HttpServletResponse response
     ){
+        log.info("back signUp api")
         try {
             return ApiResponse.success(
                     HttpStatus.CREATED,
