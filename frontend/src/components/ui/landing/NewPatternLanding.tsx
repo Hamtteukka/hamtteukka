@@ -10,7 +10,7 @@ const NewPatternLanding: React.FC<PNewPatternLanding> = ({ message }) => {
   return (
     <section className='flex h-full grow flex-col items-center justify-center gap-6'>
       <div className='animate-bounceY'>
-        <Image src={logo} alt='함뜨까 로고' width={160} height={140} />
+        <Image src={logo} alt='함뜨까 로고' width={120} height={120} />
       </div>
       <H4 className='text-center'>
         {message}
