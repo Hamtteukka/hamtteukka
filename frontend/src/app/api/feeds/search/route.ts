@@ -18,8 +18,7 @@ export async function GET(req: NextRequest) {
       throw new Error('Unauthorized: Missing cookies');
     }
 
-    // TODO: 엔드포인트 변경
-    const result = await fetch(`${BASE_URL}/feeds/saved-list?${params}`, {
+    const result = await fetch(`${BASE_URL}/feeds/search?${params}`, {
       headers: {
         Cookie: cookiesHeader,
       },

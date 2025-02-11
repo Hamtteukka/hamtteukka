@@ -78,7 +78,7 @@ export const home = {
       cursorId: cursorId === -1 ? '' : cursorId.toString(),
       limit: limit.toString(),
     });
-    return fetch(`/api/feeds?${params}`, {
+    return fetch(`/api/feeds/search?${params}`, {
       cache: 'no-store',
       credentials: 'include',
     }).then((res) => res.json());
