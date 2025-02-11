@@ -1,0 +1,38 @@
+import { BASE_URL } from '@/lib/constants/service';
+import { getAuthCookies } from '@/util/cookies';
+import { NextRequest, NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
+
+export async function GET(req: NextRequest) {
+  try {
+    const cursorId = req.nextUrl.searchParams.get('cursorId') ?? '';
+    const limit = req.nextUrl.searchParams.get('limit') ?? '';
+
+    const params = new URLSearchParams({
+      cursorId,
+      limit,
+    });
+
+    const cookiesHeader = getAuthCookies();
+    if (!cookiesHeader) {
+      throw new Error('Unauthorized: Missing cookies');
+    }
+
+    const response = await fetch(`${BASE_URL}/feeds/search?${params}`, {
+      headers: {
+        Cookie: cookiesHeader,
+      },
+      cache: 'no-store',
+      credentials: 'include',
+    });
+
+    const result = await response.json();
+
+    return NextResponse.json(result);
+  } catch (error) {
+    return NextResponse.json({
+      status: 'fail',
+      message: error instanceof Error ? error.message : 'Unknown error occurred',
+    });
+  }
+}

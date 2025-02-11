@@ -3,17 +3,24 @@ package com.ssafy.hamtteukka.controller;
 import com.ssafy.hamtteukka.common.ApiResponse;
 import com.ssafy.hamtteukka.dto.FeedCreateRequest;
 import com.ssafy.hamtteukka.dto.FeedCreateResponse;
+import com.ssafy.hamtteukka.dto.FeedDetailResponse;
+import com.ssafy.hamtteukka.dto.FeedPaginationResponseDto;
+import com.ssafy.hamtteukka.dto.ScrapRequest;
 import com.ssafy.hamtteukka.service.FeedService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.*;
+
+@Slf4j
 @RestController
 @RequestMapping("/feeds")
 @RequiredArgsConstructor
@@ -28,7 +35,7 @@ public class FeedController {
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = "20") int limit) {
 
-        try{
+        try {
 
             Long userId = (Long) authentication.getPrincipal();
             System.out.println(userId);
@@ -57,7 +64,7 @@ public class FeedController {
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = "20") int limit) {
 
-        try{
+        try {
             Long userId = (Long) authentication.getPrincipal();
 
             if (userId == 0L) {
@@ -124,10 +131,10 @@ public class FeedController {
     public ResponseEntity<?> getFeedsByUserId(
             @PathVariable("userId") Long userId,
             @RequestParam(required = false) Long cursor,
-            @RequestParam(defaultValue = "20") int limit){
+            @RequestParam(defaultValue = "20") int limit) {
         try {
-            return ApiResponse.success(HttpStatus.OK,"User feeds retrieved successfully",
-                    feedService.getFeedsByUserId(userId,cursor,limit));
+            return ApiResponse.success(HttpStatus.OK, "User feeds retrieved successfully",
+                    feedService.getFeedsByUserId(userId, cursor, limit));
         } catch (Exception e) {
             return ApiResponse.fail(HttpStatus.BAD_REQUEST, "Bad request");
         }
@@ -137,12 +144,77 @@ public class FeedController {
     public ResponseEntity<?> getAIFeedsByUserId(
             @PathVariable("userId") Long userId,
             @RequestParam(required = false) Long cursor,
-            @RequestParam(defaultValue = "20") int limit){
+            @RequestParam(defaultValue = "20") int limit) {
         try {
-            return ApiResponse.success(HttpStatus.OK,"User ai feeds retrieved successfully",
-                    feedService.getAIFeedsByUserId(userId,cursor,limit));
+            return ApiResponse.success(HttpStatus.OK, "User ai feeds retrieved successfully",
+                    feedService.getAIFeedsByUserId(userId, cursor, limit));
         } catch (Exception e) {
             return ApiResponse.fail(HttpStatus.BAD_REQUEST, "Bad request");
         }
     }
+
+    @GetMapping("/{feedId}")
+    @Operation(summary = "피드 상세조회")
+    public ResponseEntity<?> getFeedDetail(
+            @PathVariable Long feedId,
+            Authentication authentication
+    ) {
+        try {
+            Long userId = (Long) authentication.getPrincipal();
+            FeedDetailResponse response = feedService.getFeedDetail(userId, feedId);
+            return ApiResponse.success(HttpStatus.OK, "피드 상세 조회 성공", response);
+
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
+        }
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "홈 피드 조회")
+    public ResponseEntity<?> searchFeeds(
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "20") int limit,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) List<Integer> categories
+    ) {
+        try {
+            FeedPaginationResponseDto response = feedService.searchFeeds(cursor, limit, keyword, categories);
+            return ApiResponse.success(HttpStatus.OK, "피드 검색 성공", response);
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
+        }
+    }
+
+    @PostMapping("/scrap")
+    @Operation(summary = "피드저장 on/off (스크랩)")
+    public ResponseEntity<?> feedOnOff(
+            Authentication authentication,
+            @RequestBody ScrapRequest request){ // Dto 설정해야함
+
+        try{
+            Long userId = (Long) authentication.getPrincipal();
+
+            if (userId == 0L) {
+                return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
+            }
+
+            boolean scrapStatus = feedService.toggleFeedSave(userId,request.getFeedId(),request.isScrap());
+            Map<String, Object> response = new HashMap<>();
+            response.put("isScrap",scrapStatus);
+            if(scrapStatus){
+                return ApiResponse.success(HttpStatus.OK,"피드 저장 ON", response);
+            } else {
+                return ApiResponse.success(HttpStatus.OK, "피드 저장 OFF", response);
+            }
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
+
+    }
+
 }

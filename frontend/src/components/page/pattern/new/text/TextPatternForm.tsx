@@ -17,7 +17,7 @@ import { TCraftTypeKr, TNeedle, TTextPatternInstruction } from '@/types/pattern'
 import { useState } from 'react';
 
 const TextPatternForm: React.FC = () => {
-  const [needle, setNeedle] = useState<TNeedle>(NEEDLE_TYPE.knitting);
+  const [needle, setNeedle] = useState<TNeedle>(NEEDLE_TYPE.KNITTING);
   const [craft, setCraft] = useState<TCraftTypeKr>();
   const [detail, setDetail] = useTextInput<HTMLTextAreaElement>('');
   const [isPending, setIsPending] = useState<boolean>(false);

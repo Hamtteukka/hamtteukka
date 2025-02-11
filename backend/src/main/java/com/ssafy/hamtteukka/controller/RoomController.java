@@ -89,10 +89,10 @@ public class RoomController {
             }
 
             Long userId = (Long) auth.getPrincipal();
-            System.out.println("userId: " + userId);
 
             Session session = roomService.getActiveSession(sessionId);
             Connection connection = session.createConnection();
+
             if(connection == null) {
                 return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "연결이 이루어지지 않음");
             }

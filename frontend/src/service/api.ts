@@ -1,3 +1,4 @@
+import { TSubscriptionProfile } from '@/types/archive';
 import { TDotPattern, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
 import { TAuthRedirectUrl, TCursorData, TResponseData } from '@/types/service';
 import { TUser } from '@/types/user';
@@ -73,20 +74,36 @@ export const auth = {
 };
 
 export const home = {
-  getPostList: async (cursorId: number, limit: number): Promise<TResponseData<TCursorData<TPostPreview>>> => {
+  getPostList: async (cursorId: number, limit: number): Promise<TResponseData<TCursorData<TFeedPreview>>> => {
     const params = new URLSearchParams({
       cursorId: cursorId === -1 ? '' : cursorId.toString(),
       limit: limit.toString(),
     });
-    return fetch(`/api/feeds?${params}`, {
+    return fetch(`/api/feeds/search?${params}`, {
       cache: 'no-store',
       credentials: 'include',
     }).then((res) => res.json());
   },
 };
 
+export const newFeed = {
+  createFeed: async (formData: FormData): Promise<TResponseData<TFeedId>> => {
+    return fetch('/api/feeds', {
+      method: 'POST',
+      body: formData,
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+};
+
 export const archive = {
-  getStoredPostList: async (cursorId: number, limit: number): Promise<TResponseData<TCursorData<TPostPreview>>> => {
+  getSubscriptionList: async (): Promise<TResponseData<TSubscriptionProfile[]>> => {
+    return fetch('/api/users/subscription', {
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
+  getStoredPostList: async (cursorId: number, limit: number): Promise<TResponseData<TCursorData<TFeedPreview>>> => {
     const params = new URLSearchParams({
       cursorId: cursorId === -1 ? '' : cursorId.toString(),
       limit: limit.toString(),
@@ -96,7 +113,7 @@ export const archive = {
       credentials: 'same-origin',
     }).then((res) => res.json());
   },
-  getStoredPatternList: async (cursorId: number, limit: number): Promise<TResponseData<TCursorData<TPostPreview>>> => {
+  getStoredPatternList: async (cursorId: number, limit: number): Promise<TResponseData<TCursorData<TFeedPreview>>> => {
     const params = new URLSearchParams({
       cursorId: cursorId === -1 ? '' : cursorId.toString(),
       limit: limit.toString(),

@@ -10,7 +10,7 @@ export const useGetStoredPostList = (type: 'post' | 'pattern') => {
     queryFn: ({ pageParam }) =>
       type === 'post' ? getStoredPostList(pageParam, POST_LIMIT) : getStoredPatternList(pageParam, POST_LIMIT),
     initialPageParam: -1,
-    getNextPageParam: (lastPage: TCursorData<TPostPreview>) => (lastPage?.hasNextItems ? lastPage?.nextCursorId : null),
+    getNextPageParam: (lastPage: TCursorData<TFeedPreview>) => (lastPage?.hasNextItems ? lastPage?.nextCursorId : null),
   });
 
   return { data, isFetching, fetchNextPage, hasNextPage };

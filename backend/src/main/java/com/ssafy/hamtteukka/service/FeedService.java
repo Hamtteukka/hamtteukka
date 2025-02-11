@@ -1,16 +1,14 @@
 package com.ssafy.hamtteukka.service;
 
 import com.ssafy.hamtteukka.common.S3FileLoader;
-import com.ssafy.hamtteukka.domain.Category;
-import com.ssafy.hamtteukka.domain.Feed;
+import com.ssafy.hamtteukka.domain.*;
 
 import com.ssafy.hamtteukka.dto.*;
-import com.ssafy.hamtteukka.domain.FeedImage;
-import com.ssafy.hamtteukka.domain.User;
 import com.ssafy.hamtteukka.repository.CategoryRepository;
 import com.ssafy.hamtteukka.repository.FeedImageRepository;
 import com.ssafy.hamtteukka.repository.FeedRepository;
 import com.ssafy.hamtteukka.repository.UserRepository;
+import com.ssafy.hamtteukka.repository.SavedFeedRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +27,7 @@ import java.util.stream.Collectors;
 public class FeedService {
 
     private final FeedRepository feedRepository;
+    private final SavedFeedRepository savedFeedRepository;
     private final FeedImageRepository feedImageRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
@@ -140,6 +139,11 @@ public class FeedService {
 
     /**
      * 피드 생성 메서드
+     *
+     * @param userId
+     * @param request
+     * @return
+     * @throws IOException
      */
     @Transactional
     public FeedCreateResponse createFeed(Long userId, FeedCreateRequest request) throws IOException {
@@ -201,5 +205,144 @@ public class FeedService {
         }
 
         return new FeedCreateResponse(savedFeed.getId());
+    }
+
+    /**
+     * 피드 상세조회 메서드
+     *
+     * @param userId
+     * @param feedId
+     * @return
+     */
+    public FeedDetailResponse getFeedDetail(Long userId, Long feedId) {
+        // 피드 조회
+        Feed feed = feedRepository.findById(feedId)
+                .orElseThrow(() -> new EntityNotFoundException("피드를 찾을 수 없습니다"));
+
+        // 이미지 URL 목록 생성
+        List<FeedDetailResponse.Image> images = feed.getFeedImages().stream()
+                .map(image -> new FeedDetailResponse.Image(
+                        s3FileLoader.getFileUrl(image.getId()),
+                        image.getImageType()
+                ))
+                .collect(Collectors.toList());
+
+        // 카테고리 목록
+        List<Integer> categories = feed.getFeedCategories().stream()
+                .map(fc -> fc.getCategory().getId().intValue())
+                .collect(Collectors.toList());
+
+        // 임베드된 도안 정보
+        FeedDetailResponse.AiPattern aiPattern = null;
+        Feed knittingPatternsFeed = feed.getKnittingPatternsFeed();
+        if (knittingPatternsFeed != null) {
+            FeedImage feedImage = knittingPatternsFeed.getFeedImages().get(0);
+            if (feedImage != null) {
+                aiPattern = new FeedDetailResponse.AiPattern(
+                        knittingPatternsFeed.getId(),
+                        knittingPatternsFeed.getTitle(),
+                        s3FileLoader.getFileUrl(feedImage.getId())
+                );
+            }
+        }
+
+        // 작성자 정보
+        FeedDetailResponse.User user = new FeedDetailResponse.User(
+                feed.getUser().getId(),
+                feed.getUser().getNickname(),
+                s3FileLoader.getFileUrl(feed.getUser().getProfileId())
+        );
+
+        // isOwner 확인
+        boolean isOwner = feed.getUser().getId().equals(userId);
+
+        // isScrap 확인 (내 게시물이 아닌 경우에만)
+        Boolean isScrap = null;
+        if (!isOwner) {
+            isScrap = savedFeedRepository.existsByUserIdAndFeedId(userId, feedId);
+        }
+
+        return new FeedDetailResponse(
+                feed.getId(),
+                feed.getTitle(),
+                feed.getContent(),
+                images,
+                categories,
+                aiPattern,
+                user,
+                isOwner,
+                isScrap
+        );
+    }
+
+    /**
+     * 피드 저장 On/Off (스크랩) 메서드
+     *
+     * isScrap = true 면 피드 저장 Off 한다는 것
+     * isSCrap = false 면 피드 저장 On 한다는 것
+     *
+     * @param userId
+     * @param feedId
+     * @param isScrap
+     * @return
+     */
+    @Transactional
+    public boolean toggleFeedSave(Long userId, Long feedId, boolean isScrap) throws Exception {
+
+        // 피드 저장 해제 (스크랩 Off)
+        if (isScrap) {
+            SavedFeed savedFeed = savedFeedRepository.findByUserIdAndFeedId(userId, feedId)
+                    .orElseThrow(() -> new EntityNotFoundException("스크랩된 피드를 찾을 수 없습니다."));
+
+            savedFeedRepository.delete(savedFeed);
+            return false;
+        }
+
+        // 피드 저장 (스크랩 On)
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        Feed feed = feedRepository.findById(feedId)
+                .orElseThrow(() -> new EntityNotFoundException("피드를 찾을 수 없습니다."));
+
+        if (savedFeedRepository.findByUserIdAndFeedId(userId, feedId).isPresent()) {
+            throw new Exception("이미 스크랩된 피드입니다.");
+        }
+
+        savedFeedRepository.save(new SavedFeed(user, feed));
+        return true;
+    }
+    
+    /**
+     * 홈 피드 조회 메서드
+     *
+     * @param cursor
+     * @param limit
+     * @param keyword
+     * @param categories
+     * @return
+     */
+    public FeedPaginationResponseDto searchFeeds(Long cursor, int limit, String keyword, List<Integer> categories) {
+        Slice<FeedResponseDto> slice = feedRepository.searchFeedsWithCursor(
+                cursor,
+                keyword,
+                categories,
+                PageRequest.of(0, limit)
+        );
+
+        List<FeedResponseDto> feeds = slice.getContent().stream()
+                .map(feed -> new FeedResponseDto(
+                        feed.getFeedId(),
+                        s3FileLoader.getFileUrl(feed.getThumbnail()),
+                        feed.getTitle(),
+                        s3FileLoader.getFileUrl(feed.getUserProfile())
+                ))
+                .collect(Collectors.toList());
+
+        return new FeedPaginationResponseDto(
+                feeds,
+                slice.hasNext(),
+                slice.hasNext() ? feeds.get(feeds.size() - 1).getFeedId() : null
+        );
     }
 }

@@ -1,5 +1,5 @@
-import { DefaultBodyType, PathParams, StrictRequest } from 'msw';
 import { TUser } from '@/types/user';
+import { DefaultBodyType, PathParams, StrictRequest } from 'msw';
 
 export interface TMockRequest {
   request: StrictRequest<DefaultBodyType>;

@@ -62,6 +62,10 @@ const useOpenVidu = () => {
   };
 
   const cleanUpOpenVidu = () => {
+    if (session) {
+      session.disconnect();
+    }
+
     setOv(undefined);
     setSession(undefined);
     setMyStream(undefined);

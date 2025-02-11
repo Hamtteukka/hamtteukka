@@ -1,5 +1,6 @@
 import { TUser } from '@/types/user';
 
-export interface TSubscriptionProfile extends TUser {
+export interface TSubscriptionProfile {
+  user: TUser;
   subscriber: number;
 }

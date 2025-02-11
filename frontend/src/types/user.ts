@@ -1,5 +1,4 @@
 import { VIDEO_USER_ROLE } from '@/lib/constants/knitogether';
-import { TAuthRedirectUrl } from '@/types/service';
 
 type TRole = (typeof VIDEO_USER_ROLE)[keyof typeof VIDEO_USER_ROLE];
 

@@ -1,34 +1,31 @@
 import { BASE_URL } from '@/lib/constants/service';
-import { getAuthCookies } from '@/util/cookies';
 import { NextRequest, NextResponse } from 'next/server';
-export const dynamic = 'force-dynamic';
+import { getAuthCookies } from '@/util/cookies';
 
-export async function GET(req: NextRequest) {
+export async function POST(request: NextRequest) {
+  const cookiesHeader = getAuthCookies();
+  if (!cookiesHeader) {
+    throw new Error('Unauthorized: Missing cookies');
+  }
+
   try {
-    const cursorId = req.nextUrl.searchParams.get('cursorId') ?? '';
-    const limit = req.nextUrl.searchParams.get('limit') ?? '';
+    const formData = await request.formData();
 
-    const params = new URLSearchParams({
-      cursorId,
-      limit,
-    });
-
-    const cookiesHeader = getAuthCookies();
-    if (!cookiesHeader) {
-      throw new Error('Unauthorized: Missing cookies');
-    }
-
-    // TODO: 엔드포인트 변경
-    const result = await fetch(`${BASE_URL}/feeds/saved-list?${params}`, {
+    // 클라이언트에 저장된 쿠키를 가지고 요청
+    const response = await fetch(`${BASE_URL}/feeds`, {
       headers: {
         Cookie: cookiesHeader,
       },
-      cache: 'no-store',
+      method: 'POST',
+      body: formData,
       credentials: 'include',
     });
 
+    const result = await response.json();
+
     return NextResponse.json(result);
   } catch (error) {
+    console.error(error);
     return NextResponse.json({
       status: 'fail',
       message: error instanceof Error ? error.message : 'Unknown error occurred',
