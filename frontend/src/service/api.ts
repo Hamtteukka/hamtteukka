@@ -1,3 +1,4 @@
+import { TSubscriptionProfile } from '@/types/archive';
 import { TDotPattern, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
 import { TAuthRedirectUrl, TCursorData, TResponseData } from '@/types/service';
 import { TUser } from '@/types/user';
@@ -86,6 +87,12 @@ export const home = {
 };
 
 export const archive = {
+  getSubscriptionList: async (): Promise<TResponseData<TSubscriptionProfile[]>> => {
+    return fetch('/api/users/subscription', {
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
   getStoredPostList: async (cursorId: number, limit: number): Promise<TResponseData<TCursorData<TPostPreview>>> => {
     const params = new URLSearchParams({
       cursorId: cursorId === -1 ? '' : cursorId.toString(),
@@ -96,6 +103,7 @@ export const archive = {
       credentials: 'same-origin',
     }).then((res) => res.json());
   },
+
   getStoredPatternList: async (cursorId: number, limit: number): Promise<TResponseData<TCursorData<TPostPreview>>> => {
     const params = new URLSearchParams({
       cursorId: cursorId === -1 ? '' : cursorId.toString(),
