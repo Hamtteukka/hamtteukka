@@ -7,7 +7,7 @@ import { delay, HttpResponse, StrictResponse } from 'msw';
 
 export const getMPostList = async ({
   request,
-}: TMockRequest): Promise<StrictResponse<TResponseData<TCursorData<TPostPreview>>>> => {
+}: TMockRequest): Promise<StrictResponse<TResponseData<TCursorData<TFeedPreview>>>> => {
   const url = new URL(request.url);
   const cursorId = Number(url.searchParams.get('cursorId') ?? 0);
   const limit = Number(url.searchParams.get('limit') ?? POST_LIMIT);

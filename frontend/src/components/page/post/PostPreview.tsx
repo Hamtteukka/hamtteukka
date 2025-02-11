@@ -2,7 +2,7 @@ import Avatar from '@/components/ui/Avatar';
 import Link from 'next/link';
 
 interface PPostPreview {
-  info: TPostPreview;
+  info: TFeedPreview;
 }
 
 const PostPreview: React.FC<PPostPreview> = ({ info: { feedId, thumbnail, title, userProfile } }) => {

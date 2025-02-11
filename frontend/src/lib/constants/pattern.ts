@@ -31,9 +31,10 @@ export const COLOR_NUM = {
 
 const KNITTING = 'knitting';
 const CROCHETING = 'crocheting';
+
 export const NEEDLE_TYPE = {
-  knitting: KNITTING,
-  crocheting: CROCHETING,
+  KNITTING,
+  CROCHETING,
 } as const;
 
 const TOP = 'top';
@@ -45,6 +46,7 @@ const WALLET = 'wallet';
 const DOLL_CLOTHES = 'dollClothes';
 const PET_ITEM = 'petItem';
 const OTHER = 'other';
+
 export const CRAFT_TYPE = {
   TOP,
   BOTTOM,
