@@ -11,6 +11,7 @@ import com.ssafy.hamtteukka.repository.CategoryRepository;
 import com.ssafy.hamtteukka.repository.FeedImageRepository;
 import com.ssafy.hamtteukka.repository.FeedRepository;
 import com.ssafy.hamtteukka.repository.UserRepository;
+import com.ssafy.hamtteukka.repository.SavedFeedRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class FeedService {
 
     private final FeedRepository feedRepository;
+    private final SavedFeedRepository savedFeedRepository;
     private final FeedImageRepository feedImageRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
@@ -140,6 +142,11 @@ public class FeedService {
 
     /**
      * 피드 생성 메서드
+     *
+     * @param userId
+     * @param request
+     * @return
+     * @throws IOException
      */
     @Transactional
     public FeedCreateResponse createFeed(Long userId, FeedCreateRequest request) throws IOException {
@@ -201,5 +208,73 @@ public class FeedService {
         }
 
         return new FeedCreateResponse(savedFeed.getId());
+    }
+
+    /**
+     * 피드 상세조회 메서드
+     *
+     * @param userId
+     * @param feedId
+     * @return
+     */
+    public FeedDetailResponse getFeedDetail(Long userId, Long feedId) {
+        // 피드 조회
+        Feed feed = feedRepository.findById(feedId)
+                .orElseThrow(() -> new EntityNotFoundException("피드를 찾을 수 없습니다"));
+
+        // 이미지 URL 목록 생성
+        List<FeedDetailResponse.Image> images = feed.getFeedImages().stream()
+                .map(image -> new FeedDetailResponse.Image(
+                        s3FileLoader.getFileUrl(image.getId()),
+                        image.getImageType()
+                ))
+                .collect(Collectors.toList());
+
+        // 카테고리 목록
+        List<Integer> categories = feed.getFeedCategories().stream()
+                .map(fc -> fc.getCategory().getId().intValue())
+                .collect(Collectors.toList());
+
+        // 임베드된 도안 정보
+        FeedDetailResponse.AiPattern aiPattern = null;
+        Feed knittingPatternsFeed = feed.getKnittingPatternsFeed();
+        if (knittingPatternsFeed != null) {
+            FeedImage feedImage = knittingPatternsFeed.getFeedImages().get(0);
+            if (feedImage != null) {
+                aiPattern = new FeedDetailResponse.AiPattern(
+                        knittingPatternsFeed.getId(),
+                        knittingPatternsFeed.getTitle(),
+                        s3FileLoader.getFileUrl(feedImage.getId())
+                );
+            }
+        }
+
+        // 작성자 정보
+        FeedDetailResponse.User user = new FeedDetailResponse.User(
+                feed.getUser().getId(),
+                feed.getUser().getNickname(),
+                s3FileLoader.getFileUrl(feed.getUser().getProfileId())
+        );
+
+        // isOwner 확인
+        boolean isOwner = feed.getUser().getId().equals(userId);
+
+        // isScrap 확인 (내 게시물이 아닌 경우에만)
+        Boolean isScrap = null;
+        if (!isOwner) {
+            isScrap = savedFeedRepository.existsByUserIdAndFeedId(userId, feedId);
+        }
+
+        return new FeedDetailResponse(
+                feed.getId(),
+                feed.getTitle(),
+                feed.getContent(),
+                images,
+                categories,
+                aiPattern,
+                user,
+                isOwner,
+                isScrap
+        );
     }
 }
