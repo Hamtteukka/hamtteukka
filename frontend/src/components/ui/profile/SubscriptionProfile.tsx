@@ -9,7 +9,10 @@ interface PSubscriptionProfile {
 }
 
 const SubscriptionProfile: React.FC<PSubscriptionProfile> = ({
-  info: { nickname, subscriber, profileId },
+  info: {
+    user: { nickname, profileId },
+    subscriber,
+  },
   className = '',
 }) => {
   return (
