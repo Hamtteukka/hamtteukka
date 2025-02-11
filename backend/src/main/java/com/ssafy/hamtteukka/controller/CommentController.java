@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/comments")
 public class CommentController {
     private final CommentService commentService;
-    
+
     @PostMapping("")
     @Operation(summary = "댓글 작성하기")
     public ResponseEntity<?> createComment(

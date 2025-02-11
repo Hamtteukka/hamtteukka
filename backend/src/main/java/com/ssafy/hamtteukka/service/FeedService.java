@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -313,5 +312,37 @@ public class FeedService {
         savedFeedRepository.save(new SavedFeed(user, feed));
         return true;
     }
+    
+    /**
+     * 홈 피드 조회 메서드
+     *
+     * @param cursor
+     * @param limit
+     * @param keyword
+     * @param categories
+     * @return
+     */
+    public FeedPaginationResponseDto searchFeeds(Long cursor, int limit, String keyword, List<Integer> categories) {
+        Slice<FeedResponseDto> slice = feedRepository.searchFeedsWithCursor(
+                cursor,
+                keyword,
+                categories,
+                PageRequest.of(0, limit)
+        );
 
+        List<FeedResponseDto> feeds = slice.getContent().stream()
+                .map(feed -> new FeedResponseDto(
+                        feed.getFeedId(),
+                        s3FileLoader.getFileUrl(feed.getThumbnail()),
+                        feed.getTitle(),
+                        s3FileLoader.getFileUrl(feed.getUserProfile())
+                ))
+                .collect(Collectors.toList());
+
+        return new FeedPaginationResponseDto(
+                feeds,
+                slice.hasNext(),
+                slice.hasNext() ? feeds.get(feeds.size() - 1).getFeedId() : null
+        );
+    }
 }
