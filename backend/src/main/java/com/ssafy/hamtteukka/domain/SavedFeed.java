@@ -1,16 +1,20 @@
 package com.ssafy.hamtteukka.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SavedFeed {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "saved_feed_id", columnDefinition = "INT UNSIGNED")
     private Long id;
 
@@ -24,4 +28,17 @@ public class SavedFeed {
 
     @Column(nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime saveDate;
+
+    public SavedFeed(User user, Feed feed) {
+        this.user = user;
+        this.feed = feed;
+        this.saveDate = LocalDateTime.now();
+    }
+
+    public SavedFeed(Long id, User user, Feed feed, LocalDateTime saveDate){
+        this.id = id;
+        this.user = user;
+        this.feed = feed;
+        this.saveDate = saveDate;
+    }
 }
