@@ -4,6 +4,7 @@ import com.ssafy.hamtteukka.common.ApiResponse;
 import com.ssafy.hamtteukka.dto.FeedCreateRequest;
 import com.ssafy.hamtteukka.dto.FeedCreateResponse;
 import com.ssafy.hamtteukka.dto.FeedDetailResponse;
+import com.ssafy.hamtteukka.dto.ScrapRequest;
 import com.ssafy.hamtteukka.service.FeedService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,6 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/feeds")
@@ -163,5 +167,35 @@ public class FeedController {
         } catch (Exception e) {
             return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
         }
+    }
+
+    @PostMapping("/scrap")
+    @Operation(summary = "피드저장 on/off (스크랩)")
+    public ResponseEntity<?> feedOnOff(
+            Authentication authentication,
+            @RequestBody ScrapRequest request){ // Dto 설정해야함
+
+        try{
+            Long userId = (Long) authentication.getPrincipal();
+
+            if (userId == 0L) {
+                return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
+            }
+
+            boolean scrapStatus = feedService.toggleFeedSave(userId,request.getFeedId(),request.isScrap());
+            Map<String, Object> response = new HashMap<>();
+            response.put("isScrap",scrapStatus);
+            if(scrapStatus){
+                return ApiResponse.success(HttpStatus.OK,"피드 저장 ON", response);
+            } else {
+                return ApiResponse.success(HttpStatus.OK, "피드 저장 OFF", response);
+            }
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
+
     }
 }

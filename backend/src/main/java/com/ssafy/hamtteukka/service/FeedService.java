@@ -1,12 +1,9 @@
 package com.ssafy.hamtteukka.service;
 
 import com.ssafy.hamtteukka.common.S3FileLoader;
-import com.ssafy.hamtteukka.domain.Category;
-import com.ssafy.hamtteukka.domain.Feed;
+import com.ssafy.hamtteukka.domain.*;
 
 import com.ssafy.hamtteukka.dto.*;
-import com.ssafy.hamtteukka.domain.FeedImage;
-import com.ssafy.hamtteukka.domain.User;
 import com.ssafy.hamtteukka.repository.CategoryRepository;
 import com.ssafy.hamtteukka.repository.FeedImageRepository;
 import com.ssafy.hamtteukka.repository.FeedRepository;
@@ -22,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -277,4 +275,43 @@ public class FeedService {
                 isScrap
         );
     }
+
+    /**
+     * 피드 저장 On/Off (스크랩) 메서드
+     *
+     * isScrap = true 면 피드 저장 Off 한다는 것
+     * isSCrap = false 면 피드 저장 On 한다는 것
+     *
+     * @param userId
+     * @param feedId
+     * @param isScrap
+     * @return
+     */
+    @Transactional
+    public boolean toggleFeedSave(Long userId, Long feedId, boolean isScrap) throws Exception {
+
+        // 피드 저장 해제 (스크랩 Off)
+        if (isScrap) {
+            SavedFeed savedFeed = savedFeedRepository.findByUserIdAndFeedId(userId, feedId)
+                    .orElseThrow(() -> new EntityNotFoundException("스크랩된 피드를 찾을 수 없습니다."));
+
+            savedFeedRepository.delete(savedFeed);
+            return false;
+        }
+
+        // 피드 저장 (스크랩 On)
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
+        Feed feed = feedRepository.findById(feedId)
+                .orElseThrow(() -> new EntityNotFoundException("피드를 찾을 수 없습니다."));
+
+        if (savedFeedRepository.findByUserIdAndFeedId(userId, feedId).isPresent()) {
+            throw new Exception("이미 스크랩된 피드입니다.");
+        }
+
+        savedFeedRepository.save(new SavedFeed(user, feed));
+        return true;
+    }
+
 }
