@@ -3,6 +3,7 @@ package com.ssafy.hamtteukka.controller;
 import com.ssafy.hamtteukka.common.ApiResponse;
 import com.ssafy.hamtteukka.dto.FeedCreateRequest;
 import com.ssafy.hamtteukka.dto.FeedCreateResponse;
+import com.ssafy.hamtteukka.dto.FeedDetailResponse;
 import com.ssafy.hamtteukka.service.FeedService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
@@ -143,6 +144,24 @@ public class FeedController {
                     feedService.getAIFeedsByUserId(userId,cursor,limit));
         } catch (Exception e) {
             return ApiResponse.fail(HttpStatus.BAD_REQUEST, "Bad request");
+        }
+    }
+
+    @GetMapping("/{feedId}")
+    @Operation(summary = "피드 상세조회")
+    public ResponseEntity<?> getFeedDetail(
+            @PathVariable Long feedId,
+            Authentication authentication
+    ) {
+        try {
+            Long userId = (Long) authentication.getPrincipal();
+            FeedDetailResponse response = feedService.getFeedDetail(userId, feedId);
+            return ApiResponse.success(HttpStatus.OK, "피드 상세 조회 성공", response);
+
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
         }
     }
 }
