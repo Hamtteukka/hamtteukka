@@ -55,6 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws IOException {
         try {
+            log.info("api path - {}",request.getRequestURI());
             String token = getCookie(request, "accessToken");
 
             if(!checkPath(request)) {
@@ -71,10 +72,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (UnauthorizedException e) {
+            log.error("UnauthorizedException: {}", e.getMessage());
             HttpStatus status = e.getMessage().equals("Token is blacklisted. Access is forbidden.")?HttpStatus.FORBIDDEN:HttpStatus.UNAUTHORIZED;
             response.setStatus(status.value());
             response.getWriter().write(e.getMessage());
         } catch (Exception e) {
+            log.error("Exception: {}", e.getMessage());
             log.error(e.getMessage());
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             response.getWriter().write("Internal Server Error");

@@ -1,5 +1,7 @@
 package com.ssafy.hamtteukka.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hamtteukka.common.S3FileLoader;
 import com.ssafy.hamtteukka.domain.Room;
 import com.ssafy.hamtteukka.domain.User;
@@ -19,10 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,6 +31,7 @@ public class RoomService extends OpenVidu {
     private static final String ROOM_PREFIX = "room";
     private final UserRepository userRepository;
     private final S3FileLoader s3FileLoader;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     @Qualifier("roomRedisTemplate")
@@ -83,6 +84,11 @@ public class RoomService extends OpenVidu {
         if(room == null) {
             throw new CustomException(ErrorCode.FEED_NOT_FOUND);
         }
+
+        if(room.getPresentPeople() + 1 > room.getCapacity()) {
+            throw new CustomException(ErrorCode.ROOM_CAPACITY_OVER);
+        }
+
         // 사람 추가 해야해
         room.addPerson(socialId);
         room.incrementPresentPeople();
@@ -100,8 +106,11 @@ public class RoomService extends OpenVidu {
 
     public List<Room> getRooms() {
         List<Room> rooms = roomRedisTemplate.opsForHash().values(ROOM_PREFIX);
-        return rooms;
+
+        return rooms != null ? rooms : Collections.emptyList();
     }
+
+
 
     private Room getRoom(String sessionId) {
         Room room = (Room) roomRedisTemplate.opsForHash().get(ROOM_PREFIX, sessionId);
