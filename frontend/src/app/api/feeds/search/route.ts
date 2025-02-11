@@ -18,13 +18,15 @@ export async function GET(req: NextRequest) {
       throw new Error('Unauthorized: Missing cookies');
     }
 
-    const result = await fetch(`${BASE_URL}/feeds/search?${params}`, {
+    const response = await fetch(`${BASE_URL}/feeds/search?${params}`, {
       headers: {
         Cookie: cookiesHeader,
       },
       cache: 'no-store',
       credentials: 'include',
     });
+
+    const result = await response.json();
 
     return NextResponse.json(result);
   } catch (error) {

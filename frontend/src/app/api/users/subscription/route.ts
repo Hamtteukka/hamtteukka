@@ -9,12 +9,14 @@ export async function GET(req: NextRequest) {
       throw new Error('Unauthorized: Missing cookies');
     }
 
-    const result = await fetch(`${BASE_URL}/users/subscription`, {
+    const response = await fetch(`${BASE_URL}/users/subscription`, {
       headers: {
         Cookie: cookiesHeader,
       },
       credentials: 'include',
     });
+
+    const result = await response.json();
 
     return NextResponse.json(result);
   } catch (error) {

@@ -21,18 +21,9 @@ export async function POST(request: NextRequest) {
       credentials: 'include',
     });
 
-    // 쿠키를 꺼내서 클라이언트로 보내는 응답에 다시 삽입
-    const cookieHeader = response.headers.get('set-cookie');
-
     const result = await response.json();
 
-    const resWithCookie = NextResponse.json(result);
-
-    if (cookieHeader) {
-      resWithCookie.headers.set('Set-Cookie', cookieHeader);
-    }
-
-    return resWithCookie;
+    return NextResponse.json(result);
   } catch (error) {
     console.error(error);
     return NextResponse.json({
