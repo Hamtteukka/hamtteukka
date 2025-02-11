@@ -41,8 +41,8 @@ const NewFeedContentForm: React.FC = () => {
     formData.append('feedType', 'NORMAL');
     formData.append('title', title);
     formData.append('content', detail);
-    formData.append('categories[0]', NEEDLE_NUM[needle].toString());
-    formData.append('categories[1]', CRAFT_NUM[craftTypeKrToEn[craft]].toString());
+    formData.append('categoryIds[0]', NEEDLE_NUM[needle].toString());
+    formData.append('categoryIds[1]', CRAFT_NUM[craftTypeKrToEn[craft]].toString());
 
     files.forEach((file, index) => {
       formData.append(`images[${index}]`, file);
