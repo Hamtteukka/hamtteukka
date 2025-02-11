@@ -1,5 +1,9 @@
 package com.ssafy.hamtteukka.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,10 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RedisHash("room")
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Room implements Serializable {
+
     @Id
     private String sessionId;
     private String title;
@@ -22,17 +28,19 @@ public class Room implements Serializable {
     private int capacity;
     private String thumbnailName;
     private String hostNickName;
-    private String hostProfileImg; // 바뀔 수 있다.
+    private String hostProfileImg;
     private List<Long> people = new ArrayList<>();
 
+
+    // 기존 메서드들
     public void incrementPresentPeople() {
         this.presentPeople++;
     }
+
     public void addPerson(Long personId) {
         if (this.people == null) {
             this.people = new ArrayList<>();
         }
         this.people.add(personId);
     }
-
 }
