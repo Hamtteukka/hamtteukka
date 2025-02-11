@@ -11,7 +11,7 @@ const DragAndDropUploadImg = dynamic(() => import('@/components/ui/dragAndDropUp
 
 interface PImageInput {
   file: File | null;
-  setFile: React.Dispatch<React.SetStateAction<File | null>>;
+  setFile: React.Dispatch<React.SetStateAction<File | null>> | ((file: File | null) => void);
   description?: string;
   className?: string;
 }

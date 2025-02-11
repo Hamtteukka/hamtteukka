@@ -18,7 +18,7 @@ export const getMSubscriptionList = async (): Promise<StrictResponse<TResponseDa
 
 export const getMStoredPostList = async ({
   request,
-}: TMockRequest): Promise<StrictResponse<TResponseData<TCursorData<TPostPreview>>>> => {
+}: TMockRequest): Promise<StrictResponse<TResponseData<TCursorData<TFeedPreview>>>> => {
   const url = new URL(request.url);
   const cursorId = Number(url.searchParams.get('cursorId') ?? 0);
   const limit = Number(url.searchParams.get('limit') ?? POST_LIMIT);

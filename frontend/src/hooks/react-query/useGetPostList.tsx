@@ -9,7 +9,7 @@ export const useGetPostList = () => {
     queryKey: [queryKey.HOME_POST],
     queryFn: ({ pageParam }) => getPostList(pageParam, POST_LIMIT),
     initialPageParam: -1,
-    getNextPageParam: (lastPage: TCursorData<TPostPreview>) => (lastPage?.hasNextItems ? lastPage?.nextCursorId : null),
+    getNextPageParam: (lastPage: TCursorData<TFeedPreview>) => (lastPage?.hasNextItems ? lastPage?.nextCursorId : null),
   });
 
   return { data, isFetching, fetchNextPage, hasNextPage };
