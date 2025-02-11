@@ -12,6 +12,7 @@ import AIPatternInput from '@/components/page/feed/new/AIPatternInput';
 import { useNewFeedContext } from '@/hooks/useNewFeedContext';
 import { CRAFT_NUM, NEEDLE_NUM } from '@/lib/constants/post';
 import { createFeed } from '@/service/newFeed';
+import { ModalProvider } from '@/components/context/ModalContext';
 
 const NewFeedContentForm: React.FC = () => {
   const {
@@ -80,7 +81,9 @@ const NewFeedContentForm: React.FC = () => {
         input={<TextArea value={detail} onChange={setDetail} minHeight={144} placeholder='내용을 작성해 주세요.' />}
         vertical={true}
       />
-      <LabeledInput label='AI 도안 임베드' input={<AIPatternInput />} vertical={true} />
+      <ModalProvider>
+        <LabeledInput label='AI 도안 임베드' input={<AIPatternInput />} vertical={true} />
+      </ModalProvider>
       <div className='flex justify-end gap-2.5'>
         <Button onClick={submit}>등록</Button>
         <Button onClick={cancel} type='outlined'>
