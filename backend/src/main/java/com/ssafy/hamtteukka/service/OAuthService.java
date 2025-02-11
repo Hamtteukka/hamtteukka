@@ -3,6 +3,7 @@ package com.ssafy.hamtteukka.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.hamtteukka.common.S3FileLoader;
 import com.ssafy.hamtteukka.domain.User;
 import com.ssafy.hamtteukka.dto.KakaoInfo;
 import com.ssafy.hamtteukka.dto.UserResponseDto;
@@ -37,17 +38,20 @@ public class OAuthService {
     private final TokenBlacklistService tokenBlacklistService;
     private final UserRepository userRepository;
     private final RateLimiterService rateLimiterService;
+    private final S3FileLoader s3FileLoader;
 
     public OAuthService(
             JwtTokenProvider jwtTokenProvider,
             TokenBlacklistService tokenBlacklistService,
             UserRepository userRepository,
-            RateLimiterService rateLimiterService
+            RateLimiterService rateLimiterService,
+            S3FileLoader s3FileLoader
     ) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.tokenBlacklistService = tokenBlacklistService;
         this.userRepository = userRepository;
         this.rateLimiterService = rateLimiterService;
+        this.s3FileLoader = s3FileLoader;
     }
 
     public String kakaoLoginUrl() {
@@ -178,9 +182,8 @@ public class OAuthService {
         return Map.of(
                 "url", "/",
                 "user", new UserResponseDto(
-                        0,
                         user.get().getNickname(),
-                        user.get().getProfileId(),
+                        s3FileLoader.getFileUrl(user.get().getProfileId()),
                         rateLimiterService.getRequestCount(user.get().getId())
                 )
         );

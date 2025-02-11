@@ -205,7 +205,7 @@ public class UserController {
         return ApiResponse.success(
                 HttpStatus.OK,
                 "구독 유저 받아오기 완료",
-                Map.of("subscribers",response)
+                response
         );
     }
 

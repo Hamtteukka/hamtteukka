@@ -198,7 +198,6 @@ public class UserService {
      * @param nickname
      */
     public Optional<Long> getUserIdByNickname(String nickname) {
-        ;
         return userRepository.findIdByNickname(nickname);
     }
 
@@ -252,25 +251,15 @@ public class UserService {
      * @return
      */
     public List<UserSubscriptionResponseDto> getSubscription(Long userId) {
-        User subscriber = userRepository.getReferenceById(userId);
+        List<UserSubscriptionResponseDto> list = subscribeRepository.getSubscribedUsers(userId);
 
-        List<User> subscribedUsers = subscribeRepository.findProvider(subscriber);
-
-        return subscribedUsers.stream()
-                .map(user -> new UserSubscriptionResponseDto(user.getNickname(), user.getProfileId(), getSubscriberCount(user)))
+        return list.stream()
+                .map(dto -> new UserSubscriptionResponseDto(
+                        dto.getUser().getUserId(),
+                        dto.getUser().getNickname(),
+                        s3FileLoader.getFileUrl(dto.getUser().getProfileId()),
+                        dto.getSubscriber()
+                ))
                 .toList();
-
-    }
-
-    ;
-
-    /**
-     * 구독자 수 가져오기 메서드
-     *
-     * @param user
-     * @return
-     */
-    private int getSubscriberCount(User user) {
-        return subscribeRepository.countByProvider(user);
     }
 }

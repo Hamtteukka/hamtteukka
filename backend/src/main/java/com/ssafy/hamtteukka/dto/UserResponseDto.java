@@ -17,4 +17,11 @@ public class UserResponseDto {
         this.profileId = profileId;
         this.dailyCreationLimit = 0;
     }
+
+    public UserResponseDto(String nickname, String profileId, int dailyCreationLimit) {
+        this.userId = 0;
+        this.nickname = nickname;
+        this.profileId = profileId;
+        this.dailyCreationLimit = dailyCreationLimit;
+    }
 }
