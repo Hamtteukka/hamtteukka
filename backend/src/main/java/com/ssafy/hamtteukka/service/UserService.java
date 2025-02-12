@@ -96,6 +96,7 @@ public class UserService {
         );
 
         user = userRepository.save(user);
+        log.info("userId: {}", user.getId());
         String accessToken = jwtTokenProvider.generateJwt(user.getId(), 60);
         log.info("accessToken: " + accessToken);
         response.addCookie(generateCookie(
