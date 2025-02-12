@@ -1,5 +1,5 @@
 import { VIDEO_USER_ROLE } from '@/lib/constants/knitogether';
-import { TUser, TVideoUser } from '@/types/user';
+import { TSubscriptionInfo, TUser, TVideoUser } from '@/types/user';
 
 export const MUserId = {
   userId: 1,
@@ -15,4 +15,10 @@ export const MUser: TUser = {
 export const MVideoUser: TVideoUser = {
   ...MUser,
   role: VIDEO_USER_ROLE.HOST,
+};
+
+export const MSubscriptionInfo: TSubscriptionInfo = {
+  user: MUser,
+  subscriberCount: 10,
+  isSubscribed: false,
 };

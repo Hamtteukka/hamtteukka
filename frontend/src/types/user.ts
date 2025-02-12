@@ -12,3 +12,9 @@ export interface TUser {
 export interface TVideoUser extends TUser {
   role: TRole;
 }
+
+export interface TSubscriptionInfo {
+  user: TUser;
+  subscriberCount: number;
+  isSubscribed: boolean;
+}
