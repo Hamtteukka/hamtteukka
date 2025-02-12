@@ -18,7 +18,7 @@ export const getUserPatternList = async (
   cursorId: number,
   limit: number,
 ): Promise<TCursorData<TFeedPreview>> => {
-  const { status, message, data } = await profile.getUserPostList(userId, cursorId, limit);
+  const { status, message, data } = await profile.getUserPatternList(userId, cursorId, limit);
   if (status !== SUCCESS) throw new Error(message);
 
   return data;

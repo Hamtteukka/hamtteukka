@@ -57,8 +57,11 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
                     f.id, fi.id, f.title,  f.user.profileId
             )
             FROM Feed f
-            LEFT JOIN FeedImage fi ON fi.feed.id = f.id AND fi.imageType = 0
-            WHERE f.user.id = :userId AND f.feedType = 0 AND (:cursor IS NULL OR f.id < :cursor)
+            LEFT JOIN f.feedImages fi
+            WHERE f.user.id = :userId 
+            AND f.feedType = 0
+            AND fi.imageType = 0
+            AND (:cursor IS NULL OR f.id < :cursor)
             ORDER BY f.id DESC
             """)
     Slice<FeedResponseDto> findFeedsByUserIdWithCursor(
@@ -71,8 +74,11 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
                     f.id, fi.id, f.title,  f.user.profileId
             )
             FROM Feed f
-            LEFT JOIN FeedImage fi ON fi.feed.id = f.id AND fi.imageType = 0
-            WHERE f.user.id = :userId AND f.feedType = 1 AND (:cursor IS NULL OR f.id < :cursor)
+            LEFT JOIN f.feedImages fi
+            WHERE f.user.id = :userId 
+            AND f.feedType = 1
+            AND fi.imageType = 0
+            AND (:cursor IS NULL OR f.id < :cursor)
             ORDER BY f.id DESC
             """)
     Slice<FeedResponseDto> findAIFeedsByUserIdWithCursor(
