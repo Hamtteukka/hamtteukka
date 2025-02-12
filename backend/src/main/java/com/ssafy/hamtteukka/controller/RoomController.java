@@ -5,6 +5,7 @@ import com.ssafy.hamtteukka.common.ApiResponse;
 import com.ssafy.hamtteukka.domain.Room;
 import com.ssafy.hamtteukka.dto.RoomEnterResponseDto;
 import com.ssafy.hamtteukka.dto.RoomResponseDto;
+import com.ssafy.hamtteukka.exception.CustomException;
 import com.ssafy.hamtteukka.service.RoomService;
 import io.openvidu.java.client.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,14 +47,13 @@ public class RoomController {
             @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
             Authentication auth) {
         try {
-            System.out.println("이거 뜨냐? 뜨면 여기까진 들어옴"); // 안찍힘
             if (auth == null || auth.getPrincipal() == null) {
                 return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
             }
             Map<String, Object> params = new HashMap<>();
 
             Long userId = (Long) auth.getPrincipal();
-            System.out.println("방 만들 때 넘어오는 USER_id : " + userId);
+
             params.put("title", title);
             params.put("capacity", capacity);
             params.put("captainId", userId); // 방 만드는 유저 (방장)
@@ -83,7 +83,6 @@ public class RoomController {
     @Operation(summary = "모각뜨 방 참여하기")
     public ResponseEntity<?> enterRoom(@PathVariable("sessionId") String sessionId, Authentication auth) {
         try {
-            System.out.println("방 참여에 들어온 것");
             if (auth == null || auth.getPrincipal() == null) {
                 return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
             }
@@ -105,7 +104,10 @@ public class RoomController {
             return ApiResponse.fail(HttpStatus.BAD_REQUEST, "필수 값 누락: " + e.getMessage());
         } catch (ClassCastException e) {
             return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "잘못된 사용자 인증 정보");
+        } catch (CustomException ex) {
+            return ApiResponse.fail(ex.getErrorCode().getStatus(), ex.getErrorCode().getMessage());
         } catch (Exception ex) {
+            log.info(ex.getMessage());
             return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "모각뜨 방 입장 중 오류 발생");
         }
     }
@@ -119,6 +121,7 @@ public class RoomController {
         } catch (ClassCastException e) {
             return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "잘못된 사용자 인증 정보");
         } catch (Exception ex) {
+            log.info(ex.getMessage());
             return ApiResponse.fail(HttpStatus.BAD_REQUEST, "모각뜨 방 조회 중 오류 발생");
         }
     }
@@ -141,6 +144,7 @@ public class RoomController {
         } catch (NullPointerException e) {
             return ApiResponse.fail(HttpStatus.BAD_REQUEST, "필수 값 누락: " + e.getMessage());
         } catch (Exception ex) {
+            log.info(ex.getMessage());
             return ApiResponse.fail(HttpStatus.BAD_REQUEST, "모각뜨 방 나가기 중 오류 발생");
         }
     }
