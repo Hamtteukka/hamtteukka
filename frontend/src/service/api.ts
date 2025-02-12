@@ -96,6 +96,38 @@ export const newFeed = {
   },
 };
 
+export const profile = {
+  getUserPostList: async (
+    userId: string,
+    cursorId: number,
+    limit: number,
+  ): Promise<TResponseData<TCursorData<TFeedPreview>>> => {
+    const params = new URLSearchParams({
+      cursorId: cursorId === -1 ? '' : cursorId.toString(),
+      limit: limit.toString(),
+    });
+    return fetch(`/api/feeds/${userId}/list?${params}`, {
+      cache: 'no-store',
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
+  getUserPatternList: async (
+    userId: string,
+    cursorId: number,
+    limit: number,
+  ): Promise<TResponseData<TCursorData<TFeedPreview>>> => {
+    const params = new URLSearchParams({
+      cursorId: cursorId === -1 ? '' : cursorId.toString(),
+      limit: limit.toString(),
+    });
+    return fetch(`/api/feeds/${userId}/ai-list?${params}`, {
+      cache: 'no-store',
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+};
+
 export const archive = {
   getSubscriptionList: async (): Promise<TResponseData<TSubscriptionProfile[]>> => {
     return fetch('/api/users/subscription', {

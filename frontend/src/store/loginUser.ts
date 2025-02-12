@@ -2,7 +2,8 @@ import { TUser } from '@/types/user';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface PUserStore extends TUser {
+interface PUserStore {
+  userId: number;
   nickname: string;
   profileId: string;
   isLogin: boolean;
@@ -13,16 +14,17 @@ interface PUserStore extends TUser {
 export const useUserStore = create(
   persist<PUserStore>(
     (set) => ({
+      userId: -1,
       nickname: '',
       profileId: '',
       isLogin: false,
 
       login: (user: TUser) => {
-        set({ nickname: user.nickname, profileId: user.profileId, isLogin: true });
+        set({ userId: user.userId, nickname: user.nickname, profileId: user.profileId, isLogin: true });
       },
 
       logout: () => {
-        set({ nickname: '', profileId: '', isLogin: false });
+        set({ userId: -1, nickname: '', profileId: '', isLogin: false });
       },
     }),
     {
