@@ -277,7 +277,7 @@ public class FeedService {
 
     /**
      * 피드 저장 On/Off (스크랩) 메서드
-     *
+     * <p>
      * isScrap = true 면 피드 저장 Off 한다는 것
      * isSCrap = false 면 피드 저장 On 한다는 것
      *
@@ -312,7 +312,7 @@ public class FeedService {
         savedFeedRepository.save(new SavedFeed(user, feed));
         return true;
     }
-    
+
     /**
      * 홈 피드 조회 메서드
      *
@@ -332,6 +332,31 @@ public class FeedService {
 
         List<FeedResponseDto> feeds = slice.getContent().stream()
                 .map(feed -> new FeedResponseDto(
+                        feed.getFeedId(),
+                        s3FileLoader.getFileUrl(feed.getThumbnail()),
+                        feed.getTitle(),
+                        s3FileLoader.getFileUrl(feed.getUserProfile())
+                ))
+                .collect(Collectors.toList());
+
+        return new FeedPaginationResponseDto(
+                feeds,
+                slice.hasNext(),
+                slice.hasNext() ? feeds.get(feeds.size() - 1).getFeedId() : null
+        );
+    }
+
+    public FeedPaginationResponseDto searchAiFeeds(long userId, Long cursor, int limit, String keyword){
+        if (userId == 0L) throw new IllegalArgumentException("");
+        Slice<FeedResponseDto> slice = feedRepository.findAiFeedsWithPagination(
+                userId,
+                cursor,
+                keyword,
+                PageRequest.of(0, limit)
+        );
+
+        List<FeedResponseDto> feeds = slice.getContent().stream()
+                .map(feed-> new FeedResponseDto(
                         feed.getFeedId(),
                         s3FileLoader.getFileUrl(feed.getThumbnail()),
                         feed.getTitle(),

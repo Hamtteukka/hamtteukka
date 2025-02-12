@@ -217,4 +217,24 @@ public class FeedController {
 
     }
 
+    @GetMapping("/ai-embed")
+    public ResponseEntity<?> getAIFeeds(
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "20") int limit,
+            @RequestParam(required = false) String keyword,
+            Authentication authentication
+    ){
+        try {
+            Long userId = (Long) authentication.getPrincipal();
+            return ApiResponse.success(
+                    HttpStatus.OK,
+                    "success",
+                    feedService.searchAiFeeds(userId,cursor,limit,keyword)
+            );
+        }catch (IllegalArgumentException e) {
+            return ApiResponse.fail(HttpStatus.FORBIDDEN, e.getMessage());
+        }catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.BAD_REQUEST, "Bad request");
+        }
+    }
 }
