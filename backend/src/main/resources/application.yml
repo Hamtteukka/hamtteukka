@@ -14,6 +14,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: validate
+
     properties:
       hibernate:
         format_sql: true
@@ -42,7 +43,3 @@ spring:
 
 OPENVIDU_URL: ${OPENVIDU_URL}
 OPENVIDU_SECRET: ${OPENVIDU_SECRET}
-
-logging:
-  level:
-    org.hibernate.SQL: debug

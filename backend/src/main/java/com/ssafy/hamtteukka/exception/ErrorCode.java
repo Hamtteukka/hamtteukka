@@ -19,8 +19,9 @@ public enum ErrorCode {
     FEED_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 피드를 찾을 수 없습니다."),
 
     //== 500 INTERNAL SERVER ERROR ==//
-    ROOM_CAPACITY_OVER(HttpStatus.INTERNAL_SERVER_ERROR, "방의 정원이 꽉 차 입장할 수 없습니다.");
+    ROOM_CAPACITY_OVER(HttpStatus.INTERNAL_SERVER_ERROR, "정원초과");
 
     private final HttpStatus status;
     private final String message;
+
 }

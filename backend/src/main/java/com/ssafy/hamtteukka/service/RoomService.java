@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class RoomService extends OpenVidu {
-    private static final String ROOM_PREFIX = "room";
+    private static final String ROOM_PREFIX = "room: ";
     private final UserRepository userRepository;
     private final S3FileLoader s3FileLoader;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -73,14 +73,14 @@ public class RoomService extends OpenVidu {
         }
 
         Room room = new Room(sessionId, title, 1, capacity, thumbnailName, nickname, userProfile, peopleIds);
-        redisTemplate.opsForHash().put(ROOM_PREFIX, sessionId, room);
+        redisTemplate.opsForValue().set(ROOM_PREFIX + sessionId, room);
         RoomResponseDto roomResponseDto = new RoomResponseDto(sessionId);
 
         return roomResponseDto;
     }
 
     public RoomEnterResponseDto joinRoom(String sessionId, Long socialId, String tokens) {
-        Room room = getRoom(sessionId);
+        Room room = getRoom(ROOM_PREFIX + sessionId);
         if(room == null) {
             throw new CustomException(ErrorCode.FEED_NOT_FOUND);
         }
@@ -93,7 +93,7 @@ public class RoomService extends OpenVidu {
         room.addPerson(socialId);
         room.incrementPresentPeople();
 
-        roomRedisTemplate.opsForHash().put(ROOM_PREFIX, sessionId, room);
+        roomRedisTemplate.opsForValue().set(ROOM_PREFIX + sessionId, room);
 
         String thumbNailName = room.getThumbnailName();
         String thumbNailUrl = s3FileLoader.getFileUrl(thumbNailName); // 프론트에 URL 넘겨주기
@@ -105,31 +105,48 @@ public class RoomService extends OpenVidu {
     }
 
     public List<Room> getRooms() {
-        List<Room> rooms = roomRedisTemplate.opsForHash().values(ROOM_PREFIX);
+        List<Room> rooms = new ArrayList<>();
+        // Redis에서 각각의 방을 가져오는 방식
+        Set<String> sessionIds = redisTemplate.keys(ROOM_PREFIX + "*");
+        if (sessionIds != null) {
+            for (String sessionId : sessionIds) {
+                // sessionId에 해당하는 Room 객체를 가져옴
+                Room room = (Room) redisTemplate.opsForValue().get(sessionId); // roomRedisTemplate 대신 redisTemplate 사용 가능
+                if (room != null) {
+                    rooms.add(room);
+                }
+            }
+        }
 
-        return rooms != null ? rooms : Collections.emptyList();
+        if (rooms.isEmpty()) {
+            log.info("현재 존재하는 방이 없습니다 !");
+        }
+        return rooms;
     }
+
 
 
 
     private Room getRoom(String sessionId) {
-        Room room = (Room) roomRedisTemplate.opsForHash().get(ROOM_PREFIX, sessionId);
+        Room room = (Room) roomRedisTemplate.opsForValue().get(sessionId);
         return room;
     }
 
     public void exitRoom(String sessionId, Long userId) {
-        Room room = getRoom(sessionId);
+        Room room = getRoom(ROOM_PREFIX + sessionId);
         List<Long> people = room.getPeople();
         Optional<Long> roomHostId = userRepository.findIdByNickname(room.getHostNickName());
 
-        people.remove(userId);
+        people.remove(userId.longValue());  // 해당하는 값이 지워지도록
 
-        if(people.size() == 0 || roomHostId.equals(userId)) {
-            redisTemplate.opsForHash().delete(ROOM_PREFIX, sessionId);
+        if(people.size() < 0 || roomHostId.isPresent() && roomHostId.get().equals(userId)) {
+            redisTemplate.delete(ROOM_PREFIX + sessionId);
             s3FileLoader.deleteFile(room.getThumbnailName());
 
         } else {
-            redisTemplate.opsForHash().put(ROOM_PREFIX, sessionId, people);
+            Room newRoom = new Room(sessionId, room.getTitle(), room.getPresentPeople() - 1, room.getCapacity(),
+                    room.getThumbnailName(), room.getHostNickName(), room.getHostProfileImg(), people);
+            redisTemplate.opsForValue().set(ROOM_PREFIX + sessionId, newRoom);
         }
     }
 }

@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     const limit = req.nextUrl.searchParams.get('limit') ?? '';
 
     const params = new URLSearchParams({
-      cursorId,
+      cursor: cursorId,
       limit,
     });
 
