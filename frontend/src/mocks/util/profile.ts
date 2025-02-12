@@ -1,9 +1,20 @@
 import { POST_LIMIT } from '@/lib/constants/service';
 import { MPostList } from '@/mocks/data/home';
+import { MSubscriptionInfo } from '@/mocks/data/user';
 import { TMockRequest } from '@/types/msw';
 import { TCursorData, TResponseData } from '@/types/service';
 import { isNaturalNumber } from '@/util/number';
 import { delay, HttpResponse, StrictResponse } from 'msw';
+
+export const getMUserInfo = async () => {
+  await delay(1000);
+
+  return HttpResponse.json({
+    status: 'success',
+    message: '유저 정보를 성공적으로 불러왔습니다.',
+    data: MSubscriptionInfo,
+  });
+};
 
 export const getMUserPostList = async ({
   request,

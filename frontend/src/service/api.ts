@@ -1,7 +1,7 @@
 import { TSubscriptionProfile } from '@/types/archive';
 import { TDotPattern, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
 import { TAuthRedirectUrl, TCursorData, TResponseData } from '@/types/service';
-import { TUser } from '@/types/user';
+import { TSubscriptionInfo, TUser } from '@/types/user';
 
 export const pattern = {
   generateTextPattern: async (body: TTextPatternInstruction): Promise<TResponseData<TTextPattern>> => {
@@ -97,6 +97,12 @@ export const newFeed = {
 };
 
 export const profile = {
+  getUserInfo: async (userId: string): Promise<TResponseData<TSubscriptionInfo>> => {
+    return fetch(`/api/users/${userId}`, {
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
   getUserPostList: async (
     userId: string,
     cursorId: number,

@@ -1,6 +1,14 @@
 import { SUCCESS } from '@/lib/constants/service';
 import { profile } from '@/service/api';
 import { TCursorData } from '@/types/service';
+import { TSubscriptionInfo } from '@/types/user';
+
+export const getUserInfo = async (userId: string): Promise<TSubscriptionInfo> => {
+  const { status, message, data } = await profile.getUserInfo(userId);
+  if (status !== SUCCESS) throw new Error(message);
+
+  return data;
+};
 
 export const getUserPostList = async (
   userId: string,
