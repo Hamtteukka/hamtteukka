@@ -72,7 +72,7 @@ public class RoomService extends OpenVidu {
             peopleIds.add(userId);
         }
 
-        Room room = new Room(sessionId, title, 1, capacity, thumbnailName, nickname, userProfile, peopleIds);
+        Room room = new Room(sessionId, title, 0, capacity, thumbnailName, nickname, userProfile, peopleIds);
         redisTemplate.opsForValue().set(ROOM_PREFIX + sessionId, room);
         RoomResponseDto roomResponseDto = new RoomResponseDto(sessionId);
 
