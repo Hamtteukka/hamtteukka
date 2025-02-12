@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { OpenVidu, Publisher, Session, StreamManager } from 'openvidu-browser';
 import { joinVideoRoom } from '@/service/openvidu/client';
-import { useLoginUser } from '@/store/loginUser';
+import { useUserStore } from '@/store/loginUser';
 import { SessionEventHandler } from '@/types/openvidu';
 import { publisherProperties } from '@/lib/openvidu';
 
@@ -11,7 +11,7 @@ const useOpenVidu = () => {
   const [myStream, setMyStream] = useState<Publisher>();
   const [subscribers, setSubscribers] = useState<StreamManager[]>([]);
 
-  const userInfo = useLoginUser();
+  const userInfo = useUserStore();
 
   const getOpenViduEventHandlers = (session: Session): SessionEventHandler<any>[] => {
     /**
