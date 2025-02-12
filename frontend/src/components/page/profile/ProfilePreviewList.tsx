@@ -1,18 +1,22 @@
 'use client';
 
 import PostPreview from '@/components/page/post/PostPreview';
-import { useGetStoredPostList } from '@/hooks/react-query/useGetStoredPostList';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 import SyncLoader from 'react-spinners/SyncLoader';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
+import { useGetUserPostList } from '@/hooks/react-query/useGetUserPostList';
+import { usePathname } from 'next/navigation';
 
-interface PPreviewList {
-  type: 'post' | 'pattern';
+interface PProfilePreviewList {
+  type: 'userPost' | 'userPattern';
 }
 
-const PreviewList: React.FC<PPreviewList> = ({ type }) => {
-  const { data, isFetching, fetchNextPage, hasNextPage } = useGetStoredPostList(type);
+const ProfilePreviewList: React.FC<PProfilePreviewList> = ({ type }) => {
+  const pathname = usePathname();
+  const userId = pathname.split('/').pop() || '';
+
+  const { data, isFetching, fetchNextPage, hasNextPage } = useGetUserPostList(type, userId);
 
   const { ref, inView } = useInView();
 
@@ -36,4 +40,4 @@ const PreviewList: React.FC<PPreviewList> = ({ type }) => {
   );
 };
 
-export default PreviewList;
+export default ProfilePreviewList;

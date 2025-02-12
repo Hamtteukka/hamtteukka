@@ -1,8 +1,12 @@
 import { VIDEO_USER_ROLE } from '@/lib/constants/knitogether';
 import { TUser, TVideoUser } from '@/types/user';
 
+export const MUserId = {
+  userId: 1,
+};
+
 export const MUser: TUser = {
-  userId: '1',
+  userId: 1,
   nickname: '설핢',
   profileId: '/image/profile.png',
   dailyCreationLimit: 3,

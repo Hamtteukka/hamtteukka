@@ -25,7 +25,7 @@ export async function GET(req: NextRequest, { params }: { params: { userId: stri
         Cookie: cookiesHeader,
       },
       cache: 'no-store',
-      credentials: 'include',
+      credentials: 'same-origin',
     });
 
     const data = await result.json();
