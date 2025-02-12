@@ -156,7 +156,6 @@ public class OAuthService {
                     false,
                     5 * 60
             ));
-            log.info("👍👍👍👍👍👍👍👍");
             return Map.of(
                     "url", "/auth/signup"
             );
@@ -183,6 +182,7 @@ public class OAuthService {
         return Map.of(
                 "url", "/",
                 "user", new UserResponseDto(
+                        user.get().getId(),
                         user.get().getNickname(),
                         s3FileLoader.getFileUrl(user.get().getProfileId()),
                         rateLimiterService.getRequestCount(user.get().getId())
