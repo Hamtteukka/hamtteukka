@@ -7,12 +7,12 @@ import TextInput from '@/components/ui/input/TextInput';
 import { useState } from 'react';
 import { signUp } from '@/service/auth';
 import { useRouter } from 'next/navigation';
-import { useLoginUser } from '@/store/loginUser';
+import { useUserStore } from '@/store/loginUser';
 
 const SignUpForm: React.FC = () => {
   const [image, setImage] = useState<File | null>(null);
   const [nickname, setNickname] = useState<string>();
-  const { login } = useLoginUser();
+  const { login } = useUserStore();
   const router = useRouter();
 
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
