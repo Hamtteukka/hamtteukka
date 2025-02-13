@@ -13,7 +13,8 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: validate # 로컬 개발환경시
+      ddl-auto: validate
+
     properties:
       hibernate:
         format_sql: true
