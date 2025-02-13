@@ -12,23 +12,6 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class PatternCreateService {
-//    private final WebClient webClient;
-//    private final RateLimiterService rateLimiterService;
-//
-//    public PatternCreateService(
-//            WebClient.Builder webClientBuilder,
-//            @Value("${AI_URL}")String aiUrl,
-//            RateLimiterService rateLimiterService
-//    ) {
-//        this.webClient = webClientBuilder
-//                .baseUrl(aiUrl)
-//                .codecs(configurer -> configurer
-//                        .defaultCodecs()
-//                        .maxInMemorySize(10 * 1024 * 1024))
-//                .build();
-//        this.rateLimiterService = rateLimiterService;
-//    }
-
     private final WebClient aiWebClient;
     private final WebClient dotWebClient;
     private final RateLimiterService rateLimiterService;
