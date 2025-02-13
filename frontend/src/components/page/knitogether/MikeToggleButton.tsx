@@ -1,17 +1,15 @@
 'use client';
 
 import Button from '@/components/ui/button/Button';
-import { useState } from 'react';
 
-const MikeToggleButton: React.FC = () => {
-  const [isOn, setIsOn] = useState(false);
+interface PMikeToggleButton {
+  isOn: boolean;
+  onClick: () => void;
+}
 
-  const handleButtonClick = () => {
-    setIsOn((isOn) => !isOn);
-  };
-
+const MikeToggleButton: React.FC<PMikeToggleButton> = ({ isOn, onClick }) => {
   return (
-    <Button type={isOn ? 'outlined' : 'filled'} onClick={handleButtonClick}>
+    <Button type={isOn ? 'outlined' : 'filled'} onClick={onClick}>
       <span className='font-bold'>{isOn ? '마이크 끄기' : '마이크 켜기'}</span>
     </Button>
   );

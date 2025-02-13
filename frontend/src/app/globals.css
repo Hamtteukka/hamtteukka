@@ -5,6 +5,7 @@
 :root {
   --background: #FAFAFA;
   --background-gray: #BDBDBD;
+  --background-deepgray: #616161;
   --background-modal: rgba(0, 0, 0, 0.3);
   --background-kakao: #FEE500;
   --text-black: #222222;
