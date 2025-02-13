@@ -2,6 +2,7 @@ package com.ssafy.hamtteukka.service;
 
 import com.ssafy.hamtteukka.common.S3FileLoader;
 import com.ssafy.hamtteukka.domain.User;
+import com.ssafy.hamtteukka.dto.SubscriptionResponseDto;
 import com.ssafy.hamtteukka.dto.UserInfoResponseDto;
 import com.ssafy.hamtteukka.dto.UserResponseDto;
 import com.ssafy.hamtteukka.domain.UserSubscribe;
@@ -68,7 +69,6 @@ public class UserService {
      */
     @Transactional
     public UserResponseDto registerUser(String nickname, MultipartFile profileImage, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        log.info("😂😂😂😂😂😂");
         if (isNicknameDuplicate(nickname)) {
             throw new IllegalArgumentException("nickname already exists");
         }
@@ -201,55 +201,30 @@ public class UserService {
     }
 
     /**
-     * 닉네임으로 유저아이디 받아오기 메서드
-     *
-     * @param nickname
-     */
-    public Optional<Long> getUserIdByNickname(String nickname) {
-        return userRepository.findIdByNickname(nickname);
-    }
-
-    /**
      * 구독 메서드
-     *
-     * @param providerId
-     * @param subscribeId
-     * @return
      */
-    public boolean subscribe(Long providerId, Long subscribeId) {
+    @Transactional
+    public SubscriptionResponseDto subscribe(Long providerId, Long subscriberId) {
+        UserSubscribe userSubscribe = new UserSubscribe(User.fromId(providerId), User.fromId(subscriberId));
+        subscribeRepository.save(userSubscribe);
 
-        User providerUser = userRepository.getReferenceById(providerId);
-        User subscribeUser = userRepository.getReferenceById(subscribeId);
-
-        UserSubscribe savedSubscribe = subscribeRepository.save(new UserSubscribe(providerUser, subscribeUser));
-
-        return true;
+        return new SubscriptionResponseDto(
+                subscribeRepository.countSubscribedUsers(providerId),
+                true
+        );
     }
-
 
     /**
      * 구독 해제 메서드
-     *
-     * @param providerId
-     * @param subscribeId
-     * @return
      */
-    public boolean subscribeCancle(Long providerId, Long subscribeId) {
+    @Transactional
+    public SubscriptionResponseDto unsubscribe(Long providerId, Long subscriberId) {
+        subscribeRepository.deleteByIds(providerId, subscriberId);
 
-        User providerUser = userRepository.getReferenceById(providerId);
-        User subscribeUser = userRepository.getReferenceById(subscribeId);
-
-
-        Optional<Long> userSubscribeId = subscribeRepository.findIdByProviderAndSubscriber(providerUser, subscribeUser);
-
-
-        if (userSubscribeId.isEmpty()) {
-            throw new NullPointerException("구독 데이터가 없습니다");
-        }
-
-        subscribeRepository.deleteById(userSubscribeId.get());
-
-        return true;
+        return new SubscriptionResponseDto(
+                subscribeRepository.countSubscribedUsers(providerId),
+                false
+        );
     }
 
     /**
