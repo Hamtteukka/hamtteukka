@@ -23,6 +23,8 @@ export async function POST(request: NextRequest) {
     const cookieHeader = response.headers.get('set-cookie');
 
     const result = await response.json();
+    console.log(result);
+    
 
     const resWithCookie = NextResponse.json(result);
 
