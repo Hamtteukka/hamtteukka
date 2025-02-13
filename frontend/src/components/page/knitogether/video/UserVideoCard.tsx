@@ -4,25 +4,34 @@ import UserVideo from '@/components/page/knitogether/video/UserVideo';
 import Avatar from '@/components/ui/Avatar';
 import Expand from '/public/svg/expandIcon.svg';
 import Crown from '/public/svg/crownIcon.svg';
-import { TVideoUser } from '@/types/user';
-import { VIDEO_USER_ROLE } from '@/lib/constants/knitogether';
+import { TUser } from '@/types/user';
 import { Publisher, StreamManager } from 'openvidu-browser';
+import { useEffect, useState } from 'react';
 
 interface PUserVideoCard {
-  user: TVideoUser;
   stream: Publisher | StreamManager | undefined;
+  host?: string;
   isOn?: boolean;
 }
 
-const UserVideoCard: React.FC<PUserVideoCard> = ({ user: { role, nickname, profileId }, stream, isOn }) => {
+const UserVideoCard: React.FC<PUserVideoCard> = ({ stream, isOn, host }) => {
+  const [userInfo, setUserInfo] = useState<TUser>();
+
+  useEffect(() => {
+    if (stream) {
+      const userInfo = JSON.parse(stream.stream.connection.data);
+      setUserInfo(userInfo);
+    }
+  }, []);
+
   return (
     <div className='relative flex overflow-hidden rounded-sm'>
       <UserVideo stream={stream} isOn={isOn} />
       <div className='absolute bottom-0 flex w-full justify-between bg-modal p-2'>
         <div className='flex items-center gap-2'>
-          <Avatar src={profileId} />
-          <span className='text-detail font-bold text-white'>{nickname}</span>
-          {role === VIDEO_USER_ROLE.HOST && <Crown />}
+          <Avatar src={userInfo ? userInfo.profileId : ''} />
+          <span className='text-detail font-bold text-white'>{userInfo?.nickname}</span>
+          {host === userInfo?.nickname && <Crown />}
         </div>
         <div className='cursor-pointer'>
           <Expand />
