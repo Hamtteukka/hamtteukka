@@ -1,17 +1,15 @@
 'use client';
 
 import Button from '@/components/ui/button/Button';
-import { useState } from 'react';
 
-const CameraToggleButton: React.FC = () => {
-  const [isOn, setIsOn] = useState(false);
+interface PCameraToggleButton {
+  isOn: boolean;
+  onClick: () => void;
+}
 
-  const handleButtonClick = () => {
-    setIsOn((isOn) => !isOn);
-  };
-
+const CameraToggleButton: React.FC<PCameraToggleButton> = ({ isOn, onClick }) => {
   return (
-    <Button type={isOn ? 'outlined' : 'filled'} onClick={handleButtonClick}>
+    <Button type={isOn ? 'outlined' : 'filled'} onClick={onClick}>
       <span className='font-bold'>{isOn ? '카메라 끄기' : '카메라 켜기'}</span>
     </Button>
   );

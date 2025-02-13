@@ -11,6 +11,9 @@ const useOpenVidu = () => {
   const [myStream, setMyStream] = useState<Publisher>();
   const [subscribers, setSubscribers] = useState<StreamManager[]>([]);
 
+  const [cameraOn, setCameraOn] = useState<boolean>(true);
+  const [micOn, setMicOn] = useState<boolean>(true);
+
   const userInfo = useUserStore();
 
   const getOpenViduEventHandlers = (session: Session): SessionEventHandler<any>[] => {
@@ -38,8 +41,34 @@ const useOpenVidu = () => {
       },
     };
 
-    const eventHandlers: SessionEventHandler<any>[] = [handleStreamCreated, handleConnectionDestroyed];
+    /**
+     * 예외가 발생했을 때 동작하는 이벤트 핸들러
+     */
+    const handleException: SessionEventHandler<'exception'> = {
+      type: 'exception',
+      handler: (exception) => {
+        console.warn(exception);
+      },
+    };
+
+    const eventHandlers: SessionEventHandler<any>[] = [handleStreamCreated, handleConnectionDestroyed, handleException];
     return eventHandlers;
+  };
+
+  const toggleCamera = () => {
+    if (myStream) {
+      const videoEnabled = myStream.stream.videoActive;
+      myStream.publishVideo(!videoEnabled);
+      setCameraOn((prev) => !prev);
+    }
+  };
+
+  const toggleMic = () => {
+    if (myStream) {
+      const audioEnabled = myStream.stream.audioActive;
+      myStream.publishAudio(!audioEnabled);
+      setMicOn((prev) => !prev);
+    }
   };
 
   const initOpenVidu = async (token: string) => {
@@ -72,7 +101,7 @@ const useOpenVidu = () => {
     setSubscribers([]);
   };
 
-  return { myStream, subscribers, initOpenVidu, cleanUpOpenVidu };
+  return { myStream, subscribers, cameraOn, micOn, initOpenVidu, cleanUpOpenVidu, toggleCamera, toggleMic };
 };
 
 export default useOpenVidu;
