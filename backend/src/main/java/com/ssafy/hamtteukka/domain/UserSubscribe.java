@@ -10,20 +10,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserSubscribe {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_subscribe_id", columnDefinition = "INT UNSIGNED")
-    private Long id;
+    @EmbeddedId
+    private UserSubscribeId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("providerId")
     @JoinColumn(name = "provider_id", nullable = false)
     private User provider;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("subscriberId")
     @JoinColumn(name = "subscriber_id", nullable = false)
     private User subscriber;
 
     public UserSubscribe(User provider, User subscriber) {
+        this.id = new UserSubscribeId(provider.getId(), subscriber.getId());
         this.provider = provider;
         this.subscriber = subscriber;
     }
