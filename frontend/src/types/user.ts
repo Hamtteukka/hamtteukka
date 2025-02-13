@@ -18,3 +18,11 @@ export interface TSubscriptionInfo {
   subscriberCount: number;
   isSubscribed: boolean;
 }
+
+export interface TSubscription {
+  isSubscribe: boolean;
+}
+
+export interface TSubscriptionCancel {
+  isSubscribeCancle: boolean;
+}

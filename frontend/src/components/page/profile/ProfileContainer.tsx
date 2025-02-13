@@ -4,11 +4,12 @@ import { H3 } from '@/components/typography/Heading';
 import Avatar from '@/components/ui/Avatar';
 import Button from '@/components/ui/button/Button';
 import { profileTabPanels, profileTabs } from '@/lib/profile';
-import { getUserInfo } from '@/service/profile';
+import { getUserInfo, subscribe, unsubscribe } from '@/service/profile';
 import { TUser } from '@/types/user';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 const Tabs = dynamic(() => import('@/components/ui/tabs/Tabs'), { ssr: false });
 
@@ -19,6 +20,8 @@ const ProfileContainer: React.FC = () => {
   const [userInfo, setUserInfo] = useState<TUser>();
   const [subscriberCount, setSubscriberCount] = useState<number>();
   const [isSubscribed, setIsSubscribed] = useState<boolean>();
+
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -31,8 +34,26 @@ const ProfileContainer: React.FC = () => {
     fetchUserInfo();
   }, []);
 
-  const subscribe = () => {
-    // TODO: 구독 API 요청
+  const handleSubscribeClick = async () => {
+    if (userInfo) {
+      setIsFetching(true);
+      const { isSubscribe } = await subscribe(userInfo.nickname);
+      setIsSubscribed(isSubscribe);
+      setIsFetching(false);
+    } else {
+      alert('해당 유저가 존재하지 않습니다.');
+    }
+  };
+
+  const handleUnsubscribeClick = async () => {
+    if (userInfo) {
+      setIsFetching(true);
+      const { isSubscribeCancle } = await unsubscribe(userInfo.nickname);
+      setIsSubscribed(isSubscribeCancle);
+      setIsFetching(false);
+    } else {
+      alert('해당 유저가 존재하지 않습니다.');
+    }
   };
 
   return (
@@ -44,7 +65,17 @@ const ProfileContainer: React.FC = () => {
             <div className='flex flex-col justify-between'>
               <H3>{userInfo.nickname}</H3>
               <div>구독자 {subscriberCount}명</div>
-              <Button onClick={subscribe}>구독하기</Button>
+              {isFetching ? (
+                <Button>
+                  <ClipLoader color='white' size={24} />
+                </Button>
+              ) : isSubscribed ? (
+                <Button onClick={handleUnsubscribeClick} type='outlined'>
+                  구독 취소
+                </Button>
+              ) : (
+                <Button onClick={handleSubscribeClick}>구독하기</Button>
+              )}
             </div>
           </div>
           <Tabs tabList={profileTabs} tabPanels={profileTabPanels} />
