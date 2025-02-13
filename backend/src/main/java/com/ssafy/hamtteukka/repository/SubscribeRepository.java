@@ -12,15 +12,15 @@ import java.util.List;
 public interface SubscribeRepository extends JpaRepository<UserSubscribe, Long> {
     @Query("""
                 select new com.ssafy.hamtteukka.dto.UserSubscriptionResponseDto(
-                    us.subscriber.id,
-                    us.subscriber.nickname,
-                    us.subscriber.profileId,
+                    us.provider.id,
+                    us.provider.nickname,
+                    us.provider.profileId,
                     count(subs)
                 )
                 from UserSubscribe us
-                left join UserSubscribe subs on us.subscriber.id = subs.provider.id
-                where us.provider.id = :userId
-                group by us.subscriber.id, us.subscriber.nickname, us.subscriber.profileId
+                left join UserSubscribe subs on us.provider.id = subs.provider.id
+                where us.subscriber.id = :userId
+                group by us.provider.id, us.provider.nickname, us.provider.profileId
             """)
     List<UserSubscriptionResponseDto> getSubscribedUsers(@Param("userId") Long userId);
 

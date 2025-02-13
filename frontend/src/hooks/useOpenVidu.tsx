@@ -25,6 +25,7 @@ const useOpenVidu = () => {
     const handleStreamCreated: SessionEventHandler<'streamCreated'> = {
       type: 'streamCreated',
       handler: (event) => {
+        console.error('누군가 방에 들어옴');
         const subscriber = session.subscribe(event.stream, undefined);
         setSubscribers((prev) => [...prev, subscriber]);
       },
@@ -36,6 +37,7 @@ const useOpenVidu = () => {
     const handleConnectionDestroyed: SessionEventHandler<'connectionDestroyed'> = {
       type: 'connectionDestroyed',
       handler: (event) => {
+        console.error('누군가 방에서 퇴장함');
         const connectionId = event.connection.connectionId;
         setSubscribers((prev) =>
           prev.filter((subscriber) => subscriber.stream.connection.connectionId !== connectionId),
