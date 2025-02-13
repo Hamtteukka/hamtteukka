@@ -22,7 +22,7 @@ export const subscribe = async () => {
   return HttpResponse.json({
     status: 'success',
     message: '성공적으로 구독하였습니다.',
-    data: { isSubscribe: true },
+    data: { subscriberCount: 11, isSubscribed: true },
   });
 };
 
@@ -32,7 +32,7 @@ export const unsubscribe = async () => {
   return HttpResponse.json({
     status: 'success',
     message: '성공적으로 구독 취소하였습니다.',
-    data: { isSubscribeCancle: false },
+    data: { subscriberCount: 10, isSubscribed: false },
   });
 };
 

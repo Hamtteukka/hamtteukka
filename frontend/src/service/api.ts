@@ -1,7 +1,7 @@
 import { TSubscriptionProfile } from '@/types/archive';
 import { TDotPattern, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
 import { TAuthRedirectUrl, TCursorData, TResponseData } from '@/types/service';
-import { TSubscription, TSubscriptionCancel, TSubscriptionInfo, TUser } from '@/types/user';
+import { TSubscription, TSubscriptionUser, TUser } from '@/types/user';
 
 export const pattern = {
   generateTextPattern: async (body: TTextPatternInstruction): Promise<TResponseData<TTextPattern>> => {
@@ -97,7 +97,7 @@ export const newFeed = {
 };
 
 export const profile = {
-  getUserInfo: async (userId: string): Promise<TResponseData<TSubscriptionInfo>> => {
+  getUserInfo: async (userId: string): Promise<TResponseData<TSubscriptionUser>> => {
     return fetch(`/api/users/${userId}`, {
       credentials: 'include',
     }).then((res) => res.json());
@@ -133,24 +133,24 @@ export const profile = {
     }).then((res) => res.json());
   },
 
-  subscribe: async (nickname: string): Promise<TResponseData<TSubscription>> => {
+  subscribe: async (userId: number): Promise<TResponseData<TSubscription>> => {
     return fetch('/api/users/subscribe', {
       headers: {
         'Content-Type': 'application/json',
       },
       method: 'POST',
-      body: JSON.stringify({ nickname }),
+      body: JSON.stringify({ userId }),
       credentials: 'include',
     }).then((res) => res.json());
   },
 
-  unsubscribe: async (nickname: string): Promise<TResponseData<TSubscriptionCancel>> => {
+  unsubscribe: async (userId: number): Promise<TResponseData<TSubscription>> => {
     return fetch('/api/users/subscribe', {
       headers: {
         'Content-Type': 'application/json',
       },
       method: 'DELETE',
-      body: JSON.stringify({ nickname }),
+      body: JSON.stringify({ userId }),
       credentials: 'include',
     }).then((res) => res.json());
   },

@@ -13,16 +13,11 @@ export interface TVideoUser extends TUser {
   role: TRole;
 }
 
-export interface TSubscriptionInfo {
-  user: TUser;
+export interface TSubscription {
   subscriberCount: number;
   isSubscribed: boolean;
 }
 
-export interface TSubscription {
-  isSubscribe: boolean;
-}
-
-export interface TSubscriptionCancel {
-  isSubscribeCancle: boolean;
+export interface TSubscriptionUser extends TSubscription {
+  user: TUser;
 }

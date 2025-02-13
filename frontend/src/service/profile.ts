@@ -1,9 +1,9 @@
 import { SUCCESS } from '@/lib/constants/service';
 import { profile } from '@/service/api';
 import { TCursorData } from '@/types/service';
-import { TSubscription, TSubscriptionCancel, TSubscriptionInfo } from '@/types/user';
+import { TSubscription, TSubscriptionUser } from '@/types/user';
 
-export const getUserInfo = async (userId: string): Promise<TSubscriptionInfo> => {
+export const getUserInfo = async (userId: string): Promise<TSubscriptionUser> => {
   const { status, message, data } = await profile.getUserInfo(userId);
   if (status !== SUCCESS) throw new Error(message);
 
@@ -32,15 +32,15 @@ export const getUserPatternList = async (
   return data;
 };
 
-export const subscribe = async (nickname: string): Promise<TSubscription> => {
-  const { status, message, data } = await profile.subscribe(nickname);
+export const subscribe = async (userId: number): Promise<TSubscription> => {
+  const { status, message, data } = await profile.subscribe(userId);
   if (status !== SUCCESS) throw new Error(message);
 
   return data;
 };
 
-export const unsubscribe = async (nickname: string): Promise<TSubscriptionCancel> => {
-  const { status, message, data } = await profile.unsubscribe(nickname);
+export const unsubscribe = async (userId: number): Promise<TSubscription> => {
+  const { status, message, data } = await profile.unsubscribe(userId);
   if (status !== SUCCESS) throw new Error(message);
 
   return data;
