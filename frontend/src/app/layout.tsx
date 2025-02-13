@@ -25,13 +25,13 @@ export default function RootLayout({
   return (
     <html lang='kr'>
       <body className={`${nanumGothic.className} flex antialiased`}>
-        {/* <MSWProvider> */}
-        <ReactQueryProviders>
-          <Navbar />
-          <main className='min-w-0 flex-1'>{children}</main>
-          <div id='modal-container' />
-        </ReactQueryProviders>
-        {/* </MSWProvider> */}
+        <MSWProvider>
+          <ReactQueryProviders>
+            <Navbar />
+            <main className='min-w-0 flex-1'>{children}</main>
+            <div id='modal-container' />
+          </ReactQueryProviders>
+        </MSWProvider>
       </body>
     </html>
   );

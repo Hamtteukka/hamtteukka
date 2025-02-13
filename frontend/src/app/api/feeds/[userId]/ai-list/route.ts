@@ -3,12 +3,14 @@ import { getAuthCookies } from '@/util/cookies';
 import { NextRequest, NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest, { params }: { params: { userId: string } }) {
   try {
+    const userId = params.userId;
+
     const cursorId = req.nextUrl.searchParams.get('cursorId') ?? '';
     const limit = req.nextUrl.searchParams.get('limit') ?? '';
 
-    const params = new URLSearchParams({
+    const searchParams = new URLSearchParams({
       cursor: cursorId,
       limit,
     });
@@ -18,17 +20,17 @@ export async function GET(req: NextRequest) {
       throw new Error('Unauthorized: Missing cookies');
     }
 
-    const response = await fetch(`${BASE_URL}/feeds/search?${params}`, {
+    const result = await fetch(`${BASE_URL}/feeds/${userId}/ai-list?${searchParams}`, {
       headers: {
         Cookie: cookiesHeader,
       },
       cache: 'no-store',
-      credentials: 'include',
+      credentials: 'same-origin',
     });
 
-    const result = await response.json();
+    const data = await result.json();
 
-    return NextResponse.json(result);
+    return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({
       status: 'fail',

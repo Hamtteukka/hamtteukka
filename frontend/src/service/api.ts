@@ -1,7 +1,7 @@
 import { TSubscriptionProfile } from '@/types/archive';
 import { TDotPattern, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
 import { TAuthRedirectUrl, TCursorData, TResponseData } from '@/types/service';
-import { TUser } from '@/types/user';
+import { TSubscription, TSubscriptionCancel, TSubscriptionInfo, TUser } from '@/types/user';
 
 export const pattern = {
   generateTextPattern: async (body: TTextPatternInstruction): Promise<TResponseData<TTextPattern>> => {
@@ -91,6 +91,66 @@ export const newFeed = {
     return fetch('/api/feeds', {
       method: 'POST',
       body: formData,
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+};
+
+export const profile = {
+  getUserInfo: async (userId: string): Promise<TResponseData<TSubscriptionInfo>> => {
+    return fetch(`/api/users/${userId}`, {
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
+  getUserPostList: async (
+    userId: string,
+    cursorId: number,
+    limit: number,
+  ): Promise<TResponseData<TCursorData<TFeedPreview>>> => {
+    const params = new URLSearchParams({
+      cursorId: cursorId === -1 ? '' : cursorId.toString(),
+      limit: limit.toString(),
+    });
+    return fetch(`/api/feeds/${userId}/list?${params}`, {
+      cache: 'no-store',
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
+  getUserPatternList: async (
+    userId: string,
+    cursorId: number,
+    limit: number,
+  ): Promise<TResponseData<TCursorData<TFeedPreview>>> => {
+    const params = new URLSearchParams({
+      cursorId: cursorId === -1 ? '' : cursorId.toString(),
+      limit: limit.toString(),
+    });
+    return fetch(`/api/feeds/${userId}/ai-list?${params}`, {
+      cache: 'no-store',
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
+  subscribe: async (nickname: string): Promise<TResponseData<TSubscription>> => {
+    return fetch('/api/users/subscribe', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({ nickname }),
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
+  unsubscribe: async (nickname: string): Promise<TResponseData<TSubscriptionCancel>> => {
+    return fetch('/api/users/subscribe', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'DELETE',
+      body: JSON.stringify({ nickname }),
       credentials: 'include',
     }).then((res) => res.json());
   },

@@ -96,6 +96,7 @@ public class UserService {
         );
 
         user = userRepository.save(user);
+        log.info("userId: {}", user.getId());
         String accessToken = jwtTokenProvider.generateJwt(user.getId(), 60);
         log.info("accessToken: " + accessToken);
         response.addCookie(generateCookie(
@@ -153,7 +154,13 @@ public class UserService {
         long signUserId = signUser.isPresent() ? signUser.get().getId() : 0;
         UserInfoResponseDto userInfo = userRepository.findUserInfo(userId, signUserId);
         if (userInfo == null) throw new IllegalArgumentException("user not found");
-        return userRepository.findUserInfo(userId, signUserId);
+        return new UserInfoResponseDto(
+                userInfo.getUser().getUserId(),
+                userInfo.getUser().getNickname(),
+                s3FileLoader.getFileUrl(userInfo.getUser().getProfileId()),
+                userInfo.getSubscriberCount(),
+                userInfo.isSubscribed()
+        );
     }
 
     /**

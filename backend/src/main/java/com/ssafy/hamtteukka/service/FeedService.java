@@ -50,18 +50,7 @@ public class FeedService {
                 PageRequest.of(0, pageSize)
         );
 
-        List<FeedResponseDto> feeds = slice.stream()
-                .map(feed -> new FeedResponseDto(
-                        feed.getFeedId(),
-                        s3FileLoader.getFileUrl(feed.getThumbnail()),
-                        feed.getTitle(),
-                        s3FileLoader.getFileUrl(feed.getUserProfile())
-                ))
-                .collect(Collectors.toList());
-        boolean hasNextFeed = slice.hasNext();
-        Long nextCursorId = hasNextFeed ? feeds.get(feeds.size() - 1).getFeedId() : null;
-
-        return new FeedPaginationResponseDto(feeds, hasNextFeed, nextCursorId);
+        return getFeedPaginationResponseDto(slice);
     }
 
     /**
@@ -81,18 +70,7 @@ public class FeedService {
                 PageRequest.of(0, pageSize)
         );
 
-        List<FeedResponseDto> feeds = slice.stream()
-                .map(feed -> new FeedResponseDto(
-                        feed.getFeedId(),
-                        s3FileLoader.getFileUrl(feed.getThumbnail()),
-                        feed.getTitle(),
-                        s3FileLoader.getFileUrl(feed.getUserProfile())
-                ))
-                .collect(Collectors.toList());
-        boolean hasNextFeed = slice.hasNext();
-        Long nextCursorId = hasNextFeed ? feeds.get(feeds.size() - 1).getFeedId() : null;
-
-        return new FeedPaginationResponseDto(feeds, hasNextFeed, nextCursorId);
+        return getFeedPaginationResponseDto(slice);
     }
 
 
@@ -118,23 +96,19 @@ public class FeedService {
     }
 
     public FeedPaginationResponseDto getFeedsByUserId(Long userId, Long cursor, int limit) {
-        Slice<FeedResponseDto> feeds = feedRepository.findFeedsByUserIdWithCursor(
+        Slice<FeedResponseDto> slice = feedRepository.findFeedsByUserIdWithCursor(
                 userId, cursor, PageRequest.of(0, limit)
         );
-        return new FeedPaginationResponseDto(
-                feeds.getContent(), feeds.hasNext(),
-                feeds.hasNext() ? feeds.getContent().get(feeds.getContent().size() - 1).getFeedId() : null
-        );
+
+        return getFeedPaginationResponseDto(slice);
     }
 
     public FeedPaginationResponseDto getAIFeedsByUserId(Long userId, Long cursor, int limit) {
-        Slice<FeedResponseDto> feeds = feedRepository.findAIFeedsByUserIdWithCursor(
+        Slice<FeedResponseDto> slice = feedRepository.findAIFeedsByUserIdWithCursor(
                 userId, cursor, PageRequest.of(0, limit)
         );
-        return new FeedPaginationResponseDto(
-                feeds.getContent(), feeds.hasNext(),
-                feeds.hasNext() ? feeds.getContent().get(feeds.getContent().size() - 1).getFeedId() : null
-        );
+
+        return getFeedPaginationResponseDto(slice);
     }
 
     /**
@@ -277,7 +251,7 @@ public class FeedService {
 
     /**
      * 피드 저장 On/Off (스크랩) 메서드
-     *
+     * <p>
      * isScrap = true 면 피드 저장 Off 한다는 것
      * isSCrap = false 면 피드 저장 On 한다는 것
      *
@@ -312,7 +286,7 @@ public class FeedService {
         savedFeedRepository.save(new SavedFeed(user, feed));
         return true;
     }
-    
+
     /**
      * 홈 피드 조회 메서드
      *
@@ -330,8 +304,24 @@ public class FeedService {
                 PageRequest.of(0, limit)
         );
 
+        return getFeedPaginationResponseDto(slice);
+    }
+
+    public FeedPaginationResponseDto searchAiFeeds(long userId, Long cursor, int limit, String keyword){
+        if (userId == 0L) throw new IllegalArgumentException("");
+        Slice<FeedResponseDto> slice = feedRepository.findAiFeedsWithPagination(
+                userId,
+                cursor,
+                keyword,
+                PageRequest.of(0, limit)
+        );
+
+        return getFeedPaginationResponseDto(slice);
+    }
+
+    private FeedPaginationResponseDto getFeedPaginationResponseDto(Slice<FeedResponseDto> slice) {
         List<FeedResponseDto> feeds = slice.getContent().stream()
-                .map(feed -> new FeedResponseDto(
+                .map(feed-> new FeedResponseDto(
                         feed.getFeedId(),
                         s3FileLoader.getFileUrl(feed.getThumbnail()),
                         feed.getTitle(),

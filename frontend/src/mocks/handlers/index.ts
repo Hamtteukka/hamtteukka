@@ -4,6 +4,7 @@ import { handlers as archiveHandlers } from '@/mocks/handlers/archive';
 import { handlers as knitogetherHandlers } from '@/mocks/handlers/knitogether';
 import { handlers as homeHandlers } from '@/mocks/handlers/home';
 import { handlers as newFeedHandlers } from '@/mocks/handlers/newFeed';
+import { handlers as profileHandlers } from '@/mocks/handlers/profile';
 
 export const handlers = [
   ...patternHandlers,
@@ -12,4 +13,5 @@ export const handlers = [
   ...knitogetherHandlers,
   ...homeHandlers,
   ...newFeedHandlers,
+  ...profileHandlers,
 ];

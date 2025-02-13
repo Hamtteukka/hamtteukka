@@ -3,19 +3,16 @@ import defaultImg from '/public/logo/logo.png';
 
 interface PAvatar {
   src: string;
-  width?: number;
-  height?: number;
+  size?: 'sm' | 'lg';
 }
 
-const Avatar: React.FC<PAvatar> = ({ src, width = 24, height = 24 }) => {
+const Avatar: React.FC<PAvatar> = ({ src, size = 'sm' }) => {
+  const width = size === 'sm' ? 6 : 36;
+
   return (
-    <Image
-      className='h-6 w-6 rounded-full object-cover'
-      width={width}
-      height={height}
-      src={src === '' ? defaultImg : src}
-      alt='프로필 이미지'
-    />
+    <div className={`h-${width} w-${width} overflow-hidden rounded-full`}>
+      <img className={`h-full w-full object-cover`} src={src === '' ? defaultImg.src : src} alt='프로필 이미지' />
+    </div>
   );
 };
 

@@ -4,4 +4,5 @@ interface TNavigation {
   href: string;
   title: string;
   icon: React.ReactElement;
+  flag?: boolean;
 }

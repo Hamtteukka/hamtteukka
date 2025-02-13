@@ -13,7 +13,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create # 로컬 개발환경시
+      ddl-auto: validate # 로컬 개발환경시
     properties:
       hibernate:
         format_sql: true
@@ -42,7 +42,3 @@ spring:
 
 OPENVIDU_URL: ${OPENVIDU_URL}
 OPENVIDU_SECRET: ${OPENVIDU_SECRET}
-
-logging:
-  level:
-    org.hibernate.SQL: debug

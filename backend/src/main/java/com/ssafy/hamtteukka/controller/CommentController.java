@@ -2,6 +2,7 @@ package com.ssafy.hamtteukka.controller;
 
 import com.ssafy.hamtteukka.common.ApiResponse;
 import com.ssafy.hamtteukka.domain.Comment;
+import com.ssafy.hamtteukka.dto.CommentListPaginationResponseDto;
 import com.ssafy.hamtteukka.dto.CommentRequest;
 import com.ssafy.hamtteukka.dto.CommentResponse;
 import com.ssafy.hamtteukka.dto.CommentUpdateRequest;
@@ -47,9 +48,24 @@ public class CommentController {
         }
     }
 
-    /**
-     * 댓글 목록 조회
-     */
+    @GetMapping("/{feedId}")
+    @Operation(summary = "댓글 목록 조회하기")
+    public ResponseEntity<?> getComments(
+            @PathVariable Long feedId,
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "10") Integer limit,
+            Authentication authentication
+    ) {
+        try {
+            Long userId = (Long) authentication.getPrincipal();
+            CommentListPaginationResponseDto response = commentService.getComments(feedId, cursor, limit, userId);
+            return ApiResponse.success(HttpStatus.OK, "댓글 목록 조회 성공", response);
+        } catch (EntityNotFoundException e) {
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
+        }
+    }
 
     /**
      * 댓글 수정(후순위)
