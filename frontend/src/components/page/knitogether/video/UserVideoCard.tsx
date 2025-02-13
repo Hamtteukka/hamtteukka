@@ -11,7 +11,7 @@ import { Publisher, StreamManager } from 'openvidu-browser';
 interface PUserVideoCard {
   user: TVideoUser;
   stream: Publisher | StreamManager | undefined;
-  isOn: boolean;
+  isOn?: boolean;
 }
 
 const UserVideoCard: React.FC<PUserVideoCard> = ({ user: { role, nickname, profileId }, stream, isOn }) => {
