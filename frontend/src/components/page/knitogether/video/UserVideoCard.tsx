@@ -7,6 +7,7 @@ import Crown from '/public/svg/crownIcon.svg';
 import { TUser } from '@/types/user';
 import { Publisher, StreamManager } from 'openvidu-browser';
 import { useEffect, useState } from 'react';
+import { useUserStore } from '@/store/loginUser';
 
 interface PUserVideoCard {
   stream: Publisher | StreamManager | undefined;
@@ -15,6 +16,7 @@ interface PUserVideoCard {
 }
 
 const UserVideoCard: React.FC<PUserVideoCard> = ({ stream, isOn, host }) => {
+  const { nickname } = useUserStore();
   const [userInfo, setUserInfo] = useState<TUser>();
 
   useEffect(() => {
@@ -31,7 +33,7 @@ const UserVideoCard: React.FC<PUserVideoCard> = ({ stream, isOn, host }) => {
         <div className='flex items-center gap-2'>
           <Avatar src={userInfo ? userInfo.profileId : ''} />
           <span className='text-detail font-bold text-white'>{userInfo?.nickname}</span>
-          {host === userInfo?.nickname && <Crown />}
+          {host === nickname! && <Crown />}
         </div>
         <div className='cursor-pointer'>
           <Expand />
