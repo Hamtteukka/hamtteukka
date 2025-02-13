@@ -4,6 +4,7 @@ import { joinVideoRoom } from '@/service/openvidu/client';
 import { useUserStore } from '@/store/loginUser';
 import { SessionEventHandler } from '@/types/openvidu';
 import { publisherProperties } from '@/lib/openvidu';
+import { useRouter } from 'next/navigation';
 
 const useOpenVidu = () => {
   const [ov, setOv] = useState<OpenVidu>();
@@ -15,6 +16,7 @@ const useOpenVidu = () => {
   const [micOn, setMicOn] = useState<boolean>(true);
 
   const userInfo = useUserStore();
+  const router = useRouter();
 
   const getOpenViduEventHandlers = (session: Session): SessionEventHandler<any>[] => {
     /**
@@ -38,6 +40,7 @@ const useOpenVidu = () => {
         setSubscribers((prev) =>
           prev.filter((subscriber) => subscriber.stream.connection.connectionId !== connectionId),
         );
+        router.refresh();
       },
     };
 
@@ -93,6 +96,11 @@ const useOpenVidu = () => {
   const cleanUpOpenVidu = () => {
     if (session) {
       session.disconnect();
+    }
+
+    if (myStream) {
+      myStream.publishAudio(false);
+      myStream.publishVideo(false);
     }
 
     setOv(undefined);

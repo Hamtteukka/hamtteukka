@@ -1,7 +1,6 @@
 package com.ssafy.hamtteukka.controller;
 
 import com.ssafy.hamtteukka.common.ApiResponse;
-import com.ssafy.hamtteukka.dto.NicknameRequestDto;
 import com.ssafy.hamtteukka.dto.UserSubscriptionResponseDto;
 import com.ssafy.hamtteukka.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +18,6 @@ import java.io.IOException;
 import java.security.SignatureException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -124,28 +122,23 @@ public class UserController {
     }
     @PostMapping("/subscribe")
     @Operation(summary = "구독하기")
-    public ResponseEntity<?> subscribe(@RequestBody NicknameRequestDto dto, Authentication authentication){
+    public ResponseEntity<?> subscribe(
+            @RequestBody Map<String, String> requestBody,
+            Authentication authentication
+    ){
         try {
-            Optional<Long> providerId = userService.getUserIdByNickname(dto.getNickname());
+            long singId = (Long) authentication.getPrincipal();
+            long userId = requestBody.get("userId")==null?0:Long.parseLong(requestBody.get("userId"));
 
-            if (providerId.isEmpty()) {
-                return ApiResponse.fail(
-                        HttpStatus.NOT_FOUND,
-                        "구독할 사람을 찾을 수 없습니다"
-                );
-            }
-
-            Long subscribeId = (Long) authentication.getPrincipal();
-
-            if (subscribeId == 0L) {
-                return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
-            }
+            if(userId==0L||singId==0L) return ApiResponse.fail(
+                    HttpStatus.NOT_FOUND,
+                    "구독할 사람을 찾을 수 없습니다"
+            );
 
             return ApiResponse.success(
                     HttpStatus.OK,
                     "구독하기 성공",
-                    Map.of("isSubscribe",userService.subscribe(providerId.get(), subscribeId))
-
+                    userService.subscribe(userId, singId)
             );
         } catch (EntityNotFoundException e) {
             return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
@@ -158,28 +151,23 @@ public class UserController {
 
     @DeleteMapping("/subscribe")
     @Operation(summary = "구독 취소하기")
-    public ResponseEntity<?> subscribeCancle(@RequestBody NicknameRequestDto dto, Authentication authentication){
+    public ResponseEntity<?> subscribeCancle(
+            @RequestBody Map<String, String> requestBody,
+            Authentication authentication
+    ){
         try {
-            Optional<Long> providerId = userService.getUserIdByNickname(dto.getNickname());
+            long singId = (Long) authentication.getPrincipal();
+            long userId = requestBody.get("userId")==null?0:Long.parseLong(requestBody.get("userId"));
 
-            if (providerId.isEmpty()) {
-                return ApiResponse.fail(
-                        HttpStatus.NOT_FOUND,
-                        "구독할 사람을 찾을 수 없습니다"
-                );
-            }
-
-            Long subscribeId = (Long) authentication.getPrincipal();
-
-            if (subscribeId == 0L) {
-                return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
-            }
+            if(userId==0L||singId==0L) return ApiResponse.fail(
+                    HttpStatus.NOT_FOUND,
+                    "구독 취소할 사람을 찾을 수 없습니다"
+            );
 
             return ApiResponse.success(
                     HttpStatus.OK,
-                    "구독 취소하기 성공",
-                    Map.of("isSubscribeCancle",userService.subscribeCancle(providerId.get(), subscribeId))
-
+                    "구독 취소 성공",
+                    userService.unsubscribe(userId, singId)
             );
         } catch(NullPointerException ex){
             return ApiResponse.fail(HttpStatus.NOT_FOUND, "삭제하는 대상이 없습니다.");
@@ -201,13 +189,10 @@ public class UserController {
         if (subscribeId == 0L) {
             return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
         }
-
-        List<UserSubscriptionResponseDto> response = userService.getSubscription(subscribeId);
-
         return ApiResponse.success(
                 HttpStatus.OK,
                 "구독 유저 받아오기 완료",
-                response
+                userService.getSubscription(subscribeId)
         );
     }
 

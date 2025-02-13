@@ -5,7 +5,6 @@ import LeaveRoomButton from '@/components/page/knitogether/LeaveRoomButton';
 import MikeToggleButton from '@/components/page/knitogether/MikeToggleButton';
 import UserVideoCard from '@/components/page/knitogether/video/UserVideoCard';
 import useOpenVidu from '@/hooks/useOpenVidu';
-import { MVideoUser } from '@/mocks/data/user';
 import { createOpenViduConnection } from '@/service/openvidu';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -45,9 +44,10 @@ const KnitogetherRoom: React.FC = () => {
         <LeaveRoomButton />
       </header>
       <div className={`${getGridColumns()} w-full grow grid-cols-2 justify-center gap-2.5 overflow-y-hidden`}>
-        <UserVideoCard user={MVideoUser} stream={myStream} isOn={cameraOn} />
+        <UserVideoCard host={videoRoom?.hostNickname} stream={myStream} isOn={myStream?.stream.videoActive} />
+
         {subscribers.map((subscriber) => (
-          <UserVideoCard user={MVideoUser} stream={subscriber} isOn={subscriber.stream.videoActive} />
+          <UserVideoCard stream={subscriber} isOn={subscriber.stream.videoActive} />
         ))}
       </div>
       <div className='flex justify-center gap-3'>

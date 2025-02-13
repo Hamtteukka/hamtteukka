@@ -28,4 +28,10 @@ public class User {
         this.profileId = profileId;
         this.kakaoId = kakaoId;
     }
+
+    public static User fromId(Long id) {
+        User user = new User();
+        user.id = id;
+        return user;
+    }
 }

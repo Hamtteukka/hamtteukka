@@ -6,7 +6,7 @@ import VideoOffIcon from '/public/svg/VideoOffIcon.svg';
 
 interface PUserVideo {
   stream: Publisher | StreamManager | undefined;
-  isOn: boolean;
+  isOn?: boolean;
 }
 
 const UserVideo: React.FC<PUserVideo> = ({ stream, isOn }) => {
@@ -22,7 +22,7 @@ const UserVideo: React.FC<PUserVideo> = ({ stream, isOn }) => {
   return (
     <div className='bg-deepgray relative aspect-video h-full w-full overflow-hidden rounded-sm'>
       {stream && isOn ? (
-        <video id={stream.id} ref={videoRef} autoPlay muted playsInline className='h-full w-full' />
+        <video id={stream.id} ref={videoRef} autoPlay playsInline className='h-full w-full object-cover' />
       ) : (
         <VideoOffIcon className='absolute left-[calc(50%-12px)] top-[calc(50%-12px)]' />
       )}
