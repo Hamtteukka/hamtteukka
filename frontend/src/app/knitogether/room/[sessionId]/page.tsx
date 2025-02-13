@@ -12,8 +12,17 @@ import { useEffect, useState } from 'react';
 
 const KnitogetherRoom: React.FC = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
-  const { myStream, subscribers, initOpenVidu, cleanUpOpenVidu } = useOpenVidu();
+  const { myStream, subscribers, cameraOn, micOn, initOpenVidu, cleanUpOpenVidu, toggleCamera, toggleMic } =
+    useOpenVidu();
   const [videoRoom, setVideoRoom] = useState<TVideoRoom>();
+
+  const getGridColumns = () => {
+    const totalCards = subscribers.length + 1;
+    if (totalCards >= 7) return 'grid grid-cols-4';
+    if (totalCards >= 5) return 'grid grid-cols-3';
+    if (totalCards >= 2) return 'grid grid-cols-2';
+    return 'flex';
+  };
 
   useEffect(() => {
     const startOpenVidu = async () => {
@@ -30,18 +39,20 @@ const KnitogetherRoom: React.FC = () => {
   }, []);
 
   return (
-    <div className='flex flex-col gap-8 px-10 py-10'>
+    <div className='flex h-screen w-full flex-col gap-8 px-10 py-10'>
       <header className='flex items-center justify-between text-heading1 font-bold'>
         {videoRoom && <span className='truncate'>{videoRoom.title}</span>}
         <LeaveRoomButton />
       </header>
-      {myStream && <UserVideoCard user={MVideoUser} stream={myStream} />}
-      {subscribers.map((subscriber) => (
-        <UserVideoCard user={MVideoUser} stream={subscriber} />
-      ))}
+      <div className={`${getGridColumns()} w-full grow grid-cols-2 justify-center gap-2.5 overflow-y-hidden`}>
+        <UserVideoCard user={MVideoUser} stream={myStream} isOn={cameraOn} />
+        {subscribers.map((subscriber) => (
+          <UserVideoCard user={MVideoUser} stream={subscriber} isOn={subscriber.stream.videoActive} />
+        ))}
+      </div>
       <div className='flex justify-center gap-3'>
-        <CameraToggleButton />
-        <MikeToggleButton />
+        <CameraToggleButton isOn={cameraOn} onClick={toggleCamera} />
+        <MikeToggleButton isOn={micOn} onClick={toggleMic} />
       </div>
     </div>
   );

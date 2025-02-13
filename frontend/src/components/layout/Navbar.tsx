@@ -11,7 +11,7 @@ import { useUserStore } from '@/store/loginUser';
 import { useEffect, useState } from 'react';
 
 const Navbar: React.FC = () => {
-  const { isLogin } = useUserStore();
+  const { isLogin, logout } = useUserStore();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -33,6 +33,14 @@ const Navbar: React.FC = () => {
               <NavItem key={item.title} {...item} />
             ))}
           </ul>
+
+          {isLogin && (
+            <footer className='flex grow items-end self-end'>
+              <div onClick={logout} className='cursor-pointer text-detail underline'>
+                로그아웃
+              </div>
+            </footer>
+          )}
         </div>
       )}
     </nav>

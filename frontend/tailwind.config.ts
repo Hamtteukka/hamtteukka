@@ -19,6 +19,7 @@ const config: Config = {
       backgroundColor: {
         DEFAULT: 'var(--background)',
         gray: 'var(--background-gray)',
+        deepgray: 'var(--background-deepgray)',
         modal: 'var(--background-modal)',
         kakao: 'var(--background-kakao)',
       },

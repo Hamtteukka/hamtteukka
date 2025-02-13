@@ -10,13 +10,14 @@ import { Publisher, StreamManager } from 'openvidu-browser';
 
 interface PUserVideoCard {
   user: TVideoUser;
-  stream: Publisher | StreamManager;
+  stream: Publisher | StreamManager | undefined;
+  isOn: boolean;
 }
 
-const UserVideoCard: React.FC<PUserVideoCard> = ({ user: { role, nickname, profileId }, stream }) => {
+const UserVideoCard: React.FC<PUserVideoCard> = ({ user: { role, nickname, profileId }, stream, isOn }) => {
   return (
-    <div className='relative overflow-hidden rounded-sm'>
-      <UserVideo stream={stream} />
+    <div className='relative flex overflow-hidden rounded-sm'>
+      <UserVideo stream={stream} isOn={isOn} />
       <div className='absolute bottom-0 flex w-full justify-between bg-modal p-2'>
         <div className='flex items-center gap-2'>
           <Avatar src={profileId} />

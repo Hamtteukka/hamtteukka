@@ -27,7 +27,7 @@ const VideoRoomList: React.FC = () => {
         <SyncLoader color='var(--primary)' size={8} className='m-auto' />
       ) : (
         <>
-          {videoRoomList ? (
+          {videoRoomList.length !== 0 ? (
             <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
               {videoRoomList.map((room) => (
                 <VideoRoomCard key={room.sessionId} videoRoomPreview={room} />
