@@ -16,6 +16,26 @@ export const getMUserInfo = async () => {
   });
 };
 
+export const subscribe = async () => {
+  await delay(200);
+
+  return HttpResponse.json({
+    status: 'success',
+    message: '성공적으로 구독하였습니다.',
+    data: { isSubscribe: true },
+  });
+};
+
+export const unsubscribe = async () => {
+  await delay(200);
+
+  return HttpResponse.json({
+    status: 'success',
+    message: '성공적으로 구독 취소하였습니다.',
+    data: { isSubscribeCancle: false },
+  });
+};
+
 export const getMUserPostList = async ({
   request,
 }: TMockRequest): Promise<StrictResponse<TResponseData<TCursorData<TFeedPreview>>>> => {
