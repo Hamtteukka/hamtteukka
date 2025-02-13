@@ -7,6 +7,7 @@ import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
 import { useGetUserPostList } from '@/hooks/react-query/useGetUserPostList';
 import { usePathname } from 'next/navigation';
+import NoDataIndicator from '@/components/ui/NoDataIndicator';
 
 interface PProfilePreviewList {
   type: 'userPost' | 'userPattern';
@@ -28,13 +29,19 @@ const ProfilePreviewList: React.FC<PProfilePreviewList> = ({ type }) => {
 
   return (
     <div className='flex flex-col'>
-      <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3, 1200: 4, 1500: 5 }}>
-        <Masonry>
-          {data?.pages.flatMap((page) => page.items.map((post) => <PostPreview key={post.feedId} info={post} />))}
-        </Masonry>
-      </ResponsiveMasonry>
+      <>
+        {data?.pages[0].items.length === 0 ? (
+          <NoDataIndicator />
+        ) : (
+          <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 900: 3, 1200: 4, 1500: 5 }}>
+            <Masonry>
+              {data?.pages.flatMap((page) => page.items.map((post) => <PostPreview key={post.feedId} info={post} />))}
+            </Masonry>
+          </ResponsiveMasonry>
+        )}
+      </>
       <div ref={ref} className='self-center'>
-        <SyncLoader color='var(--primary)' size={8} />
+        {hasNextPage && <SyncLoader color='var(--primary)' size={8} />}
       </div>
     </div>
   );

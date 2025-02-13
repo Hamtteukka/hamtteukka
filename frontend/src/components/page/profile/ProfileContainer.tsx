@@ -37,8 +37,9 @@ const ProfileContainer: React.FC = () => {
   const handleSubscribeClick = async () => {
     if (userInfo) {
       setIsFetching(true);
-      const { isSubscribe } = await subscribe(userInfo.nickname);
-      setIsSubscribed(isSubscribe);
+      const { subscriberCount, isSubscribed } = await subscribe(Number(userId));
+      setSubscriberCount(subscriberCount);
+      setIsSubscribed(isSubscribed);
       setIsFetching(false);
     } else {
       alert('해당 유저가 존재하지 않습니다.');
@@ -48,8 +49,9 @@ const ProfileContainer: React.FC = () => {
   const handleUnsubscribeClick = async () => {
     if (userInfo) {
       setIsFetching(true);
-      const { isSubscribeCancle } = await unsubscribe(userInfo.nickname);
-      setIsSubscribed(isSubscribeCancle);
+      const { subscriberCount, isSubscribed } = await unsubscribe(Number(userId));
+      setSubscriberCount(subscriberCount);
+      setIsSubscribed(isSubscribed);
       setIsFetching(false);
     } else {
       alert('해당 유저가 존재하지 않습니다.');

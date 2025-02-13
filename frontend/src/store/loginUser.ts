@@ -1,6 +1,6 @@
 import { TUser } from '@/types/user';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface PUserStore {
   userId: number;
@@ -25,10 +25,16 @@ export const useUserStore = create(
 
       logout: () => {
         set({ userId: -1, nickname: '', profileId: '', isLogin: false });
+        document.cookie = 'accessToken=; max-age=0; path=/;';
+        document.cookie = 'refreshToken=; max-age=0; path=/;';
+
+        // 홈으로 리디렉션
+        window.location.href = '/';
       },
     }),
     {
       name: 'userStorage',
+      storage: createJSONStorage(() => sessionStorage),
     },
   ),
 );
