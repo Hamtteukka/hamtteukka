@@ -7,6 +7,7 @@ export interface TUser {
   nickname: string;
   profileId: string;
   dailyCreationLimit?: number;
+  isLogin?: boolean;
 }
 
 export interface TVideoUser extends TUser {

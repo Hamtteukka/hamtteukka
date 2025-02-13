@@ -95,6 +95,11 @@ const useOpenVidu = () => {
       session.disconnect();
     }
 
+    if (myStream) {
+      myStream.publishAudio(false);
+      myStream.publishVideo(false);
+    }
+
     setOv(undefined);
     setSession(undefined);
     setMyStream(undefined);
