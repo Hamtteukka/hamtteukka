@@ -3,7 +3,7 @@ import { TSubscriptionProfile } from '@/types/archive';
 export const MSubscriptionList: Array<TSubscriptionProfile> = [
   {
     user: {
-      userId: '1',
+      userId: 1,
       nickname: '따뜻한 개구리',
       profileId: '',
     },
@@ -11,7 +11,7 @@ export const MSubscriptionList: Array<TSubscriptionProfile> = [
   },
   {
     user: {
-      userId: '2',
+      userId: 2,
       nickname: '따뜻한 개구리',
       profileId: '',
     },
@@ -19,7 +19,7 @@ export const MSubscriptionList: Array<TSubscriptionProfile> = [
   },
   {
     user: {
-      userId: '3',
+      userId: 3,
       nickname: '따뜻한 개구리',
       profileId: '',
     },
@@ -27,7 +27,7 @@ export const MSubscriptionList: Array<TSubscriptionProfile> = [
   },
   {
     user: {
-      userId: '4',
+      userId: 4,
       nickname: '따뜻한 개구리',
       profileId: '',
     },
@@ -35,7 +35,7 @@ export const MSubscriptionList: Array<TSubscriptionProfile> = [
   },
   {
     user: {
-      userId: '5',
+      userId: 5,
       nickname: '따뜻한 개구리',
       profileId: '',
     },
@@ -43,7 +43,7 @@ export const MSubscriptionList: Array<TSubscriptionProfile> = [
   },
   {
     user: {
-      userId: '6',
+      userId: 6,
       nickname: '따뜻한 개구리',
       profileId: '',
     },
@@ -51,7 +51,7 @@ export const MSubscriptionList: Array<TSubscriptionProfile> = [
   },
   {
     user: {
-      userId: '7',
+      userId: 7,
       nickname: '따뜻한 개구리',
       profileId: '',
     },
@@ -59,7 +59,7 @@ export const MSubscriptionList: Array<TSubscriptionProfile> = [
   },
   {
     user: {
-      userId: '8',
+      userId: 8,
       nickname: '따뜻한 개구리',
       profileId: '',
     },
@@ -67,7 +67,7 @@ export const MSubscriptionList: Array<TSubscriptionProfile> = [
   },
   {
     user: {
-      userId: '9',
+      userId: 9,
       nickname: '따뜻한 개구리',
       profileId: '',
     },
@@ -75,7 +75,7 @@ export const MSubscriptionList: Array<TSubscriptionProfile> = [
   },
   {
     user: {
-      userId: '10',
+      userId: 10,
       nickname: '따뜻한 개구리',
       profileId: '',
     },
@@ -83,7 +83,7 @@ export const MSubscriptionList: Array<TSubscriptionProfile> = [
   },
   {
     user: {
-      userId: '11',
+      userId: 11,
       nickname: '따뜻한 개구리',
       profileId: '',
     },
@@ -91,7 +91,7 @@ export const MSubscriptionList: Array<TSubscriptionProfile> = [
   },
   {
     user: {
-      userId: '12',
+      userId: 12,
       nickname: '따뜻한 개구리',
       profileId: '',
     },

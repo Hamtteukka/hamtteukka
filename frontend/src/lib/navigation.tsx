@@ -27,8 +27,9 @@ export const navigationList: Array<TNavigation> = [
     icon: <NavItemIcon type='archive' />,
   },
   {
-    href: '/profile/me',
+    href: `/profile`,
     title: '내 프로필',
     icon: <NavItemIcon type='profile' />,
+    flag: true,
   },
 ];

@@ -15,8 +15,8 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
     @Query("""
                 SELECT new com.ssafy.hamtteukka.dto.FeedResponseDto(
                             sf.feed.id,
-                            sf.feed.title,
                             (SELECT fi.id FROM FeedImage fi WHERE fi.feed.id = f.id AND fi.imageType = 0),
+                            sf.feed.title,
                             sf.user.profileId
                     )
                 FROM SavedFeed sf
@@ -35,8 +35,8 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
     @Query("""
                 SELECT new com.ssafy.hamtteukka.dto.FeedResponseDto(
                             sf.feed.id,
-                            sf.feed.title,
                             (SELECT fi.id FROM FeedImage fi WHERE fi.feed.id = f.id AND fi.imageType = 0),
+                            sf.feed.title,
                             sf.user.profileId
                     )
                 FROM SavedFeed sf
@@ -57,8 +57,11 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
                     f.id, fi.id, f.title,  f.user.profileId
             )
             FROM Feed f
-            LEFT JOIN FeedImage fi ON fi.feed.id = f.id AND fi.imageType = 0
-            WHERE f.user.id = :userId AND f.feedType = 0 AND (:cursor IS NULL OR f.id < :cursor)
+            LEFT JOIN f.feedImages fi
+            WHERE f.user.id = :userId 
+            AND f.feedType = 0
+            AND fi.imageType = 0
+            AND (:cursor IS NULL OR f.id < :cursor)
             ORDER BY f.id DESC
             """)
     Slice<FeedResponseDto> findFeedsByUserIdWithCursor(
@@ -71,8 +74,11 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
                     f.id, fi.id, f.title,  f.user.profileId
             )
             FROM Feed f
-            LEFT JOIN FeedImage fi ON fi.feed.id = f.id AND fi.imageType = 0
-            WHERE f.user.id = :userId AND f.feedType = 1 AND (:cursor IS NULL OR f.id < :cursor)
+            LEFT JOIN f.feedImages fi
+            WHERE f.user.id = :userId 
+            AND f.feedType = 1
+            AND fi.imageType = 0
+            AND (:cursor IS NULL OR f.id < :cursor)
             ORDER BY f.id DESC
             """)
     Slice<FeedResponseDto> findAIFeedsByUserIdWithCursor(
@@ -124,5 +130,24 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
             @Param("keyword") String keyword,
             @Param("categories") List<Integer> categories,
             Pageable pageable);
+
+    @Query("""
+    SELECT new com.ssafy.hamtteukka.dto.FeedResponseDto(f.id, fi.id, f.title, f.user.profileId)
+       FROM Feed f
+       LEFT JOIN f.savedFeeds sf
+       LEFT JOIN f.feedImages fi
+       JOIN f.user u
+       WHERE (f.user.id = :userId OR sf.user.id = :userId)
+       AND (f.feedType = 1 AND fi.imageType = 0)
+       AND (:keyword IS NULL OR f.title LIKE %:keyword%)
+       AND (:cursor IS NULL OR f.id < :cursor)
+       ORDER BY f.id DESC
+    """)
+    Slice<FeedResponseDto> findAiFeedsWithPagination(
+            @Param("userId") Long userId,
+            @Param("cursor") Long cursor,
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
 
 }

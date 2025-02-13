@@ -3,12 +3,12 @@ import { ReactNode } from 'react';
 
 interface PButton {
   children: ReactNode;
-  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   type?: 'filled' | 'outlined' | 'primary-filled' | 'primary-outlined' | 'warning-filled' | 'warning-outlined';
   className?: string;
 }
 
-const Button: React.FC<PButton> = ({ children, onClick, type = 'filled', className = '' }) => {
+const Button: React.FC<PButton> = ({ children, onClick = () => {}, type = 'filled', className = '' }) => {
   const { borderColor, bgColor, textColor } = buttonStyles[type];
 
   return (

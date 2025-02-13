@@ -7,20 +7,12 @@ export async function GET(req: NextRequest, { params }: { params: { userId: stri
   try {
     const userId = params.userId;
 
-    const cursorId = req.nextUrl.searchParams.get('cursorId') ?? '';
-    const limit = req.nextUrl.searchParams.get('limit') ?? '';
-
-    const searchParams = new URLSearchParams({
-      cursor: cursorId,
-      limit,
-    });
-
     const cookiesHeader = getAuthCookies();
     if (!cookiesHeader) {
       throw new Error('Unauthorized: Missing cookies');
     }
 
-    const result = await fetch(`${BASE_URL}/feeds/${userId}/ai-list?${searchParams}`, {
+    const result = await fetch(`${BASE_URL}/users/${userId}`, {
       headers: {
         Cookie: cookiesHeader,
       },
