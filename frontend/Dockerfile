@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 ### Base 이미지 설정
-FROM node:23-alpine AS base
+FROM node:20-alpine AS base
 # libc6-compat 설치 (일부 의존성이 필요할 수 있음)
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
@@ -33,7 +33,7 @@ RUN \
   fi
 
 ### 런타임(프로덕션) 단계
-FROM node:23-alpine AS runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 # NODE_ENV 설정
 ENV NODE_ENV=production
