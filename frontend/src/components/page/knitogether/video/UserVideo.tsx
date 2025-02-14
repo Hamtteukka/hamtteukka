@@ -2,7 +2,7 @@
 
 import { Publisher, StreamManager } from 'openvidu-browser';
 import { useEffect, useRef } from 'react';
-import VideoOffIcon from '/public/svg/VideoOffIcon.svg';
+import VideoOffIcon from '/public/svg/videoOffIcon.svg';
 
 interface PUserVideo {
   stream: Publisher | StreamManager | undefined;
@@ -20,7 +20,7 @@ const UserVideo: React.FC<PUserVideo> = ({ stream, isOn }) => {
   }, [stream]);
 
   return (
-    <div className='bg-deepgray relative aspect-video h-full w-full overflow-hidden rounded-sm'>
+    <div className='relative aspect-video h-full w-full overflow-hidden rounded-sm bg-deepgray'>
       {stream && isOn ? (
         <video id={stream.id} ref={videoRef} autoPlay playsInline className='h-full w-full object-cover' />
       ) : (

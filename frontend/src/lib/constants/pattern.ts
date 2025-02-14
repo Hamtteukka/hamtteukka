@@ -43,6 +43,7 @@ const HAT = 'hat';
 const BAG = 'bag';
 const SCARF = 'scarf';
 const WALLET = 'wallet';
+const KEYRING = 'keyring';
 const DOLL_CLOTHES = 'dollClothes';
 const PET_ITEM = 'petItem';
 const OTHER = 'other';
@@ -54,6 +55,7 @@ export const CRAFT_TYPE = {
   BAG,
   SCARF,
   WALLET,
+  KEYRING,
   DOLL_CLOTHES,
   PET_ITEM,
   OTHER,

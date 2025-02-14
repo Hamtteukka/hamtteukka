@@ -7,8 +7,9 @@ export const CRAFT_NUM = {
   [CRAFT_TYPE.BAG]: 4,
   [CRAFT_TYPE.SCARF]: 5,
   [CRAFT_TYPE.WALLET]: 6,
-  [CRAFT_TYPE.DOLL_CLOTHES]: 7,
-  [CRAFT_TYPE.PET_ITEM]: 8,
+  [CRAFT_TYPE.KEYRING]: 7,
+  [CRAFT_TYPE.DOLL_CLOTHES]: 8,
+  [CRAFT_TYPE.PET_ITEM]: 9,
   [CRAFT_TYPE.OTHER]: 0,
 } as const;
 
@@ -18,3 +19,21 @@ export const NEEDLE_NUM = {
 } as const;
 
 export const MAX_POST_IMAGE = 8;
+
+export const CRAFT_KR = {
+  [CRAFT_NUM[CRAFT_TYPE.TOP]]: '상의',
+  [CRAFT_NUM[CRAFT_TYPE.BOTTOM]]: '하의',
+  [CRAFT_NUM[CRAFT_TYPE.HAT]]: '모자',
+  [CRAFT_NUM[CRAFT_TYPE.BAG]]: '가방',
+  [CRAFT_NUM[CRAFT_TYPE.SCARF]]: '목도리',
+  [CRAFT_NUM[CRAFT_TYPE.WALLET]]: '지갑',
+  [CRAFT_NUM[CRAFT_TYPE.KEYRING]]: '키링',
+  [CRAFT_NUM[CRAFT_TYPE.DOLL_CLOTHES]]: '인형옷',
+  [CRAFT_NUM[CRAFT_TYPE.PET_ITEM]]: '반려동물',
+  [CRAFT_NUM[CRAFT_TYPE.OTHER]]: '기타',
+} as const;
+
+export const NEEDLE_KR = {
+  [NEEDLE_NUM[NEEDLE_TYPE.KNITTING]]: '대바늘',
+  [NEEDLE_NUM[NEEDLE_TYPE.CROCHETING]]: '코바늘',
+} as const;

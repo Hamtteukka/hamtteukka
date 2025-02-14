@@ -2,6 +2,7 @@ import { POST_LIMIT } from '@/lib/constants/service';
 import { MStoredPostList, MSubscriptionList } from '@/mocks/data/archive';
 import { TSubscriptionProfile } from '@/types/archive';
 import { TMockRequest } from '@/types/msw';
+import { TFeedPreview } from '@/types/post';
 import { TCursorData, TResponseData } from '@/types/service';
 import { isNaturalNumber } from '@/util/number';
 import { delay, HttpResponse, StrictResponse } from 'msw';

@@ -4,7 +4,9 @@ import { H4 } from '@/components/typography/Heading';
 import ConfirmDialog from '@/components/ui/dialog/ConfirmDialog';
 import TextInput from '@/components/ui/input/TextInput';
 import useTextInput from '@/hooks/useTextInput';
+import { createFeed } from '@/service/newFeed';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface PPostPattern {
@@ -14,15 +16,33 @@ interface PPostPattern {
 
 const PostPattern: React.FC<PPostPattern> = ({ base64img, content = '' }) => {
   const [title, setTitle] = useTextInput('');
-  const [imageId, setImageId] = useState<string[]>([]);
+  const [imageId, setImageId] = useState<string>('');
+
+  const router = useRouter();
 
   useEffect(() => {
-    // TODO: s3에 등록 후 id 받아와서 setImageId 해주는 작업 필요
+    // TODO: base64img을 어떻게 전달해야 하는가?
   }, [base64img]);
 
-  const post = () => {
-    // TODO: 게시 api 호출
-    // TODO: 게시 성공하면 내 프로필 AI 도안 탭으로 이동
+  const post = async () => {
+    if (!title) {
+      alert('도안의 제목을 입력해 주세요!');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('feedType', 'PATTERN');
+    formData.append('title', title);
+    formData.append('images[0]', base64img);
+
+    if (content) {
+      formData.append('content', content);
+    }
+
+    // TODO: 게시물 생성 후 상세 페이지로 이동
+    const { feedId } = await createFeed(formData);
+    alert(`${feedId}번 게시물의 상세 페이지로 이동 (아직 구현 안됨, 임시 알림)`);
+    router.push(`/feed/${feedId}`);
   };
 
   return (

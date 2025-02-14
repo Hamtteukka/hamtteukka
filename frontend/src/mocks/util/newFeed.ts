@@ -3,7 +3,8 @@ import { MFeedId } from '@/mocks/data/feed';
 import { delay, HttpResponse, StrictResponse } from 'msw';
 import { POST_LIMIT } from '@/lib/constants/service';
 import { isNaturalNumber } from '@/util/number';
-import { MStoredPostList } from '../data/archive';
+import { MStoredPostList } from '@/mocks/data/archive';
+import { TFeedId, TFeedPreview } from '@/types/post';
 
 export const createFeed = async (): Promise<StrictResponse<TResponseData<TFeedId>>> => {
   await delay(1000);

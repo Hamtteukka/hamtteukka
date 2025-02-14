@@ -1,9 +1,27 @@
-interface TFeedId {
+import { TUser } from '@/types/user';
+
+export interface TFeedId {
   feedId: number;
 }
 
-interface TFeedPreview extends TFeedId {
+export interface TFeedPreview extends TFeedId {
   thumbnail: string;
   title: string;
   userProfile: string;
+}
+
+export interface TAIFeed extends TFeedId {
+  title: string;
+  thumbnailUrl: string;
+}
+
+export interface TFeedInfo extends TFeedId {
+  title: string;
+  content: string;
+  images: string[];
+  categoryIds: number[];
+  aiPattern: TAIFeed;
+  user: TUser;
+  isScrap: boolean;
+  owner: boolean;
 }
