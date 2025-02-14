@@ -39,7 +39,7 @@ const FeedContentForm: React.FC<PFeedContentForm> = ({
 
       <section className='flex flex-col gap-8'>
         <p className='whitespace-pre-line'>{content}</p>
-        <AIPatternEmbedCard title={aiPattern.title} src={aiPattern.thumbnailUrl} />
+        <AIPatternEmbedCard id={aiPattern.feedId} title={aiPattern.title} src={aiPattern.thumbnailUrl} />
       </section>
     </div>
   );
