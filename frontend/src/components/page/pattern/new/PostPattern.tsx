@@ -3,26 +3,25 @@
 import { H4 } from '@/components/typography/Heading';
 import ConfirmDialog from '@/components/ui/dialog/ConfirmDialog';
 import TextInput from '@/components/ui/input/TextInput';
+import { usePatternPostContext } from '@/hooks/usePatternPostContext';
 import useTextInput from '@/hooks/useTextInput';
-import { createFeed } from '@/service/newFeed';
+import { CRAFT_NUM, NEEDLE_NUM } from '@/lib/constants/post';
+import { craftTypeKrToEn } from '@/lib/pattern';
+import { createAIFeed } from '@/service/newFeed';
+import { TPatternPost } from '@/types/pattern';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 interface PPostPattern {
   base64img: string;
   content?: string;
 }
 
-const PostPattern: React.FC<PPostPattern> = ({ base64img, content = '' }) => {
+const PostPattern: React.FC<PPostPattern> = ({ base64img, content }) => {
+  const { needle, craft } = usePatternPostContext();
   const [title, setTitle] = useTextInput('');
-  const [imageId, setImageId] = useState<string>('');
 
   const router = useRouter();
-
-  useEffect(() => {
-    // TODO: base64img을 어떻게 전달해야 하는가?
-  }, [base64img]);
 
   const post = async () => {
     if (!title) {
@@ -30,18 +29,17 @@ const PostPattern: React.FC<PPostPattern> = ({ base64img, content = '' }) => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('feedType', 'PATTERN');
-    formData.append('title', title);
-    formData.append('images[0]', base64img);
+    const patternPost: TPatternPost = {
+      base64Image: 'data:image/png;base64,' + base64img,
+      title,
+      content: content || '',
+    };
 
-    if (content) {
-      formData.append('content', content);
+    if (craft) {
+      patternPost.categoryIds = [NEEDLE_NUM[needle], CRAFT_NUM[craftTypeKrToEn[craft]]];
     }
 
-    // TODO: 게시물 생성 후 상세 페이지로 이동
-    const { feedId } = await createFeed(formData);
-    alert(`${feedId}번 게시물의 상세 페이지로 이동 (아직 구현 안됨, 임시 알림)`);
+    const { feedId } = await createAIFeed(patternPost);
     router.push(`/feed/${feedId}`);
   };
 

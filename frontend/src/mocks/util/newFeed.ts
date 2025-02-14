@@ -16,6 +16,16 @@ export const createFeed = async (): Promise<StrictResponse<TResponseData<TFeedId
   });
 };
 
+export const createAIFeed = async (): Promise<StrictResponse<TResponseData<TFeedId>>> => {
+  await delay(1000);
+
+  return HttpResponse.json({
+    status: 'success',
+    message: '게시물을 성공적으로 등록하였습니다.',
+    data: MFeedId,
+  });
+};
+
 export const getAIPatternPostList = async ({
   request,
 }: TMockRequest): Promise<StrictResponse<TResponseData<TCursorData<TFeedPreview>>>> => {
