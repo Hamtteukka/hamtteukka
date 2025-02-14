@@ -9,7 +9,7 @@ public class FeedCategory {
 
     //PK 추가
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feed_category_id", columnDefinition = "INT UNSIGNED")
     private Long id;
 
