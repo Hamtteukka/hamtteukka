@@ -21,3 +21,10 @@ export interface TTextPattern {
 export interface TDotPattern {
   dotImage: string;
 }
+
+export interface TPatternPost {
+  base64Image: string;
+  title: string;
+  content: string;
+  categoryIds?: number[];
+}
