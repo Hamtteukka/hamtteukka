@@ -18,10 +18,14 @@ interface PNewFeedContext {
     craft: TCraftTypeKr | undefined;
     title: string;
     detail: string;
+    embedPattern: number;
+    embedPatternImage: string;
     setNeedle: Dispatch<SetStateAction<TNeedle>>;
     setCraft: Dispatch<SetStateAction<TCraftTypeKr | undefined>>;
     setTitle: (e: ChangeEvent<HTMLInputElement>) => void;
     setDetail: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+    setEmbedPattern: Dispatch<SetStateAction<number>>;
+    setEmbedPatternImage: Dispatch<SetStateAction<string>>;
   };
 }
 
@@ -32,6 +36,8 @@ export const NewFeedProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [craft, setCraft] = useState<TCraftTypeKr>();
   const [title, setTitle] = useTextInput<HTMLInputElement>('');
   const [detail, setDetail] = useTextInput<HTMLTextAreaElement>('');
+  const [embedPattern, setEmbedPattern] = useState<number>(-1);
+  const [embedPatternImage, setEmbedPatternImage] = useState<string>('');
 
   const { files, count, addImage, removeImage } = useImages();
 
@@ -47,10 +53,14 @@ export const NewFeedProvider: React.FC<{ children: React.ReactNode }> = ({ child
       craft,
       title,
       detail,
+      embedPattern,
+      embedPatternImage,
       setNeedle,
       setCraft,
       setTitle,
       setDetail,
+      setEmbedPattern,
+      setEmbedPatternImage,
     },
   };
 

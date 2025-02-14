@@ -94,6 +94,17 @@ export const newFeed = {
       credentials: 'include',
     }).then((res) => res.json());
   },
+
+  getAIPatternPostList: async (cursorId: number, limit: number): Promise<TResponseData<TCursorData<TFeedPreview>>> => {
+    const params = new URLSearchParams({
+      cursorId: cursorId === -1 ? '' : cursorId.toString(),
+      limit: limit.toString(),
+    });
+    return fetch(`/api/feeds/ai-embed?${params}`, {
+      cache: 'no-store',
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
 };
 
 export const profile = {
