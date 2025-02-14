@@ -139,11 +139,15 @@ public class FeedController {
                     "ai-pattern.png"
             );
 
+            // categoryIds가 null이면 빈 리스트로 초기화
+            List<Integer> categoryIds = request.getCategoryIds() != null ?
+                    request.getCategoryIds() : new ArrayList<>();
+
             FeedCreateRequest feedRequest = FeedCreateRequest.builder()
                     .images(List.of(convertedFile))
                     .title(request.getTitle())
                     .content(request.getContent())
-                    .categoryIds(request.getCategoryIds())
+                    .categoryIds(categoryIds)
                     .feedType(FeedType.PATTERN)
                     .build();
 
@@ -207,10 +211,10 @@ public class FeedController {
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = "20") int limit,
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) List<Integer> categories
+            @RequestParam(required = false) List<Integer> categoryIds
     ) {
         try {
-            FeedPaginationResponseDto response = feedService.searchFeeds(cursor, limit, keyword, categories);
+            FeedPaginationResponseDto response = feedService.searchFeeds(cursor, limit, keyword, categoryIds);
             return ApiResponse.success(HttpStatus.OK, "피드 검색 성공", response);
         } catch (Exception e) {
             return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");

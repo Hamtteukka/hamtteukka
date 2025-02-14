@@ -20,6 +20,5 @@ public class FeedCreatePatternRequest {
 
     private String content;
 
-    @Size(min = 1, message = "카테고리는 필수 입력값입니다")
     private List<Integer> categoryIds;
 }
