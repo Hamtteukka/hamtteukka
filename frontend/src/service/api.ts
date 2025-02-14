@@ -1,5 +1,6 @@
 import { TSubscriptionProfile } from '@/types/archive';
 import { TDotPattern, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
+import { TFeedId, TFeedPreview } from '@/types/post';
 import { TAuthRedirectUrl, TCursorData, TResponseData } from '@/types/service';
 import { TSubscription, TSubscriptionUser, TUser } from '@/types/user';
 

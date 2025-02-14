@@ -1,4 +1,4 @@
-import { CRAFT_TYPE, PATTERN_PAGE } from '@/lib/constants/pattern';
+import { CRAFT_TYPE, NEEDLE_TYPE, PATTERN_PAGE } from '@/lib/constants/pattern';
 import { TCraftTypeKr } from '@/types/pattern';
 import dotImage from '/public/image/dot.png';
 import textImage from '/public/image/text.png';
@@ -52,6 +52,11 @@ export const craftTypeKrToEn = {
   인형옷: CRAFT_TYPE.DOLL_CLOTHES,
   반려동물: CRAFT_TYPE.PET_ITEM,
   기타: CRAFT_TYPE.OTHER,
+} as const;
+
+export const needleTypeKrToEn = {
+  대바늘: NEEDLE_TYPE.KNITTING,
+  코바늘: NEEDLE_TYPE.CROCHETING,
 } as const;
 
 export const craftTypeListKr = Object.keys(craftTypeKrToEn) as TCraftTypeKr[];

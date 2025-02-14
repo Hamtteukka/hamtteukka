@@ -1,5 +1,6 @@
 import { SUCCESS } from '@/lib/constants/service';
 import { newFeed } from '@/service/api';
+import { TFeedId, TFeedPreview } from '@/types/post';
 import { TCursorData } from '@/types/service';
 
 export const createFeed = async (formData: FormData): Promise<TFeedId> => {

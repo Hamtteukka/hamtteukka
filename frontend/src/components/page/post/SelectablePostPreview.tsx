@@ -1,6 +1,7 @@
 import Avatar from '@/components/ui/Avatar';
 import CheckboxChecked from '/public/svg/checkboxCheckedIcon.svg';
 import { useEmbedPatternContext } from '@/hooks/useEmbedPatternContext';
+import { TFeedPreview } from '@/types/post';
 
 interface PSelectablePostPreview {
   info: TFeedPreview;

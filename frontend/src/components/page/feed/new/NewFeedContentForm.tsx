@@ -57,7 +57,7 @@ const NewFeedContentForm: React.FC = () => {
     // TODO: 게시물 생성 후 상세 페이지로 이동
     const { feedId } = await createFeed(formData);
     alert(`${feedId}번 게시물의 상세 페이지로 이동 (아직 구현 안됨, 임시 알림)`);
-    router.push(`/feeds/${feedId}`);
+    router.push(`/feed/${feedId}`);
   };
 
   const cancel = () => {

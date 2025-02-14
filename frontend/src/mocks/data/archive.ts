@@ -1,4 +1,5 @@
 import { TSubscriptionProfile } from '@/types/archive';
+import { TFeedPreview } from '@/types/post';
 
 export const MSubscriptionList: Array<TSubscriptionProfile> = [
   {

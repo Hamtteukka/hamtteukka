@@ -1,5 +1,6 @@
 import { SUCCESS } from '@/lib/constants/service';
 import { profile } from '@/service/api';
+import { TFeedPreview } from '@/types/post';
 import { TCursorData } from '@/types/service';
 import { TSubscription, TSubscriptionUser } from '@/types/user';
 

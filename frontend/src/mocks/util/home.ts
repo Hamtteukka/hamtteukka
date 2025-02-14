@@ -1,6 +1,7 @@
 import { POST_LIMIT } from '@/lib/constants/service';
 import { MPostList } from '@/mocks/data/home';
 import { TMockRequest } from '@/types/msw';
+import { TFeedPreview } from '@/types/post';
 import { TCursorData, TResponseData } from '@/types/service';
 import { isNaturalNumber } from '@/util/number';
 import { delay, HttpResponse, StrictResponse } from 'msw';
