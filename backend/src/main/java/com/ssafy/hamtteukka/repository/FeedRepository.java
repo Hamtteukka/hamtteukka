@@ -98,7 +98,7 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
             WHERE (:cursor IS NULL OR f.id < :cursor)
             AND (:keyword IS NULL OR f.title LIKE %:keyword%)
             AND (
-                COALESCE(:categories, NULL) IS NULL
+                COALESCE(:categoryIds, NULL) IS NULL
                 OR
                 EXISTS (
                     SELECT 1 FROM FeedCategory fc
@@ -108,17 +108,17 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
                             WHEN EXISTS (
                                 SELECT 1 FROM FeedCategory fc1
                                 WHERE fc1.feed = f
-                                AND fc1.category.id IN :categories
+                                AND fc1.category.id IN :categoryIds
                                 AND fc1.category.id IN (101, 102)
                             ) THEN
                                 EXISTS (
                                     SELECT 1 FROM FeedCategory fc2
                                     WHERE fc2.feed = f
-                                    AND fc2.category.id IN :categories
+                                    AND fc2.category.id IN :categoryIds
                                     AND fc2.category.id NOT IN (101, 102)
                                 )
                             ELSE
-                                fc.category.id IN :categories
+                                fc.category.id IN :categoryIds
                         END
                     )
                 )
@@ -128,21 +128,21 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
     Slice<FeedResponseDto> searchFeedsWithCursor(
             @Param("cursor") Long cursor,
             @Param("keyword") String keyword,
-            @Param("categories") List<Integer> categories,
+            @Param("categoryIds") List<Integer> categoryIds,
             Pageable pageable);
 
     @Query("""
-    SELECT new com.ssafy.hamtteukka.dto.FeedResponseDto(f.id, fi.id, f.title, f.user.profileId)
-       FROM Feed f
-       LEFT JOIN f.savedFeeds sf
-       LEFT JOIN f.feedImages fi
-       JOIN f.user u
-       WHERE (f.user.id = :userId OR sf.user.id = :userId)
-       AND (f.feedType = 1 AND fi.imageType = 0)
-       AND (:keyword IS NULL OR f.title LIKE %:keyword%)
-       AND (:cursor IS NULL OR f.id < :cursor)
-       ORDER BY f.id DESC
-    """)
+            SELECT new com.ssafy.hamtteukka.dto.FeedResponseDto(f.id, fi.id, f.title, f.user.profileId)
+               FROM Feed f
+               LEFT JOIN f.savedFeeds sf
+               LEFT JOIN f.feedImages fi
+               JOIN f.user u
+               WHERE (f.user.id = :userId OR sf.user.id = :userId)
+               AND (f.feedType = 1 AND fi.imageType = 0)
+               AND (:keyword IS NULL OR f.title LIKE %:keyword%)
+               AND (:cursor IS NULL OR f.id < :cursor)
+               ORDER BY f.id DESC
+            """)
     Slice<FeedResponseDto> findAiFeedsWithPagination(
             @Param("userId") Long userId,
             @Param("cursor") Long cursor,
