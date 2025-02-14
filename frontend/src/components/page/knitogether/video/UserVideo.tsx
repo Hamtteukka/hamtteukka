@@ -17,7 +17,7 @@ const UserVideo: React.FC<PUserVideo> = ({ stream, isOn }) => {
       stream.addVideoElement(videoRef.current);
       console.error(stream.stream.connection.data);
     }
-  }, []);
+  }, [stream]);
 
   return (
     <div className='bg-deepgray relative aspect-video h-full w-full overflow-hidden rounded-sm'>

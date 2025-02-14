@@ -11,7 +11,7 @@ const Avatar: React.FC<PAvatar> = ({ src, size = 'sm' }) => {
 
   return (
     <div className={`relative h-${width} w-${width} overflow-hidden rounded-full`}>
-      <Image fill className='object-cover' src={src === '' ? defaultImg.src : src} alt='프로필 이미지' />
+      <img className='h-full w-full object-cover' src={src === '' ? defaultImg.src : src} alt='프로필 이미지' />
     </div>
   );
 };

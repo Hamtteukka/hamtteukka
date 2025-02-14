@@ -44,7 +44,9 @@ const KnitogetherRoom: React.FC = () => {
         <LeaveRoomButton />
       </header>
       <div className={`${getGridColumns()} w-full grow grid-cols-2 justify-center gap-2.5 overflow-y-hidden`}>
-        <UserVideoCard host={videoRoom?.hostNickname} stream={myStream} isOn={myStream?.stream.videoActive} />
+        {myStream && (
+          <UserVideoCard host={videoRoom?.hostNickname} stream={myStream} isOn={myStream.stream.videoActive} />
+        )}
 
         {subscribers.map((subscriber) => (
           <UserVideoCard stream={subscriber} isOn={subscriber.stream.videoActive} />

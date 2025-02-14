@@ -13,11 +13,12 @@ import { useNewFeedContext } from '@/hooks/useNewFeedContext';
 import { CRAFT_NUM, NEEDLE_NUM } from '@/lib/constants/post';
 import { createFeed } from '@/service/newFeed';
 import { ModalProvider } from '@/components/context/ModalContext';
+import { EmbedPatternProvider } from '@/components/context/EmbedPatternContext';
 
 const NewFeedContentForm: React.FC = () => {
   const {
     image: { files, count },
-    content: { needle, craft, title, detail, setNeedle, setCraft, setTitle, setDetail },
+    content: { needle, craft, title, detail, embedPattern, setNeedle, setCraft, setTitle, setDetail },
   } = useNewFeedContext();
 
   const router = useRouter();
@@ -49,10 +50,14 @@ const NewFeedContentForm: React.FC = () => {
       formData.append(`images[${index}]`, file);
     });
 
-    // TODO: 게시물 생성 후 마이페이지로 이동
+    if (embedPattern >= 0) {
+      formData.append('knittingPatternsFeedId', embedPattern.toString());
+    }
+
+    // TODO: 게시물 생성 후 상세 페이지로 이동
     const { feedId } = await createFeed(formData);
-    alert(feedId + '번 게시물 등록 성공! (임시 알림)');
-    router.push('/');
+    alert(`${feedId}번 게시물의 상세 페이지로 이동 (아직 구현 안됨, 임시 알림)`);
+    router.push(`/feeds/${feedId}`);
   };
 
   const cancel = () => {
@@ -82,7 +87,9 @@ const NewFeedContentForm: React.FC = () => {
         vertical={true}
       />
       <ModalProvider>
-        <LabeledInput label='AI 도안 임베드' input={<AIPatternInput />} vertical={true} />
+        <EmbedPatternProvider>
+          <LabeledInput label='AI 도안 임베드' input={<AIPatternInput />} vertical={true} />
+        </EmbedPatternProvider>
       </ModalProvider>
       <div className='flex justify-end gap-2.5'>
         <Button onClick={submit}>등록</Button>

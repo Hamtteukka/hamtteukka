@@ -1,11 +1,8 @@
 package com.ssafy.hamtteukka.controller;
 
 import com.ssafy.hamtteukka.common.ApiResponse;
-import com.ssafy.hamtteukka.dto.FeedCreateRequest;
-import com.ssafy.hamtteukka.dto.FeedCreateResponse;
-import com.ssafy.hamtteukka.dto.FeedDetailResponse;
-import com.ssafy.hamtteukka.dto.FeedPaginationResponseDto;
-import com.ssafy.hamtteukka.dto.ScrapRequest;
+import com.ssafy.hamtteukka.common.Base64ToMultipartFileConverter;
+import com.ssafy.hamtteukka.dto.*;
 import com.ssafy.hamtteukka.service.FeedService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -106,12 +104,16 @@ public class FeedController {
     }
 
     @PostMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "피드 생성하기")
+    @Operation(summary = "일반 피드 생성하기")
     public ResponseEntity<?> createFeed(
             @Valid @ModelAttribute FeedCreateRequest request,
             Authentication authentication
     ) {
         try {
+            if (request.getFeedType() != FeedType.NORMAL) {
+                return ApiResponse.fail(HttpStatus.BAD_REQUEST, "일반 피드 생성만 가능합니다");
+            }
+
             Long userId = (Long) authentication.getPrincipal();
             FeedCreateResponse response = feedService.createFeed(userId, request);
             return ApiResponse.success(HttpStatus.CREATED, "피드 생성 성공", response);
@@ -123,9 +125,37 @@ public class FeedController {
         }
     }
 
-    /**
-     * 피드 수정(후순위)
-     */
+    @PostMapping(value = "/pattern", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "AI 도안 피드 생성하기")
+    public ResponseEntity<?> createPatternFeed(
+            @Valid @RequestBody FeedCreatePatternRequest request,
+            Authentication authentication
+    ) {
+        try {
+            Long userId = (Long) authentication.getPrincipal();
+
+            MultipartFile convertedFile = Base64ToMultipartFileConverter.convert(
+                    request.getBase64Image(),
+                    "ai-pattern.png"
+            );
+
+            FeedCreateRequest feedRequest = FeedCreateRequest.builder()
+                    .images(List.of(convertedFile))
+                    .title(request.getTitle())
+                    .content(request.getContent())
+                    .categoryIds(request.getCategoryIds())
+                    .feedType(FeedType.PATTERN)
+                    .build();
+
+            FeedCreateResponse response = feedService.createFeed(userId, feedRequest);
+            return ApiResponse.success(HttpStatus.CREATED, "AI 도안 피드 생성 성공", response);
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.fail(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다");
+        }
+    }
+
 
     @GetMapping("/{userId}/list")
     public ResponseEntity<?> getFeedsByUserId(

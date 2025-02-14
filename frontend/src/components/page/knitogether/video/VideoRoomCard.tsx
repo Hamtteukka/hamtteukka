@@ -17,8 +17,8 @@ const VideoRoomCard: React.FC<PVideoRoomCard> = ({
 
   return (
     <div className='cursor-pointer text-detail' onClick={handleVideoRoomCardClick}>
-      <div className='relative w-full pb-[75%]'>
-        <Image src={videoImg} fill alt='비디오 이미지' className='rounded-md object-cover' />
+      <div className='relative aspect-video w-full'>
+        <img src={videoImg} alt='비디오 이미지' className='h-full w-full rounded-md object-cover' />
       </div>
       <div className='flex flex-col gap-2 p-3'>
         <span className='font-bold'>{title}</span>
