@@ -1,12 +1,10 @@
-import { HttpResponse, StrictResponse, delay } from 'msw';
+import { HttpResponse, StrictResponse } from 'msw';
 import { MUser } from '@/mocks/data/user';
 import { TAuthRedirectUrl, TResponseData } from '@/types/service';
 import { TUser } from '@/types/user';
 
 export const getKakaoToken = async (): Promise<StrictResponse<TResponseData<TAuthRedirectUrl>>> => {
   const redirectUrl = 'http://localhost:3000/auth/signup';
-
-  await delay(1000);
 
   return HttpResponse.json({
     status: 'success',
@@ -16,8 +14,6 @@ export const getKakaoToken = async (): Promise<StrictResponse<TResponseData<TAut
 };
 
 export const signUp = async (): Promise<StrictResponse<TResponseData<TUser>>> => {
-  await delay(1000);
-
   return HttpResponse.json({
     status: 'success',
     message: '회원가입에 성공하였습니다.',
