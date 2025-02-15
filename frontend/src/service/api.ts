@@ -126,6 +126,14 @@ export const profile = {
     }).then((res) => res.json());
   },
 
+  editUserInfo: async (formData: FormData): Promise<TResponseData<TUser>> => {
+    return fetch('/api/users', {
+      method: 'PUT',
+      body: formData,
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
   getUserPostList: async (
     userId: string,
     cursorId: number,
