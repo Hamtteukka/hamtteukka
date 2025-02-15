@@ -125,7 +125,7 @@ public class FeedController {
         }
     }
 
-    @PostMapping(value = "/pattern")
+    @PostMapping(value = "/pattern", consumes = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "AI 도안 피드 생성하기")
     public ResponseEntity<?> createPatternFeed(
             @Valid @RequestBody FeedCreatePatternRequest request,
