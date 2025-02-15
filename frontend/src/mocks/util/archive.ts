@@ -5,11 +5,9 @@ import { TMockRequest } from '@/types/msw';
 import { TFeedPreview } from '@/types/post';
 import { TCursorData, TResponseData } from '@/types/service';
 import { isNaturalNumber } from '@/util/number';
-import { delay, HttpResponse, StrictResponse } from 'msw';
+import { HttpResponse, StrictResponse } from 'msw';
 
 export const getMSubscriptionList = async (): Promise<StrictResponse<TResponseData<TSubscriptionProfile[]>>> => {
-  await delay(1000);
-
   return HttpResponse.json({
     status: 'success',
     message: '구독 목록을 성공적으로 가져왔습니다.',
@@ -31,8 +29,6 @@ export const getMStoredPostList = async ({
 
   const hasNextItems = endIndex < MStoredPostList.length;
   const nextCursorId = hasNextItems ? endIndex : -1;
-
-  await delay(1000);
 
   return HttpResponse.json({
     status: 'success',
