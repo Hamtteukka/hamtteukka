@@ -5,11 +5,9 @@ import { TMockRequest } from '@/types/msw';
 import { TFeedPreview } from '@/types/post';
 import { TCursorData, TResponseData } from '@/types/service';
 import { isNaturalNumber } from '@/util/number';
-import { delay, HttpResponse, StrictResponse } from 'msw';
+import { HttpResponse, StrictResponse } from 'msw';
 
 export const getMUserInfo = async () => {
-  await delay(1000);
-
   return HttpResponse.json({
     status: 'success',
     message: '유저 정보를 성공적으로 불러왔습니다.',
@@ -18,8 +16,6 @@ export const getMUserInfo = async () => {
 };
 
 export const editUserInfo = async () => {
-  await delay(1000);
-
   return HttpResponse.json({
     status: 'success',
     message: '유저 정보를 성공적으로 수정하였습니다.',
@@ -33,8 +29,6 @@ export const editUserInfo = async () => {
 };
 
 export const subscribe = async () => {
-  await delay(200);
-
   return HttpResponse.json({
     status: 'success',
     message: '성공적으로 구독하였습니다.',
@@ -43,8 +37,6 @@ export const subscribe = async () => {
 };
 
 export const unsubscribe = async () => {
-  await delay(200);
-
   return HttpResponse.json({
     status: 'success',
     message: '성공적으로 구독 취소하였습니다.',
@@ -66,8 +58,6 @@ export const getMUserPostList = async ({
 
   const hasNextItems = endIndex < MPostList.length;
   const nextCursorId = hasNextItems ? endIndex : -1;
-
-  await delay(1000);
 
   return HttpResponse.json({
     status: 'success',

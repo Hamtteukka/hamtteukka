@@ -1,5 +1,5 @@
 import { CRAFT_TYPE, NEEDLE_TYPE, PATTERN_PAGE } from '@/lib/constants/pattern';
-import { TCraftTypeKr } from '@/types/pattern';
+import { TCraftTypeKr, TNeedleTypeKr } from '@/types/pattern';
 import dotImage from '/public/image/dot.png';
 import textImage from '/public/image/text.png';
 
@@ -42,6 +42,20 @@ export const patternInput = {
   },
 };
 
+export const needleList: TNeedleTypeKr[] = ['대바늘', '코바늘'] as const;
+export const craftList: TCraftTypeKr[] = [
+  '상의',
+  '하의',
+  '모자',
+  '가방',
+  '목도리',
+  '지갑',
+  '키링',
+  '인형옷',
+  '반려동물',
+  '기타',
+] as const;
+
 export const craftTypeKrToEn = {
   상의: CRAFT_TYPE.TOP,
   하의: CRAFT_TYPE.BOTTOM,
@@ -49,6 +63,7 @@ export const craftTypeKrToEn = {
   가방: CRAFT_TYPE.BAG,
   목도리: CRAFT_TYPE.SCARF,
   지갑: CRAFT_TYPE.WALLET,
+  키링: CRAFT_TYPE.KEYRING,
   인형옷: CRAFT_TYPE.DOLL_CLOTHES,
   반려동물: CRAFT_TYPE.PET_ITEM,
   기타: CRAFT_TYPE.OTHER,
