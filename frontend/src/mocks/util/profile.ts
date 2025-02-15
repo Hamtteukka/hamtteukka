@@ -1,6 +1,6 @@
 import { POST_LIMIT } from '@/lib/constants/service';
 import { MPostList } from '@/mocks/data/home';
-import { MSubscriptionInfo } from '@/mocks/data/user';
+import { MEditUser, MSubscriptionInfo } from '@/mocks/data/user';
 import { TMockRequest } from '@/types/msw';
 import { TFeedPreview } from '@/types/post';
 import { TCursorData, TResponseData } from '@/types/service';
@@ -15,6 +15,21 @@ export const getMUserInfo = async () => {
     message: '유저 정보를 성공적으로 불러왔습니다.',
     data: MSubscriptionInfo,
   });
+};
+
+export const editUserInfo = async () => {
+  await delay(1000);
+
+  return HttpResponse.json({
+    status: 'success',
+    message: '유저 정보를 성공적으로 수정하였습니다.',
+    data: MEditUser,
+  });
+
+  // return HttpResponse.json({
+  //   status: 'fail',
+  //   message: '이미 존재하는 닉네임입니다.',
+  // });
 };
 
 export const subscribe = async () => {
