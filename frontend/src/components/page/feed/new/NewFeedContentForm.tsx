@@ -54,10 +54,9 @@ const NewFeedContentForm: React.FC = () => {
       formData.append('knittingPatternsFeedId', embedPattern.toString());
     }
 
-    // TODO: 게시물 생성 후 상세 페이지로 이동
     const { feedId } = await createFeed(formData);
-    alert(`${feedId}번 게시물의 상세 페이지로 이동 (아직 구현 안됨, 임시 알림)`);
-    router.push(`/feeds/${feedId}`);
+    alert(title + '\n게시물이 성공적으로 등록되었습니다.');
+    router.push(`/feed/${feedId}`);
   };
 
   const cancel = () => {

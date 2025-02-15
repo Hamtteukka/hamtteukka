@@ -1,5 +1,6 @@
 import { TSubscriptionProfile } from '@/types/archive';
-import { TDotPattern, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
+import { TDotPattern, TPatternPost, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
+import { TFeedId, TFeedPreview } from '@/types/post';
 import { TAuthRedirectUrl, TCursorData, TResponseData } from '@/types/service';
 import { TSubscription, TSubscriptionUser, TUser } from '@/types/user';
 
@@ -91,6 +92,17 @@ export const newFeed = {
     return fetch('/api/feeds', {
       method: 'POST',
       body: formData,
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
+  createAIFeed: async (body: TPatternPost): Promise<TResponseData<TFeedId>> => {
+    return fetch('/api/feeds/pattern', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify(body),
       credentials: 'include',
     }).then((res) => res.json());
   },

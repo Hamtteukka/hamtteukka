@@ -7,20 +7,20 @@ import NeedleInput from '@/components/page/pattern/new/text/NeedleInput';
 import Button from '@/components/ui/button/Button';
 import NewPatternLanding from '@/components/ui/landing/NewPatternLanding';
 import { usePatternContext } from '@/hooks/usePatternContext';
+import { usePatternPostContext } from '@/hooks/usePatternPostContext';
 import { useSetPatternTypeContext } from '@/hooks/useSetPatternTypeContext';
 import useTextInput from '@/hooks/useTextInput';
-import { NEEDLE_TYPE, AI_GENERATION_TOTAL_COUNT, PATTERN_PAGE } from '@/lib/constants/pattern';
+import { AI_GENERATION_TOTAL_COUNT, PATTERN_PAGE } from '@/lib/constants/pattern';
 import { patternInput } from '@/lib/pattern';
 import { generateTextPattern } from '@/service/pattern';
 import { useAiGenerationRemainingCount } from '@/store/remainingPatternCount';
-import { TCraftTypeKr, TNeedle, TTextPatternInstruction } from '@/types/pattern';
+import { TTextPatternInstruction } from '@/types/pattern';
 import { useState } from 'react';
 
 const TextPatternForm: React.FC = () => {
-  const [needle, setNeedle] = useState<TNeedle>(NEEDLE_TYPE.KNITTING);
-  const [craft, setCraft] = useState<TCraftTypeKr>();
-  const [detail, setDetail] = useTextInput<HTMLTextAreaElement>('');
+  const { needle, craft, setNeedle, setCraft } = usePatternPostContext();
   const [isPending, setIsPending] = useState<boolean>(false);
+  const [detail, setDetail] = useTextInput<HTMLTextAreaElement>('');
 
   const { count, subCount } = useAiGenerationRemainingCount();
 
@@ -60,7 +60,7 @@ const TextPatternForm: React.FC = () => {
       <LabeledInput
         label={patternInput.detail.label}
         help={patternInput.detail.help}
-        input={<DetailInput onChange={setDetail} />}
+        input={<DetailInput value={detail} onChange={setDetail} />}
       />
       <div className='flex gap-2.5 self-end'>
         <Button type='outlined' onClick={() => setPatterType(PATTERN_PAGE.SELECT)}>

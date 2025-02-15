@@ -194,11 +194,14 @@ public class FeedService {
                 .orElseThrow(() -> new EntityNotFoundException("피드를 찾을 수 없습니다"));
 
         // 이미지 URL 목록 생성
-        List<FeedDetailResponse.Image> images = feed.getFeedImages().stream()
-                .map(image -> new FeedDetailResponse.Image(
-                        s3FileLoader.getFileUrl(image.getId()),
-                        image.getImageType()
-                ))
+        List<String> images = feed.getFeedImages().stream()
+                .sorted((a, b) -> {
+                    // 대표이미지(imageType=0)가 첫 번째로 오도록 정렬
+                    if (a.getImageType() == 0) return -1;
+                    if (b.getImageType() == 0) return 1;
+                    return 0;
+                })
+                .map(image -> s3FileLoader.getFileUrl(image.getId()))
                 .collect(Collectors.toList());
 
         // 카테고리 목록
@@ -293,14 +296,14 @@ public class FeedService {
      * @param cursor
      * @param limit
      * @param keyword
-     * @param categories
+     * @param categoryIds
      * @return
      */
-    public FeedPaginationResponseDto searchFeeds(Long cursor, int limit, String keyword, List<Integer> categories) {
+    public FeedPaginationResponseDto searchFeeds(Long cursor, int limit, String keyword, List<Integer> categoryIds) {
         Slice<FeedResponseDto> slice = feedRepository.searchFeedsWithCursor(
                 cursor,
                 keyword,
-                categories,
+                categoryIds,
                 PageRequest.of(0, limit)
         );
 
