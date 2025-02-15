@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
     const response = await fetch(`${BASE_URL}/feeds/pattern`, {
       headers: {
         Cookie: cookiesHeader,
+        'Content-Type': 'application/json',
       },
       method: 'POST',
       body: JSON.stringify(body),
