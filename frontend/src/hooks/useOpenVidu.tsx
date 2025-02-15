@@ -42,6 +42,7 @@ const useOpenVidu = () => {
         setSubscribers((prev) =>
           prev.filter((subscriber) => subscriber.stream.connection.connectionId !== connectionId),
         );
+        // TODO: 방에서 누군가 나갈 때 바로 반영되는지 확인
         router.refresh();
       },
     };

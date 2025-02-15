@@ -12,6 +12,13 @@ export const MUser: TUser = {
   dailyCreationLimit: 3,
 };
 
+export const MEditUser: TUser = {
+  userId: 1,
+  nickname: '설오',
+  profileId: '/image/profile.png',
+  dailyCreationLimit: 3,
+};
+
 export const MVideoUser: TVideoUser = {
   ...MUser,
   role: VIDEO_USER_ROLE.HOST,

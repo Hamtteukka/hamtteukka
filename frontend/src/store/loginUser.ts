@@ -9,6 +9,7 @@ interface PUserStore {
   isLogin: boolean;
   login: (user: TUser) => void;
   logout: () => void;
+  edit: (user: TUser) => void;
 }
 
 export const useUserStore = create(
@@ -18,6 +19,10 @@ export const useUserStore = create(
       nickname: '',
       profileId: '',
       isLogin: false,
+
+      edit: (user: TUser) => {
+        set({ nickname: user.nickname, profileId: user.profileId });
+      },
 
       login: (user: TUser) => {
         set({ userId: user.userId, nickname: user.nickname, profileId: user.profileId, isLogin: true });

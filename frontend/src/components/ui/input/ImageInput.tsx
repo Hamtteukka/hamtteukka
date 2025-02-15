@@ -10,7 +10,7 @@ const DragAndDropUploadImg = dynamic(() => import('@/components/ui/dragAndDropUp
 });
 
 interface PImageInput {
-  file: File | null;
+  file: File | string | null;
   setFile: React.Dispatch<React.SetStateAction<File | null>> | ((file: File | null) => void);
   description?: string;
   className?: string;
@@ -20,10 +20,12 @@ const ImageInput: React.FC<PImageInput> = ({ file, setFile, description = '', cl
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (file) {
+    if (file instanceof File) {
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
       return () => URL.revokeObjectURL(objectUrl);
+    } else if (typeof file === 'string') {
+      setPreviewUrl(file);
     } else {
       if (previewUrl) {
         setPreviewUrl(null);
