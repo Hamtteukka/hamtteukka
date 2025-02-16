@@ -1,15 +1,12 @@
 import { craftList, patternInput } from '@/lib/pattern';
 import NeedleInput from '@/components/page/pattern/new/text/NeedleInput';
-import { TCraftTypeKr, TNeedle } from '@/types/pattern';
-import { useState } from 'react';
 import LabeledInput from '@/components/page/pattern/new/LabeledInput';
 import RemovableBadge from '@/components/ui/badge/RemovableBadge';
 import CheckboxButton from '@/components/ui/checkbox/CheckboxButton';
-import { useCheckboxButton } from '@/hooks/useCheckboxButton';
+import { useSearchContext } from '@/hooks/useSearchContext';
 
 const SearchDropdown: React.FC = () => {
-  const [needle, setNeedle] = useState<TNeedle>();
-  const { values: crafts, addValue: addCraft, removeValue: removeCraft } = useCheckboxButton<TCraftTypeKr>();
+  const { needle, crafts, setNeedle, addCraft, removeCraft } = useSearchContext();
 
   const removeNeedle = () => {
     setNeedle(undefined);

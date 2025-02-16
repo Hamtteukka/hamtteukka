@@ -87,6 +87,33 @@ export const home = {
   },
 };
 
+export const search = {
+  getSearchedPostList: async (
+    cursorId: number,
+    limit: number,
+    keyword: string,
+    categoryIds: string,
+  ): Promise<TResponseData<TCursorData<TFeedPreview>>> => {
+    const params = new URLSearchParams({
+      cursorId: cursorId === -1 ? '' : cursorId.toString(),
+      limit: limit.toString(),
+    });
+
+    if (keyword) {
+      params.set('keyword', keyword);
+    }
+
+    if (categoryIds) {
+      params.set('categoryIds', categoryIds);
+    }
+
+    return fetch(`/api/feeds/search?${params}`, {
+      cache: 'no-store',
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+};
+
 export const newFeed = {
   createFeed: async (formData: FormData): Promise<TResponseData<TFeedId>> => {
     return fetch('/api/feeds', {
