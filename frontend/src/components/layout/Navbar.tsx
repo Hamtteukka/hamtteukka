@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
         <div className='fixed flex h-screen w-64 flex-col gap-8 px-4 py-10'>
           <header className='flex items-center justify-between'>
             {/* <Image width={50} height={50} src={logo} alt='함뜨까 로고' /> */}
-            <Image width={128} height={50} src={fullLogo} alt='함뜨까 로고' />
+            <img width={128} height={50} src={fullLogo.src} alt='함뜨까 로고' />
             {isLogin ? <AlertIcon height='24' width='24' className='cursor-pointer' /> : <KakaoAuthButton />}
           </header>
 

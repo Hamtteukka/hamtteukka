@@ -7,6 +7,7 @@ import { H1 } from '@/components/typography/Heading';
 import { CRAFT_KR, NEEDLE_KR } from '@/lib/constants/post';
 import Avatar from '@/components/ui/Avatar';
 import AIPatternEmbedCard from '@/components/page/feed/AIPatternEmbedCard';
+import Link from 'next/link';
 
 interface PFeedContentForm {
   feedInfo: TFeedInfo;
@@ -18,10 +19,10 @@ const FeedContentForm: React.FC<PFeedContentForm> = ({
   return (
     <div className='flex w-3/5 flex-col gap-8 overflow-y-auto border-l bg-white px-10 py-10'>
       <section className='flex flex-col gap-2'>
-        <div className='flex items-center gap-2.5'>
+        <Link href={`/profile/${user.userId}`} className='flex cursor-pointer items-center gap-2.5 self-start'>
           <Avatar src={user.profileId} />
           <span className='text-detail'>{user.nickname}</span>
-        </div>
+        </Link>
         <div className='flex items-center justify-between'>
           <H1>{title}</H1>
           {owner && (
