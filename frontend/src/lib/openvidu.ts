@@ -3,8 +3,8 @@ import { PublisherProperties } from 'openvidu-browser';
 export const publisherProperties: PublisherProperties = {
   audioSource: undefined,
   videoSource: undefined,
-  publishAudio: false,
-  publishVideo: false,
+  publishAudio: true,
+  publishVideo: true,
   resolution: '640x480',
   frameRate: 30,
   insertMode: 'APPEND',
