@@ -23,7 +23,7 @@ const useOpenVidu = () => {
     const handleStreamCreated: SessionEventHandler<'streamCreated'> = {
       type: 'streamCreated',
       handler: (event) => {
-        console.error('누군가 방에 들어옴');
+        console.log('스트림이 생성되었습니다:', event.stream);
         const subscriber = session.subscribe(event.stream, undefined);
         setSubscribers((prev) => [...prev, subscriber]);
       },
@@ -46,7 +46,7 @@ const useOpenVidu = () => {
     const handleConnectionDestroyed: SessionEventHandler<'connectionDestroyed'> = {
       type: 'connectionDestroyed',
       handler: (event) => {
-        console.error('누군가 방에서 퇴장함');
+        console.error('누군가 방에서 퇴장하였습니다:', event);
         const connectionId = event.connection.connectionId;
         setSubscribers((prev) =>
           prev.filter((subscriber) => subscriber.stream.connection.connectionId !== connectionId),
@@ -77,7 +77,7 @@ const useOpenVidu = () => {
     if (myStream) {
       const videoEnabled = myStream.stream.videoActive;
       myStream.publishVideo(!videoEnabled);
-      setCameraOn(myStream.stream.videoActive);
+      setCameraOn(!videoEnabled);
     }
   };
 
@@ -85,7 +85,7 @@ const useOpenVidu = () => {
     if (myStream) {
       const audioEnabled = myStream.stream.audioActive;
       myStream.publishAudio(!audioEnabled);
-      setMicOn(myStream.stream.audioActive);
+      setMicOn(!audioEnabled);
     }
   };
 
