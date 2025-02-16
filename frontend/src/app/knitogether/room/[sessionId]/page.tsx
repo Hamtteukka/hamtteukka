@@ -37,7 +37,7 @@ const KnitogetherRoom: React.FC = () => {
     return () => {
       window.removeEventListener('beforeunload', cleanUpOpenVidu);
     };
-  }, []);
+  }, [myStream]);
 
   return (
     <div className='flex h-screen w-full flex-col gap-8 px-10 py-10'>
