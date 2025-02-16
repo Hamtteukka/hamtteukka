@@ -34,13 +34,14 @@ const useOpenVidu = () => {
     /**
      * 어떤 유저가 스트림을 종료(카메라 혹은 마이크 OFF)했을 때 동작하는 이벤트 핸들러
      */
-    // const handleStreamDestroyed: SessionEventHandler<'streamDestroyed'> = {
-    //   type: 'streamDestroyed',
-    //   handler: (event) => {
-    //     console.log('스트림이 종료되었습니다:', event.stream);
-    //     setSubscribers((prev) => prev.filter((subscriber) => subscriber.stream !== event.stream));
-    //   },
-    // };
+    const handleStreamDestroyed: SessionEventHandler<'streamDestroyed'> = {
+      type: 'streamDestroyed',
+      handler: (event) => {
+        console.log('스트림이 종료되었습니다:', event.stream);
+        setSubscribers((prev) => prev.filter((subscriber) => subscriber.stream !== event.stream));
+        router.refresh();
+      },
+    };
 
     /**
      * 어떤 유저가 방을 퇴장했을 때 동작하는 이벤트 핸들러
@@ -70,7 +71,7 @@ const useOpenVidu = () => {
 
     const eventHandlers: SessionEventHandler<any>[] = [
       handleStreamCreated,
-      // handleStreamDestroyed,
+      handleStreamDestroyed,
       handleConnectionDestroyed,
       handleException,
     ];
