@@ -13,7 +13,7 @@ const Badge: React.FC<PBadge> = ({ children, type = 'filled', className = '' }) 
   return (
     <div
       className={cn(
-        `flex cursor-pointer justify-center rounded-full border px-3 py-1 font-bold ${borderColor} ${bgColor} ${textColor} hover:opacity-90`,
+        `flex justify-center rounded-full border px-3 py-1 font-bold ${borderColor} ${bgColor} ${textColor}`,
         className,
       )}
     >
