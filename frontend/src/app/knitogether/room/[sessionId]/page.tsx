@@ -32,8 +32,10 @@ const KnitogetherRoom: React.FC = () => {
 
     startOpenVidu();
 
+    window.addEventListener('beforeunload', cleanUpOpenVidu);
+
     return () => {
-      cleanUpOpenVidu();
+      window.removeEventListener('beforeunload', cleanUpOpenVidu);
     };
   }, []);
 

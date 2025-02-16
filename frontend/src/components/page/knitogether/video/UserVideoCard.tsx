@@ -24,7 +24,7 @@ const UserVideoCard: React.FC<PUserVideoCard> = ({ stream, isOn, host }) => {
       const userInfo = JSON.parse(stream.stream.connection.data);
       setUserInfo(userInfo);
     }
-  }, []);
+  }, [stream]);
 
   return (
     <div className='relative flex overflow-hidden rounded-sm'>

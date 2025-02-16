@@ -12,8 +12,8 @@ const useOpenVidu = () => {
   const [myStream, setMyStream] = useState<Publisher>();
   const [subscribers, setSubscribers] = useState<StreamManager[]>([]);
 
-  const [cameraOn, setCameraOn] = useState<boolean>(true);
-  const [micOn, setMicOn] = useState<boolean>(true);
+  const [cameraOn, setCameraOn] = useState<boolean>(false);
+  const [micOn, setMicOn] = useState<boolean>(false);
 
   const userInfo = useUserStore();
   const router = useRouter();
@@ -30,6 +30,17 @@ const useOpenVidu = () => {
         setSubscribers((prev) => [...prev, subscriber]);
       },
     };
+
+    /**
+     * 어떤 유저가 스트림을 종료(카메라 혹은 마이크 OFF)했을 때 동작하는 이벤트 핸들러
+     */
+    // const handleStreamDestroyed: SessionEventHandler<'streamDestroyed'> = {
+    //   type: 'streamDestroyed',
+    //   handler: (event) => {
+    //     console.log('스트림이 종료되었습니다:', event.stream);
+    //     setSubscribers((prev) => prev.filter((subscriber) => subscriber.stream !== event.stream));
+    //   },
+    // };
 
     /**
      * 어떤 유저가 방을 퇴장했을 때 동작하는 이벤트 핸들러
@@ -57,7 +68,12 @@ const useOpenVidu = () => {
       },
     };
 
-    const eventHandlers: SessionEventHandler<any>[] = [handleStreamCreated, handleConnectionDestroyed, handleException];
+    const eventHandlers: SessionEventHandler<any>[] = [
+      handleStreamCreated,
+      // handleStreamDestroyed,
+      handleConnectionDestroyed,
+      handleException,
+    ];
     return eventHandlers;
   };
 
@@ -65,7 +81,7 @@ const useOpenVidu = () => {
     if (myStream) {
       const videoEnabled = myStream.stream.videoActive;
       myStream.publishVideo(!videoEnabled);
-      setCameraOn((prev) => !prev);
+      setCameraOn(myStream.stream.videoActive);
     }
   };
 
@@ -73,7 +89,7 @@ const useOpenVidu = () => {
     if (myStream) {
       const audioEnabled = myStream.stream.audioActive;
       myStream.publishAudio(!audioEnabled);
-      setMicOn((prev) => !prev);
+      setMicOn(myStream.stream.audioActive);
     }
   };
 
