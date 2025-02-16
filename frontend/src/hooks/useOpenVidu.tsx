@@ -4,7 +4,6 @@ import { joinVideoRoom } from '@/service/openvidu/client';
 import { useUserStore } from '@/store/loginUser';
 import { SessionEventHandler } from '@/types/openvidu';
 import { publisherProperties } from '@/lib/openvidu';
-import { useRouter } from 'next/navigation';
 
 const useOpenVidu = () => {
   const [ov, setOv] = useState<OpenVidu>();
@@ -12,11 +11,10 @@ const useOpenVidu = () => {
   const [myStream, setMyStream] = useState<Publisher>();
   const [subscribers, setSubscribers] = useState<StreamManager[]>([]);
 
-  const [cameraOn, setCameraOn] = useState<boolean>(false);
-  const [micOn, setMicOn] = useState<boolean>(false);
+  const [cameraOn, setCameraOn] = useState<boolean>(true);
+  const [micOn, setMicOn] = useState<boolean>(true);
 
   const userInfo = useUserStore();
-  const router = useRouter();
 
   const getOpenViduEventHandlers = (session: Session): SessionEventHandler<any>[] => {
     /**
@@ -39,7 +37,6 @@ const useOpenVidu = () => {
       handler: (event) => {
         console.log('스트림이 종료되었습니다:', event.stream);
         setSubscribers((prev) => prev.filter((subscriber) => subscriber.stream !== event.stream));
-        router.refresh();
       },
     };
 
@@ -54,8 +51,6 @@ const useOpenVidu = () => {
         setSubscribers((prev) =>
           prev.filter((subscriber) => subscriber.stream.connection.connectionId !== connectionId),
         );
-        // TODO: 방에서 누군가 나갈 때 바로 반영되는지 확인
-        router.refresh();
       },
     };
 

@@ -37,7 +37,7 @@ const KnitogetherRoom: React.FC = () => {
     return () => {
       window.removeEventListener('beforeunload', cleanUpOpenVidu);
     };
-  }, [myStream]);
+  }, [sessionId]);
 
   return (
     <div className='flex h-screen w-full flex-col gap-8 px-10 py-10'>
@@ -46,9 +46,7 @@ const KnitogetherRoom: React.FC = () => {
         <LeaveRoomButton />
       </header>
       <div className={`${getGridColumns()} w-full grow grid-cols-2 justify-center gap-2.5 overflow-y-hidden`}>
-        {myStream && (
-          <UserVideoCard host={videoRoom?.hostNickname} stream={myStream} isOn={myStream.stream.videoActive} />
-        )}
+        <UserVideoCard host={videoRoom?.hostNickname} stream={myStream} isOn={myStream?.stream.videoActive} />
 
         {subscribers.map((subscriber) => (
           <UserVideoCard stream={subscriber} isOn={subscriber.stream.videoActive} />
