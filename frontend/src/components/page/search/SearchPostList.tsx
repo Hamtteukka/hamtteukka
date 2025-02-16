@@ -1,17 +1,23 @@
 'use client';
 
-import { useGetPostList } from '@/hooks/react-query/useGetPostList';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 import SyncLoader from 'react-spinners/SyncLoader';
 import PostPreview from '@/components/page/post/PostPreview';
 import NoDataIndicator from '@/components/ui/NoDataIndicator';
-import SearchBar from '@/components/page/home/SearchBar';
-import { SearchProvider } from '@/components/context/SearchContext';
+import { useSearchParams } from 'next/navigation';
+import { useGetSearchedPostList } from '@/hooks/react-query/useGetSearchedPostList';
+import { H1 } from '@/components/typography/Heading';
+import { categoryIdsToKr } from '@/util/categoryUtils';
+import Badge from '@/components/ui/badge/Badge';
 
-const HomePostList: React.FC = () => {
-  const { data, isFetching, fetchNextPage, hasNextPage } = useGetPostList();
+const SearchPostList: React.FC = () => {
+  const searchParams = useSearchParams();
+  const keyword = searchParams.get('keyword') || '';
+  const categoryIds = searchParams.get('categoryIds') || '';
+
+  const { data, isFetching, fetchNextPage, hasNextPage } = useGetSearchedPostList(keyword, categoryIds);
   const [isClient, setIsClient] = useState(false);
 
   const { ref, inView } = useInView();
@@ -25,12 +31,16 @@ const HomePostList: React.FC = () => {
   useEffect(() => {
     setIsClient(true);
   }, []);
-
   return (
     <div className='flex h-full flex-col gap-5 px-2.5 py-10'>
-      <SearchProvider>
-        <SearchBar />
-      </SearchProvider>
+      {keyword && <H1>'{keyword}' 에 대한 검색 결과</H1>}
+      {categoryIds && (
+        <div className='flex flex-wrap gap-2'>
+          {categoryIdsToKr(categoryIds).map((category) => (
+            <Badge>{category}</Badge>
+          ))}
+        </div>
+      )}
       {isClient &&
         (data?.pages[0].items.length === 0 ? (
           <NoDataIndicator />
@@ -48,4 +58,4 @@ const HomePostList: React.FC = () => {
   );
 };
 
-export default HomePostList;
+export default SearchPostList;
