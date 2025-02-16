@@ -28,11 +28,12 @@ const UserVideo: React.FC<PUserVideo> = ({ stream, isOn }) => {
 
   return (
     <div className='relative aspect-video h-full w-full overflow-hidden rounded-sm bg-deepgray'>
-      {isOn ? (
+      {/* {isOn ? (
         <video id={stream?.id} ref={videoRef} autoPlay playsInline className='h-full w-full object-cover' />
       ) : (
         <VideoOffIcon className='absolute left-[calc(50%-12px)] top-[calc(50%-12px)]' />
-      )}
+      )} */}
+      <video id={stream?.id} ref={videoRef} autoPlay playsInline className='h-full w-full object-cover' />
     </div>
   );
 };

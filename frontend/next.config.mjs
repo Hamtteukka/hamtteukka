@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['common-project-s3.s3.us-east-2.amazonaws.com'],
+    domains: ['common-project-s3.s3.us-east-2.amazonaws.com','hamtteukka.site'],
   },
   webpack: (config) => {
     config.module.rules.push({
