@@ -20,7 +20,7 @@ export async function GET(req: NextRequest, { params }: { params: { userId: stri
       throw new Error('Unauthorized: Missing cookies');
     }
 
-    const result = await fetch(`${BASE_URL}/feeds/${userId}/ai-list?${searchParams}`, {
+    const result = await fetch(`${BASE_URL}/feeds/${userId}/saved-ai-list?${searchParams}`, {
       headers: {
         Cookie: cookiesHeader,
       },
