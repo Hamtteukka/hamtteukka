@@ -57,4 +57,4 @@ USER nextjs
 EXPOSE 3000
 # 프로덕션 서버 실행 (package.json의 start 스크립트: "next start")
 #CMD ["yarn", "start"]
-CMD ["sh", "-c", "ls -ld /app/.next/cache && yarn start"]
+CMD ["sh", "-c", "ls -ld /app/.next/cache || (echo 'Cache directory missing, creating...' && mkdir -p /app/.next/cache && chmod -R 777 /app/.next/cache); yarn start"]
