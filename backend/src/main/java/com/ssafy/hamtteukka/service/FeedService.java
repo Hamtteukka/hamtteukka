@@ -64,7 +64,7 @@ public class FeedService {
     public FeedPaginationResponseDto getSavedAiFeeds(Long userId, Long cursor, Integer limit) {
         int pageSize = (limit != null) ? limit : 20;
 
-        Slice<FeedResponseDto> slice = feedRepository.findSavedFeedsWithPagination(
+        Slice<FeedResponseDto> slice = feedRepository.findSavedAiFeedsWithPagination(
                 userId,
                 cursor,
                 PageRequest.of(0, pageSize)
