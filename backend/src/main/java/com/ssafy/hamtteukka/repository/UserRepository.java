@@ -24,7 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Modifying
     @Query("UPDATE User u SET u.nickname = :nickname, u.profileId = :profileId WHERE u.id = :id")
-    int updateUser(Long id, String nickname, String profileId);
+    int updateUser(@Param("id")Long id, @Param("nickname")String nickname, @Param("profileId")String profileId);
 
     @Query(value = """
             SELECT DISTINCT new com.ssafy.hamtteukka.dto.UserInfoResponseDto(

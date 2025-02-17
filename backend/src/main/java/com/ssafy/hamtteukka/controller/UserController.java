@@ -102,7 +102,7 @@ public class UserController {
     @PutMapping(value = "", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> modifyMyInfo(
             @RequestPart("nickname") String nickname,
-            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
+            @RequestPart(value = "profileId", required = false) MultipartFile profileImage,
             Authentication authentication
     ){
         Long userId = (Long) authentication.getPrincipal();
@@ -117,6 +117,7 @@ public class UserController {
         } catch (SignatureException se) {
             return ApiResponse.fail(HttpStatus.UNAUTHORIZED, se.getMessage());
         } catch (Exception ex) {
+            log.error("user profile update error: {}", ex.getMessage());
             return ApiResponse.fail(HttpStatus.BAD_REQUEST, "Bad Request");
         }
     }
