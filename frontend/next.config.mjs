@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   images: {
     domains: ['common-project-s3.s3.us-east-2.amazonaws.com','hamtteukka.site'],
   },
