@@ -48,9 +48,13 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
 # 빌드 단계에서 설치한 node_modules도 복사 (next start 실행 시 필요)
 COPY --from=builder /app/node_modules ./node_modules
+
+RUN mkdir -p /app/.next/cache && chmod -R 777 /app/.next/cache
+
 # 권한 변경 (nextjs 사용자로 실행)
 USER nextjs
 # 컨테이너 포트 노출
 EXPOSE 3000
 # 프로덕션 서버 실행 (package.json의 start 스크립트: "next start")
-CMD ["yarn", "start"]
+#CMD ["yarn", "start"]
+CMD ["sh", "-c", "ls -ld /app/.next/cache || (echo 'Cache directory missing, creating...' && mkdir -p /app/.next/cache && chmod -R 777 /app/.next/cache); yarn start"]
