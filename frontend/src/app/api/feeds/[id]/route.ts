@@ -6,9 +6,9 @@ export const dynamic = 'force-dynamic';
 /**
  * 특정 게시물 조회
  */
-export async function GET(req: NextRequest, { params }: { params: { feedId: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const feedId = params.feedId;
+    const feedId = params.id;
 
     const cookiesHeader = getAuthCookies();
     if (!cookiesHeader) {
