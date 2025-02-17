@@ -83,7 +83,7 @@ public class RoomService extends OpenVidu {
     public RoomEnterResponseDto joinRoom(String sessionId, Long socialId, String tokens) {
         Room room = getRoom(ROOM_PREFIX + sessionId);
         if(room == null) {
-            throw new CustomException(ErrorCode.FEED_NOT_FOUND);
+            throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
         }
 
         if(room.getPresentPeople() + 1 > room.getCapacity()) {
