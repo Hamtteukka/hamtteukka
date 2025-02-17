@@ -3,9 +3,9 @@ import { getAuthCookies } from '@/util/cookies';
 import { NextRequest, NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
-export async function GET(req: NextRequest, { params }: { params: { userId: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const userId = params.userId;
+    const userId = params.id;
 
     const cursorId = req.nextUrl.searchParams.get('cursorId') ?? '';
     const limit = req.nextUrl.searchParams.get('limit') ?? '';
