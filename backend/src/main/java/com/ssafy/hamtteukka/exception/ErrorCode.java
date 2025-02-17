@@ -19,7 +19,7 @@ public enum ErrorCode {
     FEED_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 피드를 찾을 수 없습니다."),
 
     //== 500 INTERNAL SERVER ERROR ==//
-    ROOM_CAPACITY_OVER(HttpStatus.INTERNAL_SERVER_ERROR, "정원초과");
+    ROOM_CAPACITY_OVER(HttpStatus.INTERNAL_SERVER_ERROR, "정원이 초과되었습니다.");
 
     private final HttpStatus status;
     private final String message;
