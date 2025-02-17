@@ -6,10 +6,11 @@ import MikeToggleButton from '@/components/page/knitogether/MikeToggleButton';
 import UserVideoCard from '@/components/page/knitogether/video/UserVideoCard';
 import useOpenVidu from '@/hooks/useOpenVidu';
 import { createOpenViduConnection } from '@/service/openvidu';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const KnitogetherRoom: React.FC = () => {
+  const router = useRouter();
   const { sessionId } = useParams<{ sessionId: string }>();
   const { myStream, subscribers, cameraOn, micOn, initOpenVidu, cleanUpOpenVidu, toggleCamera, toggleMic } =
     useOpenVidu();
@@ -25,9 +26,14 @@ const KnitogetherRoom: React.FC = () => {
 
   useEffect(() => {
     const startOpenVidu = async () => {
-      const videoRoom = await createOpenViduConnection(sessionId);
-      await initOpenVidu(videoRoom.token);
-      setVideoRoom(videoRoom);
+      try {
+        const videoRoom = await createOpenViduConnection(sessionId);
+        await initOpenVidu(videoRoom.token);
+        setVideoRoom(videoRoom);
+      } catch (e) {
+        alert(e);
+        router.push('/knitogether');
+      }
     };
 
     startOpenVidu();
