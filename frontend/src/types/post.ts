@@ -7,7 +7,7 @@ export interface TFeedId {
 export interface TFeedPreview extends TFeedId {
   thumbnail: string;
   title: string;
-  userProfile: string;
+  profileId: string;
 }
 
 export interface TAIFeed extends TFeedId {
