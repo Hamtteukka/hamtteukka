@@ -6,5 +6,5 @@ export const MPostList: Array<TFeedPreview> = Array.from({ length: 500 }, (_, in
   feedId: index,
   title: '제목 ' + index,
   thumbnail: imgArr[parseInt((Math.random() * 4).toString())],
-  userProfile: '',
+  profileId: '',
 }));
