@@ -77,7 +77,7 @@ const ProfileContainer: React.FC = () => {
                 <Button>
                   <ClipLoader color='white' size={24} />
                 </Button>
-              ) : myId ? (
+              ) : myId === Number(userId) ? (
                 <ModalProvider>
                   <EditProfileButton />
                 </ModalProvider>
