@@ -36,9 +36,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 /**
  * 특정 게시물 삭제
  */
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ feedId: string }> }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const feedId = (await params).feedId;
+    const feedId = (await params).id;
 
     // 쿠키 헤더 가져오기
     const cookiesHeader = getAuthCookies();
