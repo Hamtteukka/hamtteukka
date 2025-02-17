@@ -9,6 +9,11 @@ export const getFeedInfo = async (feedId: string): Promise<TFeedInfo> => {
   return data;
 };
 
+export const deleteFeed = async (feedId: number) => {
+  const { status, message } = await feed.deleteFeed(feedId);
+  if (status !== SUCCESS) throw new Error(message);
+};
+
 export const scrapFeed = async (feedId: number, isScrap: boolean): Promise<TScrap> => {
   const { status, message, data } = await feed.scrapFeed(feedId, isScrap);
   if (status !== SUCCESS) throw new Error(message);
