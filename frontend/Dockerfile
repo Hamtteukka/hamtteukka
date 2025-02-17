@@ -39,6 +39,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 # 보안을 위해 별도의 사용자/그룹 생성
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
+RUN chmod -R 777 /app/.next/cache
 # 빌드 산출물 복사  
 # public 폴더 (정적 파일)
 COPY --from=builder /app/public ./public
