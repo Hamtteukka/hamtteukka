@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class RoomService extends OpenVidu {
-    private static final String ROOM_PREFIX = "room: ";
+    private static final String ROOM_PREFIX = "room:";
     private final UserRepository userRepository;
     private final S3FileLoader s3FileLoader;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -132,21 +133,34 @@ public class RoomService extends OpenVidu {
         return room;
     }
 
+
     public void exitRoom(String sessionId, Long userId) {
         Room room = getRoom(ROOM_PREFIX + sessionId);
+        if (room == null) {
+            log.warn("방을 찾을 수 없습니다: " + sessionId);
+            return;
+        }
+
         List<Long> people = room.getPeople();
         Optional<Long> roomHostId = userRepository.findIdByNickname(room.getHostNickName());
 
-        people.remove(userId.longValue());  // 해당하는 값이 지워지도록
+        // 현재 유저 삭제
+        people.remove(userId.longValue());
 
-        if(people.size() < 0 || roomHostId.isPresent() && roomHostId.get().equals(userId)) {
-            redisTemplate.delete(ROOM_PREFIX + sessionId);
+        // 1. 방장이 나갔거나 2. 모든 사람이 나가면 방 삭제
+        if (people.isEmpty() || (roomHostId.isPresent() && roomHostId.get().equals(userId.longValue()))) {
+            redisTemplate.execute((RedisCallback<Object>) connection -> {
+                connection.del((ROOM_PREFIX + sessionId).getBytes());
+                return null;
+            });
             s3FileLoader.deleteFile(room.getThumbnailName());
-
+            log.info("방 삭제됨: " + sessionId);
         } else {
-            Room newRoom = new Room(sessionId, room.getTitle(), room.getPresentPeople() - 1, room.getCapacity(),
+            // 남아 있는 사람 수 업데이트 후 다시 저장
+            Room newRoom = new Room(sessionId, room.getTitle(), people.size(), room.getCapacity(),
                     room.getThumbnailName(), room.getHostNickName(), room.getHostProfileImg(), people);
             redisTemplate.opsForValue().set(ROOM_PREFIX + sessionId, newRoom);
         }
     }
+
 }
