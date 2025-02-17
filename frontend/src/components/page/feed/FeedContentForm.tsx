@@ -11,7 +11,8 @@ import Link from 'next/link';
 import BookmarkFilledIcon from '/public/svg/bookmarkFilledIcon.svg';
 import BookmarkOutlinedIcon from '/public/svg/bookmarkOutlinedIcon.svg';
 import { useState } from 'react';
-import { scrapFeed } from '@/service/feed';
+import { deleteFeed, scrapFeed } from '@/service/feed';
+import { useRouter } from 'next/navigation';
 
 interface PFeedContentForm {
   feedInfo: TFeedInfo;
@@ -20,11 +21,22 @@ interface PFeedContentForm {
 const FeedContentForm: React.FC<PFeedContentForm> = ({
   feedInfo: { feedId, title, content, categoryIds, owner, isScrap, user, aiPattern },
 }) => {
+  const router = useRouter();
   const [curIsScrap, setCurIsScrap] = useState<boolean>(isScrap);
 
   const toggleBookmark = async () => {
     const { isScrap: newIsScrap } = await scrapFeed(feedId, curIsScrap);
     setCurIsScrap(newIsScrap);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteFeed(feedId);
+      alert(`${title}\n게시물을 성공적으로 삭제하였습니다.`);
+      router.push(`/profile/${user.userId}`);
+    } catch (e) {
+      alert(e);
+    }
   };
 
   return (
@@ -37,7 +49,7 @@ const FeedContentForm: React.FC<PFeedContentForm> = ({
         <div className='flex items-center justify-between'>
           <H1>{title}</H1>
           {owner ? (
-            <Button onClick={() => {}} type='warning-outlined'>
+            <Button onClick={handleDelete} type='warning-outlined'>
               삭제
             </Button>
           ) : curIsScrap ? (

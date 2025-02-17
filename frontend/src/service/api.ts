@@ -121,6 +121,13 @@ export const feed = {
     }).then((res) => res.json());
   },
 
+  deleteFeed: async (feedId: number) => {
+    return fetch(`/api/feeds/${feedId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
   scrapFeed: async (feedId: number, isScrap: boolean): Promise<TResponseData<TScrap>> => {
     const body = {
       feedId,
