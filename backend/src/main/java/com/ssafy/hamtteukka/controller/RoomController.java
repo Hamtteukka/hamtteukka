@@ -9,6 +9,7 @@ import com.ssafy.hamtteukka.exception.CustomException;
 import com.ssafy.hamtteukka.service.RoomService;
 import io.openvidu.java.client.*;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -106,7 +107,9 @@ public class RoomController {
             return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "잘못된 사용자 인증 정보");
         } catch (CustomException ex) {
             return ApiResponse.fail(ex.getErrorCode().getStatus(), ex.getErrorCode().getMessage());
-        } catch (Exception ex) {
+        } catch(EntityNotFoundException ex) {
+            return ApiResponse.fail(HttpStatus.NOT_FOUND, "존재하지 않는 모각뜨 방 입니다.");
+        } catch(Exception ex) {
             log.info(ex.getMessage());
             return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "모각뜨 방 입장 중 오류 발생");
         }

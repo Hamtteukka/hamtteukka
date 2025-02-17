@@ -17,6 +17,7 @@ public enum ErrorCode {
     //== 404 Not Found ==//
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
     FEED_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 피드를 찾을 수 없습니다."),
+    ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 모각뜨 방 입니다."),
 
     //== 500 INTERNAL SERVER ERROR ==//
     ROOM_CAPACITY_OVER(HttpStatus.INTERNAL_SERVER_ERROR, "정원이 초과되었습니다.");
