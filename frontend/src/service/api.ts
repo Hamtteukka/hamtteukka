@@ -1,6 +1,6 @@
 import { TSubscriptionProfile } from '@/types/archive';
 import { TDotPattern, TPatternPost, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
-import { TFeedId, TFeedPreview } from '@/types/post';
+import { TFeedId, TFeedInfo, TFeedPreview } from '@/types/post';
 import { TAuthRedirectUrl, TCursorData, TResponseData } from '@/types/service';
 import { TSubscription, TSubscriptionUser, TUser } from '@/types/user';
 
@@ -109,6 +109,14 @@ export const search = {
 
     return fetch(`/api/feeds/search?${params}`, {
       cache: 'no-store',
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+};
+
+export const feed = {
+  getFeedInfo: async (feedId: string): Promise<TResponseData<TFeedInfo>> => {
+    return fetch(`/api/feeds/${feedId}`, {
       credentials: 'include',
     }).then((res) => res.json());
   },

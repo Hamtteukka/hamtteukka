@@ -1,18 +1,22 @@
 'use client';
 
-import { MFeedInfo } from '@/mocks/data/feed';
 import { TFeedInfo } from '@/types/post';
 import { useEffect, useState } from 'react';
 import FeedImageForm from './FeedImageForm';
 import FeedContentForm from './FeedContentForm';
+import { usePathname } from 'next/navigation';
+import { getFeedInfo } from '@/service/feed';
 
 const FeedForm: React.FC = () => {
-  const [feedInfo, setFeedInfo] = useState<TFeedInfo>(MFeedInfo);
+  const pathname = usePathname();
+  const feedId = pathname.split('/').pop() || '';
+
+  const [feedInfo, setFeedInfo] = useState<TFeedInfo>();
 
   useEffect(() => {
     const fetchFeedInfo = async () => {
-      // const feedInfo = await getFeedInfo();
-      setFeedInfo(MFeedInfo);
+      const feedInfo = await getFeedInfo(feedId);
+      setFeedInfo(feedInfo);
     };
 
     fetchFeedInfo();
@@ -20,8 +24,8 @@ const FeedForm: React.FC = () => {
 
   return (
     <>
-      <FeedImageForm feedInfo={feedInfo} />
-      <FeedContentForm feedInfo={feedInfo} />
+      {feedInfo && <FeedImageForm feedInfo={feedInfo} />}
+      {feedInfo && <FeedContentForm feedInfo={feedInfo} />}
     </>
   );
 };
