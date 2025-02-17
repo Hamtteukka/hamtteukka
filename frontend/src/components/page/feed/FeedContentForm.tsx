@@ -59,12 +59,10 @@ const FeedContentForm: React.FC<PFeedContentForm> = ({
           )}
         </div>
 
-        {categoryIds && (
-          <div className='flex gap-2'>
-            <Badge>{NEEDLE_KR[categoryIds[0] as keyof typeof NEEDLE_KR]}</Badge>
-            <Badge>{CRAFT_KR[categoryIds[1] as keyof typeof CRAFT_KR]}</Badge>
-          </div>
-        )}
+        <div className='flex gap-2'>
+          {categoryIds[0] && <Badge>{NEEDLE_KR[categoryIds[0] as keyof typeof NEEDLE_KR]}</Badge>}
+          {categoryIds[1] && <Badge>{CRAFT_KR[categoryIds[1] as keyof typeof CRAFT_KR]}</Badge>}
+        </div>
       </section>
 
       <section className='flex flex-col gap-8'>
