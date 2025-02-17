@@ -106,5 +106,5 @@ export const MStoredPostList: Array<TFeedPreview> = Array.from({ length: 100 }, 
   feedId: index,
   title: '제목 ' + index,
   thumbnail: imgArr[parseInt((Math.random() * 4).toString())],
-  userProfile: '',
+  profileId: '',
 }));

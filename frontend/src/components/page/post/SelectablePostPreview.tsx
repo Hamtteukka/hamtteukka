@@ -7,9 +7,7 @@ interface PSelectablePostPreview {
   info: TFeedPreview;
 }
 
-const SelectablePostPreview: React.FC<PSelectablePostPreview> = ({
-  info: { feedId, thumbnail, title, userProfile },
-}) => {
+const SelectablePostPreview: React.FC<PSelectablePostPreview> = ({ info: { feedId, thumbnail, title, profileId } }) => {
   const { selectedEmbedPattern, setSelectedEmbedPattern, setSelectedEmbedPatternImage } = useEmbedPatternContext();
 
   const select = () => {
@@ -27,7 +25,7 @@ const SelectablePostPreview: React.FC<PSelectablePostPreview> = ({
       />
       <div className='flex items-center justify-between p-2'>
         <span className='text-detail'>{title}</span>
-        <Avatar src={userProfile} />
+        <Avatar src={profileId} />
       </div>
     </div>
   );
