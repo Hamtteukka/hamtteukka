@@ -37,12 +37,12 @@ public class FeedDetailResponse {
     public static class User {
         private Long userId;
         private String nickname;
-        private String profileUrl;
+        private String profileId;
 
-        public User(Long userId, String nickname, String profileUrl) {
+        public User(Long userId, String nickname, String profileId) {
             this.userId = userId;
             this.nickname = nickname;
-            this.profileUrl = profileUrl;
+            this.profileId = profileId;
         }
     }
 
