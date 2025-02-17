@@ -1,7 +1,6 @@
-import Image from 'next/image';
-import defaultImg from '/public/image/profile.png';
 import { cn } from '@/lib/utils';
 import { TSubscriptionProfile } from '@/types/archive';
+import Avatar from '@/components/ui/Avatar';
 
 interface PSubscriptionProfile {
   info: TSubscriptionProfile;
@@ -17,14 +16,7 @@ const SubscriptionProfile: React.FC<PSubscriptionProfile> = ({
 }) => {
   return (
     <div className={cn('flex grow flex-col items-center gap-2.5', className)}>
-      <div className='relative w-full pb-[100%]'>
-        <Image
-          className='rounded-full object-cover'
-          src={profileId === '' ? defaultImg : profileId}
-          alt='프로필 이미지'
-          fill
-        />
-      </div>
+      <Avatar src={profileId} size='lg' />
       <p className='font-bold'>{nickname}</p>
       <p className='text-detail'>구독자 {subscriber}명</p>
     </div>
