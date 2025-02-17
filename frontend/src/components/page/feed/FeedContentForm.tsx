@@ -8,14 +8,25 @@ import { CRAFT_KR, NEEDLE_KR } from '@/lib/constants/post';
 import Avatar from '@/components/ui/Avatar';
 import AIPatternEmbedCard from '@/components/page/feed/AIPatternEmbedCard';
 import Link from 'next/link';
+import BookmarkFilledIcon from '/public/svg/bookmarkFilledIcon.svg';
+import BookmarkOutlinedIcon from '/public/svg/bookmarkOutlinedIcon.svg';
+import { useState } from 'react';
+import { scrapFeed } from '@/service/feed';
 
 interface PFeedContentForm {
   feedInfo: TFeedInfo;
 }
 
 const FeedContentForm: React.FC<PFeedContentForm> = ({
-  feedInfo: { title, content, categoryIds, owner, user, aiPattern },
+  feedInfo: { feedId, title, content, categoryIds, owner, isScrap, user, aiPattern },
 }) => {
+  const [curIsScrap, setCurIsScrap] = useState<boolean>(isScrap);
+
+  const toggleBookmark = async () => {
+    const { isScrap: newIsScrap } = await scrapFeed(feedId, curIsScrap);
+    setCurIsScrap(newIsScrap);
+  };
+
   return (
     <div className='flex w-3/5 flex-col gap-8 overflow-y-auto border-l bg-white px-10 py-10'>
       <section className='flex flex-col gap-2'>
@@ -25,10 +36,14 @@ const FeedContentForm: React.FC<PFeedContentForm> = ({
         </Link>
         <div className='flex items-center justify-between'>
           <H1>{title}</H1>
-          {owner && (
+          {owner ? (
             <Button onClick={() => {}} type='warning-outlined'>
               삭제
             </Button>
+          ) : curIsScrap ? (
+            <BookmarkFilledIcon onClick={toggleBookmark} className='cursor-pointer' />
+          ) : (
+            <BookmarkOutlinedIcon onClick={toggleBookmark} className='cursor-pointer' />
           )}
         </div>
 
