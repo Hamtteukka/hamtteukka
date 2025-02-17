@@ -32,24 +32,25 @@ const KnitogetherRoom: React.FC = () => {
 
     startOpenVidu();
 
+    window.addEventListener('beforeunload', cleanUpOpenVidu);
+
     return () => {
       cleanUpOpenVidu();
+      window.removeEventListener('beforeunload', cleanUpOpenVidu);
     };
-  }, []);
+  }, [sessionId]);
 
   return (
     <div className='flex h-screen w-full flex-col gap-8 px-10 py-10'>
       <header className='flex items-center justify-between text-heading1 font-bold'>
         {videoRoom && <span className='truncate'>{videoRoom.title}</span>}
-        <LeaveRoomButton />
+        <LeaveRoomButton onLeave={cleanUpOpenVidu} />
       </header>
       <div className={`${getGridColumns()} w-full grow grid-cols-2 justify-center gap-2.5 overflow-y-hidden`}>
-        {myStream && (
-          <UserVideoCard host={videoRoom?.hostNickname} stream={myStream} isOn={myStream.stream.videoActive} />
-        )}
+        <UserVideoCard host={videoRoom?.hostNickname} stream={myStream} isOn={myStream?.stream.videoActive} />
 
         {subscribers.map((subscriber) => (
-          <UserVideoCard stream={subscriber} isOn={subscriber.stream.videoActive} />
+          <UserVideoCard host={videoRoom?.hostNickname} stream={subscriber} isOn={subscriber.stream.videoActive} />
         ))}
       </div>
       <div className='flex justify-center gap-3'>

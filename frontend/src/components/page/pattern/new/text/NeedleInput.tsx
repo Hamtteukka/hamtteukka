@@ -2,7 +2,7 @@ import Button from '@/components/ui/button/Button';
 import { TNeedle } from '@/types/pattern';
 
 interface PNeedle {
-  needle: TNeedle;
+  needle: TNeedle | undefined;
   setNeedle: (value: TNeedle) => void;
 }
 

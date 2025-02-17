@@ -7,6 +7,8 @@ import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 import SyncLoader from 'react-spinners/SyncLoader';
 import PostPreview from '@/components/page/post/PostPreview';
 import NoDataIndicator from '@/components/ui/NoDataIndicator';
+import SearchBar from '@/components/page/home/SearchBar';
+import { SearchProvider } from '@/components/context/SearchContext';
 
 const HomePostList: React.FC = () => {
   const { data, isFetching, fetchNextPage, hasNextPage } = useGetPostList();
@@ -25,7 +27,10 @@ const HomePostList: React.FC = () => {
   }, []);
 
   return (
-    <div className='flex h-full flex-col px-2.5 py-10'>
+    <div className='flex h-full flex-col gap-5 px-2.5 py-10'>
+      <SearchProvider>
+        <SearchBar />
+      </SearchProvider>
       {isClient &&
         (data?.pages[0].items.length === 0 ? (
           <NoDataIndicator />

@@ -1,5 +1,4 @@
 import { BASE_URL } from '@/lib/constants/service';
-import { getAuthCookies } from '@/util/cookies';
 import { NextRequest, NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
@@ -7,21 +6,23 @@ export async function GET(req: NextRequest) {
   try {
     const cursorId = req.nextUrl.searchParams.get('cursorId') ?? '';
     const limit = req.nextUrl.searchParams.get('limit') ?? '';
+    const keyword = req.nextUrl.searchParams.get('keyword') ?? '';
+    const categoryIds = req.nextUrl.searchParams.get('categoryIds') ?? '';
 
     const params = new URLSearchParams({
       cursor: cursorId,
       limit,
     });
 
-    const cookiesHeader = getAuthCookies();
-    if (!cookiesHeader) {
-      throw new Error('Unauthorized: Missing cookies');
+    if (keyword) {
+      params.set('keyword', keyword);
+    }
+
+    if (categoryIds) {
+      params.set('categoryIds', categoryIds);
     }
 
     const response = await fetch(`${BASE_URL}/feeds/search?${params}`, {
-      headers: {
-        Cookie: cookiesHeader,
-      },
       cache: 'no-store',
       credentials: 'include',
     });

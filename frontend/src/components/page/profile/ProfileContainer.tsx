@@ -5,11 +5,14 @@ import Avatar from '@/components/ui/Avatar';
 import Button from '@/components/ui/button/Button';
 import { profileTabPanels, profileTabs } from '@/lib/profile';
 import { getUserInfo, subscribe, unsubscribe } from '@/service/profile';
+import { useUserStore } from '@/store/loginUser';
 import { TUser } from '@/types/user';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ClipLoader from 'react-spinners/ClipLoader';
+import EditProfileButton from '@/components/page/profile/EditProfileButton';
+import { ModalProvider } from '@/components/context/ModalContext';
 
 const Tabs = dynamic(() => import('@/components/ui/tabs/Tabs'), { ssr: false });
 
@@ -20,6 +23,8 @@ const ProfileContainer: React.FC = () => {
   const [userInfo, setUserInfo] = useState<TUser>();
   const [subscriberCount, setSubscriberCount] = useState<number>();
   const [isSubscribed, setIsSubscribed] = useState<boolean>();
+
+  const { userId: myId } = useUserStore();
 
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
@@ -62,8 +67,9 @@ const ProfileContainer: React.FC = () => {
     <>
       {userInfo && (
         <div>
-          <div className='flex gap-14 py-6'>
+          <section className='flex gap-14 py-6'>
             <Avatar src={userInfo.profileId} size='lg' />
+
             <div className='flex flex-col justify-between'>
               <H3>{userInfo.nickname}</H3>
               <div>구독자 {subscriberCount}명</div>
@@ -71,6 +77,10 @@ const ProfileContainer: React.FC = () => {
                 <Button>
                   <ClipLoader color='white' size={24} />
                 </Button>
+              ) : myId === Number(userId) ? (
+                <ModalProvider>
+                  <EditProfileButton />
+                </ModalProvider>
               ) : isSubscribed ? (
                 <Button onClick={handleUnsubscribeClick} type='outlined'>
                   구독 취소
@@ -79,7 +89,8 @@ const ProfileContainer: React.FC = () => {
                 <Button onClick={handleSubscribeClick}>구독하기</Button>
               )}
             </div>
-          </div>
+          </section>
+
           <Tabs tabList={profileTabs} tabPanels={profileTabPanels} />
         </div>
       )}

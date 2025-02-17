@@ -1,9 +1,10 @@
 import { POST_LIMIT } from '@/lib/constants/service';
 import { MPostList } from '@/mocks/data/home';
 import { TMockRequest } from '@/types/msw';
+import { TFeedPreview } from '@/types/post';
 import { TCursorData, TResponseData } from '@/types/service';
 import { isNaturalNumber } from '@/util/number';
-import { delay, HttpResponse, StrictResponse } from 'msw';
+import { HttpResponse, StrictResponse } from 'msw';
 
 export const getMPostList = async ({
   request,
@@ -19,8 +20,6 @@ export const getMPostList = async ({
 
   const hasNextItems = endIndex < MPostList.length;
   const nextCursorId = hasNextItems ? endIndex : -1;
-
-  await delay(1000);
 
   return HttpResponse.json({
     status: 'success',

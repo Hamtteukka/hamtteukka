@@ -1,6 +1,7 @@
 import { queryKey } from '@/lib/constants/queryKey';
 import { POST_LIMIT } from '@/lib/constants/service';
 import { getStoredPatternList, getStoredPostList } from '@/service/archive';
+import { TFeedPreview } from '@/types/post';
 import { TCursorData } from '@/types/service';
 import { useInfiniteQuery } from '@tanstack/react-query';
 

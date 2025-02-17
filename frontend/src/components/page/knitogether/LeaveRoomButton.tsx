@@ -4,13 +4,18 @@ import Button from '@/components/ui/button/Button';
 import { leaveVideoRoom } from '@/service/openvidu';
 import { useParams, useRouter } from 'next/navigation';
 
-const LeaveRoomButton: React.FC = () => {
+interface PLeaveRoomButton {
+  onLeave: () => void;
+}
+
+const LeaveRoomButton: React.FC<PLeaveRoomButton> = ({ onLeave }) => {
   const router = useRouter();
   const { sessionId } = useParams<{ sessionId: string }>();
 
   const handleButtonClick = async () => {
     await leaveVideoRoom(sessionId);
     router.push('/knitogether');
+    onLeave();
   };
 
   return (

@@ -1,5 +1,6 @@
 import { TSubscriptionProfile } from '@/types/archive';
-import { TDotPattern, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
+import { TDotPattern, TPatternPost, TTextPattern, TTextPatternInstruction } from '@/types/pattern';
+import { TFeedId, TFeedInfo, TFeedPreview, TScrap } from '@/types/post';
 import { TAuthRedirectUrl, TCursorData, TResponseData } from '@/types/service';
 import { TSubscription, TSubscriptionUser, TUser } from '@/types/user';
 
@@ -86,11 +87,80 @@ export const home = {
   },
 };
 
+export const search = {
+  getSearchedPostList: async (
+    cursorId: number,
+    limit: number,
+    keyword: string,
+    categoryIds: string,
+  ): Promise<TResponseData<TCursorData<TFeedPreview>>> => {
+    const params = new URLSearchParams({
+      cursorId: cursorId === -1 ? '' : cursorId.toString(),
+      limit: limit.toString(),
+    });
+
+    if (keyword) {
+      params.set('keyword', keyword);
+    }
+
+    if (categoryIds) {
+      params.set('categoryIds', categoryIds);
+    }
+
+    return fetch(`/api/feeds/search?${params}`, {
+      cache: 'no-store',
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+};
+
+export const feed = {
+  getFeedInfo: async (feedId: string): Promise<TResponseData<TFeedInfo>> => {
+    return fetch(`/api/feeds/${feedId}`, {
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
+  deleteFeed: async (feedId: number) => {
+    return fetch(`/api/feeds/${feedId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
+  scrapFeed: async (feedId: number, isScrap: boolean): Promise<TResponseData<TScrap>> => {
+    const body = {
+      feedId,
+      isScrap,
+    };
+
+    return fetch('/api/feeds/scrap', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify(body),
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+};
+
 export const newFeed = {
   createFeed: async (formData: FormData): Promise<TResponseData<TFeedId>> => {
     return fetch('/api/feeds', {
       method: 'POST',
       body: formData,
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
+  createAIFeed: async (body: TPatternPost): Promise<TResponseData<TFeedId>> => {
+    return fetch('/api/feeds/pattern', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify(body),
       credentials: 'include',
     }).then((res) => res.json());
   },
@@ -110,6 +180,14 @@ export const newFeed = {
 export const profile = {
   getUserInfo: async (userId: string): Promise<TResponseData<TSubscriptionUser>> => {
     return fetch(`/api/users/${userId}`, {
+      credentials: 'include',
+    }).then((res) => res.json());
+  },
+
+  editUserInfo: async (formData: FormData): Promise<TResponseData<TUser>> => {
+    return fetch('/api/users', {
+      method: 'PUT',
+      body: formData,
       credentials: 'include',
     }).then((res) => res.json());
   },

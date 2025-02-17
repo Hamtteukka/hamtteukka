@@ -3,26 +3,44 @@
 import { H4 } from '@/components/typography/Heading';
 import ConfirmDialog from '@/components/ui/dialog/ConfirmDialog';
 import TextInput from '@/components/ui/input/TextInput';
+import { usePatternPostContext } from '@/hooks/usePatternPostContext';
 import useTextInput from '@/hooks/useTextInput';
+import { CRAFT_NUM, NEEDLE_NUM } from '@/lib/constants/post';
+import { craftTypeKrToEn } from '@/lib/pattern';
+import { createAIFeed } from '@/service/newFeed';
+import { TPatternPost } from '@/types/pattern';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface PPostPattern {
   base64img: string;
   content?: string;
 }
 
-const PostPattern: React.FC<PPostPattern> = ({ base64img, content = '' }) => {
+const PostPattern: React.FC<PPostPattern> = ({ base64img, content }) => {
+  const { needle, craft } = usePatternPostContext();
   const [title, setTitle] = useTextInput('');
-  const [imageId, setImageId] = useState<string[]>([]);
 
-  useEffect(() => {
-    // TODO: s3에 등록 후 id 받아와서 setImageId 해주는 작업 필요
-  }, [base64img]);
+  const router = useRouter();
 
-  const post = () => {
-    // TODO: 게시 api 호출
-    // TODO: 게시 성공하면 내 프로필 AI 도안 탭으로 이동
+  const post = async () => {
+    if (!title) {
+      alert('도안의 제목을 입력해 주세요!');
+      return;
+    }
+
+    const patternPost: TPatternPost = {
+      base64Image: 'data:image/png;base64,' + base64img,
+      title,
+      content: content || '',
+    };
+
+    if (craft) {
+      patternPost.categoryIds = [NEEDLE_NUM[needle], CRAFT_NUM[craftTypeKrToEn[craft]]];
+    }
+
+    const { feedId } = await createAIFeed(patternPost);
+    router.push(`/feed/${feedId}`);
   };
 
   return (

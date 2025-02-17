@@ -11,24 +11,12 @@ public class FeedDetailResponse {
     private Long feedId;
     private String title;
     private String content;
-    private List<Image> images;
-    private List<Integer> categories;
+    private List<String> images;
+    private List<Integer> categoryIds;
     private AiPattern aiPattern; // 임베드된 도안
     private User user;
     private boolean isOwner; // true, false
     private Boolean isScrap; // true, false, null
-
-    @Getter
-    @NoArgsConstructor
-    public static class Image {
-        private String imageUrl;
-        private int typeId;
-
-        public Image(String imageUrl, int typeId) {
-            this.imageUrl = imageUrl;
-            this.typeId = typeId;
-        }
-    }
 
     @Getter
     @NoArgsConstructor
@@ -58,17 +46,12 @@ public class FeedDetailResponse {
         }
     }
 
-    public FeedDetailResponse(
-            Long feedId, String title, String content,
-            List<Image> images, List<Integer> categories,
-            AiPattern aiPattern, User user,
-            boolean isOwner, Boolean isScrap
-    ) {
+    public FeedDetailResponse(Long feedId, String title, String content, List<String> images, List<Integer> categoryIds, AiPattern aiPattern, User user, boolean isOwner, Boolean isScrap) {
         this.feedId = feedId;
         this.title = title;
         this.content = content;
         this.images = images;
-        this.categories = categories;
+        this.categoryIds = categoryIds;
         this.aiPattern = aiPattern;
         this.user = user;
         this.isOwner = isOwner;

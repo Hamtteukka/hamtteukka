@@ -4,7 +4,6 @@ import { joinVideoRoom } from '@/service/openvidu/client';
 import { useUserStore } from '@/store/loginUser';
 import { SessionEventHandler } from '@/types/openvidu';
 import { publisherProperties } from '@/lib/openvidu';
-import { useRouter } from 'next/navigation';
 
 const useOpenVidu = () => {
   const [ov, setOv] = useState<OpenVidu>();
@@ -16,7 +15,6 @@ const useOpenVidu = () => {
   const [micOn, setMicOn] = useState<boolean>(true);
 
   const userInfo = useUserStore();
-  const router = useRouter();
 
   const getOpenViduEventHandlers = (session: Session): SessionEventHandler<any>[] => {
     /**
@@ -25,9 +23,20 @@ const useOpenVidu = () => {
     const handleStreamCreated: SessionEventHandler<'streamCreated'> = {
       type: 'streamCreated',
       handler: (event) => {
-        console.error('누군가 방에 들어옴');
+        console.log('스트림이 생성되었습니다:', event.stream);
         const subscriber = session.subscribe(event.stream, undefined);
         setSubscribers((prev) => [...prev, subscriber]);
+      },
+    };
+
+    /**
+     * 어떤 유저가 스트림을 종료(카메라 혹은 마이크 OFF)했을 때 동작하는 이벤트 핸들러
+     */
+    const handleStreamDestroyed: SessionEventHandler<'streamDestroyed'> = {
+      type: 'streamDestroyed',
+      handler: (event) => {
+        console.log('스트림이 종료되었습니다:', event.stream);
+        setSubscribers((prev) => prev.filter((subscriber) => subscriber.stream !== event.stream));
       },
     };
 
@@ -37,12 +46,11 @@ const useOpenVidu = () => {
     const handleConnectionDestroyed: SessionEventHandler<'connectionDestroyed'> = {
       type: 'connectionDestroyed',
       handler: (event) => {
-        console.error('누군가 방에서 퇴장함');
+        console.error('누군가 방에서 퇴장하였습니다:', event);
         const connectionId = event.connection.connectionId;
         setSubscribers((prev) =>
           prev.filter((subscriber) => subscriber.stream.connection.connectionId !== connectionId),
         );
-        router.refresh();
       },
     };
 
@@ -56,7 +64,12 @@ const useOpenVidu = () => {
       },
     };
 
-    const eventHandlers: SessionEventHandler<any>[] = [handleStreamCreated, handleConnectionDestroyed, handleException];
+    const eventHandlers: SessionEventHandler<any>[] = [
+      handleStreamCreated,
+      handleStreamDestroyed,
+      handleConnectionDestroyed,
+      handleException,
+    ];
     return eventHandlers;
   };
 
@@ -64,7 +77,7 @@ const useOpenVidu = () => {
     if (myStream) {
       const videoEnabled = myStream.stream.videoActive;
       myStream.publishVideo(!videoEnabled);
-      setCameraOn((prev) => !prev);
+      setCameraOn(!videoEnabled);
     }
   };
 
@@ -72,7 +85,7 @@ const useOpenVidu = () => {
     if (myStream) {
       const audioEnabled = myStream.stream.audioActive;
       myStream.publishAudio(!audioEnabled);
-      setMicOn((prev) => !prev);
+      setMicOn(!audioEnabled);
     }
   };
 

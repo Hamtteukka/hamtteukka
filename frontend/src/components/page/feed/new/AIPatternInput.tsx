@@ -18,7 +18,7 @@ const AIPatternInput: React.FC = () => {
 
   return (
     <>
-      {embedPattern && embedPatternImage ? (
+      {embedPattern !== -1 && embedPatternImage ? (
         <div className='group relative inline-block cursor-pointer' onClick={clearEmbedPattern}>
           <div className='absolute left-0 top-0 flex h-full w-full items-center justify-center bg-modal opacity-0 transition-opacity duration-200 group-hover:opacity-100'>
             <TrashIcon />
