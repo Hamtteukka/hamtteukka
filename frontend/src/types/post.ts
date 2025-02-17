@@ -15,6 +15,10 @@ export interface TAIFeed extends TFeedId {
   thumbnailUrl: string;
 }
 
+export interface TScrap {
+  isScrap: boolean;
+}
+
 export interface TFeedInfo extends TFeedId {
   title: string;
   content: string;

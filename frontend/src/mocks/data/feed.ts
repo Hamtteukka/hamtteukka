@@ -24,5 +24,5 @@ export const MFeedInfo: TFeedInfo = {
   },
   user: MUser,
   isScrap: false,
-  owner: true,
+  owner: false,
 };
