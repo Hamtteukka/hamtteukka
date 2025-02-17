@@ -128,7 +128,7 @@ public class UserService {
     public UserResponseDto modifyUser(Long userId, String nickname, MultipartFile profileImage) throws SignatureException, IOException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new SignatureException("Invalid or expired access token"));
-        if (isNicknameDuplicate(nickname)) throw new IllegalArgumentException("nickname already exists");
+        if (!nickname.equals(user.getNickname())&&isNicknameDuplicate(nickname)) throw new IllegalArgumentException("nickname already exists");
 
         s3FileLoader.deleteFile(user.getProfileId());
         String newProfileId = s3FileLoader.uploadFile(profileImage);
