@@ -7,12 +7,12 @@ public class FeedResponseDto {
     private final Long feedId;
     private final String thumbnail;
     private final String title;
-    private final String userProfile;
+    private final String profileId;
 
-    public FeedResponseDto(Long feedId, String thumbnail, String title, String userProfile) {
+    public FeedResponseDto(Long feedId, String thumbnail, String title, String profileId) {
         this.feedId = feedId;
         this.thumbnail = thumbnail;
         this.title = title;
-        this.userProfile = userProfile;
+        this.profileId = profileId;
     }
 }

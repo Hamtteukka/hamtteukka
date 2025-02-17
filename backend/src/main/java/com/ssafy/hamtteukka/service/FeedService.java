@@ -328,7 +328,7 @@ public class FeedService {
                         feed.getFeedId(),
                         s3FileLoader.getFileUrl(feed.getThumbnail()),
                         feed.getTitle(),
-                        s3FileLoader.getFileUrl(feed.getUserProfile())
+                        s3FileLoader.getFileUrl(feed.getProfileId())
                 ))
                 .collect(Collectors.toList());
 

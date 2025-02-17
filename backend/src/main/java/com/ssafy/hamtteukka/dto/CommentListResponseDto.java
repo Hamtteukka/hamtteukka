@@ -10,7 +10,7 @@ public class CommentListResponseDto {
     private final Long commentId;
     private final String userId;
     private final String nickname;
-    private final String profileUrl;
+    private final String profileId;
     private final String content;
     private final LocalDateTime createDate;
     private final boolean owner;
@@ -22,7 +22,7 @@ public class CommentListResponseDto {
         this.commentId = commentId;
         this.userId = userId;
         this.nickname = nickname;
-        this.profileUrl = profileUrl;
+        this.profileId = profileUrl;
         this.content = content;
         this.createDate = createDate;
         this.owner = owner;
