@@ -42,7 +42,7 @@ const ImageInput: React.FC<PImageInput> = ({ file, setFile, description = '', cl
       <div className='absolute left-0 top-0 flex h-full w-full items-center justify-center bg-modal opacity-0 transition-opacity duration-200 group-hover:opacity-100'>
         <TrashIcon />
       </div>
-      <Image className='hover:bg-modal' width={500} height={500} src={previewUrl} alt='참고 이미지' />
+      <img className='hover:bg-modal' width={500} height={500} src={previewUrl} alt='참고 이미지' />
     </div>
   ) : (
     <DragAndDropUploadImg setImage={handleFile} description={description} className={className} />
