@@ -62,10 +62,14 @@ public class S3FileLoader {
      * UUID 기반 고유한 파일명 생성
      *
      * @param file 업로드할 파일
-     * @return UUID + 원본 파일명
+     * @return UUID + 원본 확장자
      */
     private String generateFileName(MultipartFile file) {
-        return UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
+        String originalFilename = file.getOriginalFilename();
+        String extension = originalFilename != null && originalFilename.contains(".")
+                ?originalFilename.substring(originalFilename.lastIndexOf("."))
+                :"";
+        return UUID.randomUUID().toString() + extension;
     }
 
     /**

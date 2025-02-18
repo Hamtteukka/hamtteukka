@@ -4,9 +4,10 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
@@ -40,5 +41,11 @@ public class SavedFeed {
         this.user = user;
         this.feed = feed;
         this.saveDate = saveDate;
+    }
+
+    public SavedFeed(Long userId, Long feedId){
+        this.user = User.fromId(userId);
+        this.feed = Feed.fromId(feedId);
+        this.saveDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();;
     }
 }

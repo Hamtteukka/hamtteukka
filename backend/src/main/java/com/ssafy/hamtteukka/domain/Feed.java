@@ -68,4 +68,10 @@ public class Feed {
             this.feedCategories.add(feedCategory);
         }
     }
+
+    public static Feed fromId(Long id){
+        Feed feed = new Feed();
+        feed.id = id;
+        return feed;
+    }
 }
