@@ -25,7 +25,7 @@ public class Room implements Serializable {
     private String title;
     private int presentPeople;
     private int capacity;
-    private String thumbnailName;
+    private String videoImg;
     private String hostNickName;
     private String hostProfileImg;
     private List<Long> people = new ArrayList<>();
