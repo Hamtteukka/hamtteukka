@@ -71,7 +71,6 @@ public class RoomService extends OpenVidu {
         if (user.isPresent()) {
             nickname = user.get().getNickname();
             userProfile = s3FileLoader.getFileUrl(user.get().getProfileId());
-            peopleIds.add(userId);
         }
 
         Room room = new Room(sessionId, title, 1, capacity, fileUrl, nickname, userProfile, peopleIds);
