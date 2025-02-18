@@ -65,6 +65,7 @@ public class RoomService extends OpenVidu {
         MultipartFile thumbnail = (MultipartFile) params.get("thumbnail");
 
         String videoImg = s3FileLoader.uploadFile(thumbnail); // filename
+        String fileUrl = s3FileLoader.getFileUrl(videoImg);
 
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
@@ -73,7 +74,7 @@ public class RoomService extends OpenVidu {
             peopleIds.add(userId);
         }
 
-        Room room = new Room(sessionId, title, 1, capacity, videoImg, nickname, userProfile, peopleIds);
+        Room room = new Room(sessionId, title, 1, capacity, fileUrl, nickname, userProfile, peopleIds);
         redisTemplate.opsForValue().set(ROOM_PREFIX + sessionId, room);
         RoomResponseDto roomResponseDto = new RoomResponseDto(sessionId);
 
@@ -90,6 +91,10 @@ public class RoomService extends OpenVidu {
             throw new CustomException(ErrorCode.ROOM_CAPACITY_OVER);
         }
 
+        if(!checkDuplicate(room.getPeople(), socialId)) { // 이미 있으면
+            throw new CustomException(ErrorCode.ROOM_ACCESS_ERROR);
+        }
+
         // 사람 추가 해야해
         room.addPerson(socialId);
         room.incrementPresentPeople();
@@ -100,7 +105,7 @@ public class RoomService extends OpenVidu {
         String thumbNailUrl = s3FileLoader.getFileUrl(thumbNailName); // 프론트에 URL 넘겨주기
 
         RoomEnterResponseDto roomResponseDto = new RoomEnterResponseDto(tokens, sessionId, room.getTitle(), room.getPresentPeople(),
-                room.getCapacity(), thumbNailUrl, room.getHostNickName() ,room.getHostProfileImg());
+                room.getCapacity(), thumbNailUrl, room.getHostNickname() ,room.getHostProfileImg());
 
         return roomResponseDto;
     }
@@ -142,7 +147,7 @@ public class RoomService extends OpenVidu {
         }
 
         List<Long> people = room.getPeople();
-        Optional<Long> roomHostId = userRepository.findIdByNickname(room.getHostNickName());
+        Optional<Long> roomHostId = userRepository.findIdByNickname(room.getHostNickname());
 
         // 현재 유저 삭제
         people.remove(userId.longValue());
@@ -158,9 +163,16 @@ public class RoomService extends OpenVidu {
         } else {
             // 남아 있는 사람 수 업데이트 후 다시 저장
             Room newRoom = new Room(sessionId, room.getTitle(), people.size(), room.getCapacity(),
-                    room.getVideoImg(), room.getHostNickName(), room.getHostProfileImg(), people);
+                    room.getVideoImg(), room.getHostNickname(), room.getHostProfileImg(), people);
             redisTemplate.opsForValue().set(ROOM_PREFIX + sessionId, newRoom);
         }
+    }
+
+    private boolean checkDuplicate(List<Long> people, Long userId) {
+        if(people.contains(userId.longValue())) {
+            return false;
+        }
+        return true;
     }
 
 }

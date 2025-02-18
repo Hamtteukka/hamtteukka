@@ -20,7 +20,8 @@ public enum ErrorCode {
     ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 모각뜨 방 입니다."),
 
     //== 500 INTERNAL SERVER ERROR ==//
-    ROOM_CAPACITY_OVER(HttpStatus.INTERNAL_SERVER_ERROR, "정원이 초과되었습니다.");
+    ROOM_CAPACITY_OVER(HttpStatus.INTERNAL_SERVER_ERROR, "정원이 초과되었습니다."),
+    ROOM_ACCESS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "이미 접속중입니다.");
 
     private final HttpStatus status;
     private final String message;
