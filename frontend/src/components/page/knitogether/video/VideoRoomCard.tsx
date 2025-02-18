@@ -1,7 +1,7 @@
-import Image from 'next/image';
 import Avatar from '@/components/ui/Avatar';
 import People from '/public/svg/peopleIcon.svg';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface PVideoRoomCard {
   videoRoomPreview: TVideoRoom;
@@ -11,8 +11,14 @@ const VideoRoomCard: React.FC<PVideoRoomCard> = ({
   videoRoomPreview: { sessionId, title, hostNickname, hostProfileImg, videoImg, presentPeople, capacity },
 }) => {
   const router = useRouter();
+  const [isFetching, setIsFetching] = useState(false);
+
   const handleVideoRoomCardClick = () => {
+    if (isFetching) return;
+
+    setIsFetching(true);
     router.push(`/knitogether/room/${sessionId}`);
+    setIsFetching(false);
   };
 
   return (
