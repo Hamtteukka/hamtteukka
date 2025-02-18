@@ -6,7 +6,7 @@ import lombok.Getter;
 public class UserInfoResponseDto {
     private final UserResponseDto user;
     private final long subscriberCount;
-    private final boolean isSubscribed;
+    private final Boolean isSubscribed;
 
     public UserInfoResponseDto(UserResponseDto user, long subscriberCount, boolean isSubscribed) {
         this.user = user;

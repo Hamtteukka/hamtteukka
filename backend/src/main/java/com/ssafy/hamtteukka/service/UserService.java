@@ -159,7 +159,7 @@ public class UserService {
                 userInfo.getUser().getNickname(),
                 s3FileLoader.getFileUrl(userInfo.getUser().getProfileId()),
                 userInfo.getSubscriberCount(),
-                userInfo.isSubscribed()
+                userInfo.getIsSubscribed()
         );
     }
 
