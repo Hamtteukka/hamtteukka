@@ -17,7 +17,7 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
                             sf.feed.id,
                             (SELECT fi.id FROM FeedImage fi WHERE fi.feed.id = f.id AND fi.imageType = 0),
                             sf.feed.title,
-                            sf.user.profileId
+                            sf.feed.user.profileId
                     )
                 FROM SavedFeed sf
                 JOIN sf.feed f
@@ -37,7 +37,7 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
                             sf.feed.id,
                             (SELECT fi.id FROM FeedImage fi WHERE fi.feed.id = f.id AND fi.imageType = 0),
                             sf.feed.title,
-                            sf.user.profileId
+                            sf.feed.user.profileId
                     )
                 FROM SavedFeed sf
                 JOIN sf.feed f

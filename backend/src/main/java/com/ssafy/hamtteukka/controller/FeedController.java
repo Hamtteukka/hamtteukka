@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,11 +33,8 @@ public class FeedController {
             Authentication authentication,
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = "20") int limit) {
-
         try {
-
             Long userId = (Long) authentication.getPrincipal();
-            System.out.println(userId);
             if (userId == 0L) {
                 return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
             }
@@ -225,26 +223,24 @@ public class FeedController {
     @Operation(summary = "피드저장 on/off (스크랩)")
     public ResponseEntity<?> feedOnOff(
             Authentication authentication,
-            @RequestBody ScrapRequest request){ // Dto 설정해야함
+            @RequestBody ScrapRequest request) { // Dto 설정해야함
 
-        try{
+        try {
             Long userId = (Long) authentication.getPrincipal();
 
             if (userId == 0L) {
                 return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");
             }
 
-            boolean scrapStatus = feedService.toggleFeedSave(userId,request.getFeedId(),request.isScrap());
-            Map<String, Object> response = new HashMap<>();
-            response.put("isScrap",scrapStatus);
-            if(scrapStatus){
-                return ApiResponse.success(HttpStatus.OK,"피드 저장 ON", response);
-            } else {
-                return ApiResponse.success(HttpStatus.OK, "피드 저장 OFF", response);
+            if (feedService.toggleFeedSave(userId, request.getFeedId(), request.isScrap())) {
+                return ApiResponse.success(HttpStatus.OK, "feed saved", Map.of("isScrap", true));
             }
+            return ApiResponse.success(HttpStatus.OK, "feed unsaved", Map.of("isScrap", false));
         } catch (EntityNotFoundException e) {
             return ApiResponse.fail(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (Exception e) {
+        }catch (DataIntegrityViolationException de){
+            return ApiResponse.fail(HttpStatus.CONFLICT, "not exist user or feed");
+        }catch (Exception e) {
             return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
@@ -257,17 +253,17 @@ public class FeedController {
             @RequestParam(defaultValue = "20") int limit,
             @RequestParam(required = false) String keyword,
             Authentication authentication
-    ){
+    ) {
         try {
             Long userId = (Long) authentication.getPrincipal();
             return ApiResponse.success(
                     HttpStatus.OK,
                     "success",
-                    feedService.searchAiFeeds(userId,cursor,limit,keyword)
+                    feedService.searchAiFeeds(userId, cursor, limit, keyword)
             );
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return ApiResponse.fail(HttpStatus.FORBIDDEN, e.getMessage());
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ApiResponse.fail(HttpStatus.BAD_REQUEST, "Bad request");
         }
     }
