@@ -11,6 +11,7 @@ import com.ssafy.hamtteukka.repository.UserRepository;
 import com.ssafy.hamtteukka.repository.SavedFeedRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -264,31 +266,23 @@ public class FeedService {
      * @return
      */
     @Transactional
-    public boolean toggleFeedSave(Long userId, Long feedId, boolean isScrap) throws Exception {
+    public boolean toggleFeedSave(Long userId, Long feedId, boolean isScrap) throws DataIntegrityViolationException {
+        Optional<SavedFeed> savedFeed = savedFeedRepository.findByUserIdAndFeedId(userId, feedId);
 
-        // 피드 저장 해제 (스크랩 Off)
-        if (isScrap) {
-            SavedFeed savedFeed = savedFeedRepository.findByUserIdAndFeedId(userId, feedId)
-                    .orElseThrow(() -> new EntityNotFoundException("스크랩된 피드를 찾을 수 없습니다."));
-
-            savedFeedRepository.delete(savedFeed);
-            return false;
-        }
-
-        // 피드 저장 (스크랩 On)
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
-
-        Feed feed = feedRepository.findById(feedId)
-                .orElseThrow(() -> new EntityNotFoundException("피드를 찾을 수 없습니다."));
-
-        if (savedFeedRepository.findByUserIdAndFeedId(userId, feedId).isPresent()) {
-            throw new Exception("이미 스크랩된 피드입니다.");
-        }
-
-        savedFeedRepository.save(new SavedFeed(user, feed));
-        return true;
+        return savedFeed
+                .map(saveFeed -> {
+                    if (isScrap)
+                        savedFeedRepository.deleteById(saveFeed.getId());
+                    return !isScrap;
+                })
+                .orElseGet(() -> {
+                    if (!isScrap)
+                        savedFeedRepository.save(new SavedFeed(userId, feedId));
+                    return !isScrap;
+                });
     }
+
+
 
     /**
      * 홈 피드 조회 메서드
