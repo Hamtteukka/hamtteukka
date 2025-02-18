@@ -73,7 +73,7 @@ public class RoomService extends OpenVidu {
             userProfile = s3FileLoader.getFileUrl(user.get().getProfileId());
         }
 
-        Room room = new Room(sessionId, title, 1, capacity, fileUrl, nickname, userProfile, peopleIds);
+        Room room = new Room(sessionId, title, 0, capacity, fileUrl, nickname, userProfile, peopleIds);
         redisTemplate.opsForValue().set(ROOM_PREFIX + sessionId, room);
         RoomResponseDto roomResponseDto = new RoomResponseDto(sessionId);
 
@@ -86,7 +86,7 @@ public class RoomService extends OpenVidu {
             throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
         }
 
-        if(room.getPresentPeople() + 1 > room.getCapacity()) {
+        if(room.getPeople().size() + 1 > room.getCapacity()) {
             throw new CustomException(ErrorCode.ROOM_CAPACITY_OVER);
         }
 
@@ -96,14 +96,13 @@ public class RoomService extends OpenVidu {
 
         // 사람 추가 해야해
         room.addPerson(socialId);
-        room.incrementPresentPeople();
 
         roomRedisTemplate.opsForValue().set(ROOM_PREFIX + sessionId, room);
 
         String thumbNailName = room.getVideoImg();
         String thumbNailUrl = s3FileLoader.getFileUrl(thumbNailName); // 프론트에 URL 넘겨주기
 
-        RoomEnterResponseDto roomResponseDto = new RoomEnterResponseDto(tokens, sessionId, room.getTitle(), room.getPresentPeople(),
+        RoomEnterResponseDto roomResponseDto = new RoomEnterResponseDto(tokens, sessionId, room.getTitle(), room.getPeople().size(),
                 room.getCapacity(), thumbNailUrl, room.getHostNickname() ,room.getHostProfileImg());
 
         return roomResponseDto;

@@ -31,10 +31,6 @@ public class Room implements Serializable {
     private List<Long> people = new ArrayList<>();
 
 
-    // 기존 메서드들
-    public void incrementPresentPeople() {
-        this.presentPeople++;
-    }
 
     public void addPerson(Long personId) {
         if (this.people == null) {
