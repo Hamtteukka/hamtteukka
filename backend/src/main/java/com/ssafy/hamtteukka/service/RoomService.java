@@ -64,7 +64,7 @@ public class RoomService extends OpenVidu {
         Long userId = (Long) params.get("captainId");
         MultipartFile thumbnail = (MultipartFile) params.get("thumbnail");
 
-        String thumbnailName = s3FileLoader.uploadFile(thumbnail); // filename
+        String videoImg = s3FileLoader.uploadFile(thumbnail); // filename
 
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
@@ -73,7 +73,7 @@ public class RoomService extends OpenVidu {
             peopleIds.add(userId);
         }
 
-        Room room = new Room(sessionId, title, 1, capacity, thumbnailName, nickname, userProfile, peopleIds);
+        Room room = new Room(sessionId, title, 1, capacity, videoImg, nickname, userProfile, peopleIds);
         redisTemplate.opsForValue().set(ROOM_PREFIX + sessionId, room);
         RoomResponseDto roomResponseDto = new RoomResponseDto(sessionId);
 
@@ -96,7 +96,7 @@ public class RoomService extends OpenVidu {
 
         roomRedisTemplate.opsForValue().set(ROOM_PREFIX + sessionId, room);
 
-        String thumbNailName = room.getThumbnailName();
+        String thumbNailName = room.getVideoImg();
         String thumbNailUrl = s3FileLoader.getFileUrl(thumbNailName); // 프론트에 URL 넘겨주기
 
         RoomEnterResponseDto roomResponseDto = new RoomEnterResponseDto(tokens, sessionId, room.getTitle(), room.getPresentPeople(),
@@ -153,12 +153,12 @@ public class RoomService extends OpenVidu {
                 connection.del((ROOM_PREFIX + sessionId).getBytes());
                 return null;
             });
-            s3FileLoader.deleteFile(room.getThumbnailName());
+            s3FileLoader.deleteFile(room.getVideoImg());
             log.info("방 삭제됨: " + sessionId);
         } else {
             // 남아 있는 사람 수 업데이트 후 다시 저장
             Room newRoom = new Room(sessionId, room.getTitle(), people.size(), room.getCapacity(),
-                    room.getThumbnailName(), room.getHostNickName(), room.getHostProfileImg(), people);
+                    room.getVideoImg(), room.getHostNickName(), room.getHostProfileImg(), people);
             redisTemplate.opsForValue().set(ROOM_PREFIX + sessionId, newRoom);
         }
     }
