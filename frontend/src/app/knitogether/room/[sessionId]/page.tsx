@@ -36,7 +36,10 @@ const KnitogetherRoom: React.FC = () => {
       }
     };
 
-    const endOpenVidu = async () => {
+    const endOpenVidu = async (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '페이지를 나가시겠습니까?';
+
       try {
         cleanUpOpenVidu();
         await leaveVideoRoom(sessionId);
