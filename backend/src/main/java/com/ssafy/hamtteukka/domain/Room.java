@@ -33,9 +33,7 @@ public class Room implements Serializable {
 
 
     public void addPerson(Long personId) {
-        if (this.people == null) {
-            this.people = new ArrayList<>();
-        }
         this.people.add(personId);
+        this.presentPeople = this.people.size(); // 현재 인원 수 업데이트
     }
 }
