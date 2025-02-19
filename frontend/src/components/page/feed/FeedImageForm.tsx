@@ -3,7 +3,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { useCallback } from 'react';
 import LeftArrowIcon from '/public/svg/leftArrowIcon.svg';
-import RightArrowIcon from '/public/svg/RightArrowIcon.svg';
+import RightArrowIcon from '/public/svg/rightArrowIcon.svg';
 
 interface PFeedImageForm {
   feedInfo: TFeedInfo;
