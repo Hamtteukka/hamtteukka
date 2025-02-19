@@ -23,7 +23,7 @@ const AIPatternInput: React.FC = () => {
           <div className='absolute left-0 top-0 flex h-full w-full items-center justify-center bg-modal opacity-0 transition-opacity duration-200 group-hover:opacity-100'>
             <TrashIcon />
           </div>
-          <Image width={500} height={500} src={embedPatternImage} alt='참고 이미지' />
+          <Image width={500} height={500} src={`data:image/png;base64,${embedPatternImage}`} alt='참고 이미지' />
         </div>
       ) : (
         <div className='flex h-40 w-64 flex-col items-center justify-center gap-2 rounded-sm border border-primary'>
