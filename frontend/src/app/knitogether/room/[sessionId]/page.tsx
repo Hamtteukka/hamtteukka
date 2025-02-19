@@ -40,9 +40,9 @@ const KnitogetherRoom: React.FC = () => {
       try {
         cleanUpOpenVidu();
         await leaveVideoRoom(sessionId);
+        router.push('/knitogether');
       } catch (e) {
         alert(e);
-        router.push('/knitogether');
       }
     };
 
