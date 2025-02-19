@@ -54,7 +54,6 @@ const KnitogetherRoom: React.FC = () => {
     window.addEventListener('beforeunload', endOpenVidu);
 
     return () => {
-      endOpenVidu();
       window.removeEventListener('beforeunload', endOpenVidu);
     };
   }, [sessionId]);
