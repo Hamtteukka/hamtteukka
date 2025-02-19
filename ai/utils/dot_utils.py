@@ -45,7 +45,7 @@ def create_dot_pattern(image_data, height=32, width=32, nColors=5, background=Tr
             draw.rectangle([top_left, bottom_right], fill=cell_color, outline=(200, 200, 200, 255))
 
     font_size = 12
-    font = ImageFont.truetype("arial.ttf", font_size)
+    font = ImageFont.load_default()
 
     max_number = ((height - 1) // 5) * 5
     for i in range(0, height, 5):
