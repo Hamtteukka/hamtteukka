@@ -122,6 +122,8 @@ const useOpenVidu = () => {
     setSession(undefined);
     setMyStream(undefined);
     setSubscribers([]);
+
+    console.log('useOpenVidu: 오픈비두 초기화');
   };
 
   return { myStream, subscribers, cameraOn, micOn, initOpenVidu, cleanUpOpenVidu, toggleCamera, toggleMic };
