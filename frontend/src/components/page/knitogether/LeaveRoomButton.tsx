@@ -13,9 +13,9 @@ const LeaveRoomButton: React.FC<PLeaveRoomButton> = ({ onLeave }) => {
   const { sessionId } = useParams<{ sessionId: string }>();
 
   const handleButtonClick = async () => {
+    onLeave();
     await leaveVideoRoom(sessionId);
     router.push('/knitogether');
-    onLeave();
   };
 
   return (
