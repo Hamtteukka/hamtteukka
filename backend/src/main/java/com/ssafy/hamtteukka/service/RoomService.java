@@ -145,13 +145,12 @@ public class RoomService extends OpenVidu {
         }
 
         List<Long> people = room.getPeople();
-        Optional<Long> roomHostId = userRepository.findIdByNickname(room.getHostNickname());
 
         // 현재 유저 삭제
         people.remove(userId.longValue());
 
-        // 1. 방장이 나갔거나 2. 모든 사람이 나가면 방 삭제
-        if (people.isEmpty() || (roomHostId.isPresent() && roomHostId.get().equals(userId.longValue()))) {
+        // 모든 사람이 나가면 방 삭제
+        if (people.isEmpty()) {
             redisTemplate.execute((RedisCallback<Object>) connection -> {
                 connection.del((ROOM_PREFIX + sessionId).getBytes());
                 return null;
