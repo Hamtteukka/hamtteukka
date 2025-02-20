@@ -20,7 +20,7 @@ export const MFeedInfo: TFeedInfo = {
   aiPattern: {
     feedId: 2,
     title: '지구본 키링 도안',
-    thumbnailUrl: '/image/temp/short.png',
+    thumbnail: '/image/temp/short.png',
   },
   user: MUser,
   isScrap: false,
