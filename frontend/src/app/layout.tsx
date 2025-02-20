@@ -13,6 +13,9 @@ if (process.env.NEXT_RUNTIME === 'nodejs' && process.env.NODE_ENV !== 'productio
 export const metadata: Metadata = {
   title: '함뜨까',
   description: '뜨개인을 위한 서비스',
+  icons: {
+    icon:"favicon.png"
+  }
 };
 
 const nanumGothic = Nanum_Gothic({ weight: ['400', '700', '800'], subsets: ['latin'] });
