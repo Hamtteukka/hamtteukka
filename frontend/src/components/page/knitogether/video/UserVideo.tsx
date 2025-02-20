@@ -15,7 +15,7 @@ const UserVideo: React.FC<PUserVideo> = ({ stream, isOn }) => {
   useEffect(() => {
     if (videoRef.current && stream) {
       stream.addVideoElement(videoRef.current);
-      console.error(stream.stream.connection.data);
+      // console.error(stream.stream.connection.data);
     }
   }, [stream]);
 

@@ -109,15 +109,20 @@ const useOpenVidu = () => {
   };
 
   const cleanUpOpenVidu = () => {
+    try {
+      if (myStream&&myStream.stream) {
+        myStream.publishAudio(false);
+        myStream.publishVideo(false);
+      }
+    } catch (error) {
+      console.error("뭔에러여?");
+    }
+    
     if (session) {
       session.disconnect();
     }
 
-    if (myStream) {
-      myStream.publishAudio(false);
-      myStream.publishVideo(false);
-    }
-
+    
     setOv(undefined);
     setSession(undefined);
     setMyStream(undefined);
