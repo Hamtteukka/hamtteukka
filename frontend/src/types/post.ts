@@ -12,7 +12,7 @@ export interface TFeedPreview extends TFeedId {
 
 export interface TAIFeed extends TFeedId {
   title: string;
-  thumbnailUrl: string;
+  thumbnail: string;
 }
 
 export interface TScrap {
