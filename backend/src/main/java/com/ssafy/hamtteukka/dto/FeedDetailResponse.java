@@ -23,12 +23,12 @@ public class FeedDetailResponse {
     public static class AiPattern {
         private Long feedId;
         private String title;
-        private String thumbnailUrl;
+        private String thumbnail;
 
-        public AiPattern(Long feedId, String title, String thumbnailUrl) {
+        public AiPattern(Long feedId, String title, String thumbnail) {
             this.feedId = feedId;
             this.title = title;
-            this.thumbnailUrl = thumbnailUrl;
+            this.thumbnail = thumbnail;
         }
     }
 
