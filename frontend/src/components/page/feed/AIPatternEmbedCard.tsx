@@ -14,7 +14,7 @@ const AIPatternEmbedCard: React.FC<PAIPatternEmbedCard> = ({ id, title, src }) =
         <LinkIcon />
         <span className='font-bold'>{title}</span>
       </div>
-      <img src={`data:image/png;base64,${src}`} className='rounded-sm' />
+      <img src={src} className='rounded-sm' />
     </Link>
   );
 };
