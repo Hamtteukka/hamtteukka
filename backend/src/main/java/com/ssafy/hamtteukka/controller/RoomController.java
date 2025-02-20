@@ -75,6 +75,7 @@ public class RoomController {
         } catch (NullPointerException e) {
             return ApiResponse.fail(HttpStatus.BAD_REQUEST, "필수 값 누락: " + e.getMessage());
         } catch (Exception ex) {
+            log.error("room create error: {}", ex.getMessage());
             return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, "모각뜨 방 생성 중 오류 발생");
         }
     }
@@ -132,6 +133,7 @@ public class RoomController {
     @DeleteMapping("/sessions/{sessionId}")
     @Operation(summary = "모각뜨 방 나가기")
     public ResponseEntity<?> exitRoom(@PathVariable("sessionId") String sessionId, Authentication auth) {
+        log.info("exit room: {}", sessionId);
         try {
             if (auth == null || auth.getPrincipal() == null) {
                 return ApiResponse.fail(HttpStatus.UNAUTHORIZED, "사용자 인증 정보가 없습니다");

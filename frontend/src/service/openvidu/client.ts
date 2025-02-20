@@ -60,7 +60,6 @@ const addSessionEventListeners = async (
  * @param userInfo
  */
 const connectToSession = async (session: Session, token: string, userInfo: TUser) => {
-  console.error('connectToSession 함수입니다!!');
   await session.connect(token, userInfo);
 };
 
