@@ -36,4 +36,11 @@ public class Room implements Serializable {
         this.people.add(personId);
         this.presentPeople = this.people.size(); // 현재 인원 수 업데이트
     }
+
+    public void setHostInfo(String nickname, String profileImg) {
+        this.hostNickname = nickname;
+        this.hostProfileImg = profileImg;
+    }
+
+
 }
