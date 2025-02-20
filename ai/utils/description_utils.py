@@ -19,6 +19,9 @@ async def openai_text(input : Description_Input) -> str:
 - 상세설명 : {input.detail}
 - 결과는 뜨개질 과정과 각 단위 작업을 단계별 자세하게 작성해주세요.
 - 말투는 친절하지만 세세하게 설명해주세요
+- 바늘 호수는 바늘 호수 사전을 참고해서 알려주세요.
+- 뜨개 과정은 뜨개 사전을 참고해서 한글 명칭을 사용해주세요
+- 출력물은 마크다운 형식이 아닌 일반 텍스트로 나오게 해주세요.
 """
 
     completion = client.chat.completions.create(
