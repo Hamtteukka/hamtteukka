@@ -82,31 +82,35 @@ public class RoomService extends OpenVidu {
 
     public RoomEnterResponseDto joinRoom(String sessionId, Long socialId, String tokens) {
         Room room = getRoom(ROOM_PREFIX + sessionId);
-        if(room == null) {
+        if (room == null) {
             throw new CustomException(ErrorCode.ROOM_NOT_FOUND);
         }
 
-        if(room.getPeople().size() + 1 > room.getCapacity()) {
+        if (room.getPeople().size() + 1 > room.getCapacity()) {
             throw new CustomException(ErrorCode.ROOM_CAPACITY_OVER);
         }
 
-        if(!checkDuplicate(room.getPeople(), socialId)) { // 이미 있으면
+        if (!checkDuplicate(room.getPeople(), socialId)) { // 이미 있으면
             throw new CustomException(ErrorCode.ROOM_ACCESS_ERROR);
         }
 
-        // 사람 추가 해야해
+        // 사람 추가
         room.addPerson(socialId);
 
+        // ✅ 호스트 정보 선정
+        String[] hostInfos = selectCaptain(room.getPeople());
+        room.setHostInfo(hostInfos[0], hostInfos[1]);  // room 객체에 호스트 정보 저장
+
+        // Redis에 업데이트
         roomRedisTemplate.opsForValue().set(ROOM_PREFIX + sessionId, room);
 
         String thumbNailName = room.getVideoImg();
         String thumbNailUrl = s3FileLoader.getFileUrl(thumbNailName); // 프론트에 URL 넘겨주기
 
-        RoomEnterResponseDto roomResponseDto = new RoomEnterResponseDto(tokens, sessionId, room.getTitle(), room.getPeople().size(),
-                room.getCapacity(), thumbNailUrl, room.getHostNickname() ,room.getHostProfileImg());
-
-        return roomResponseDto;
+        return new RoomEnterResponseDto(tokens, sessionId, room.getTitle(), room.getPeople().size(),
+                room.getCapacity(), thumbNailUrl, room.getHostNickname(), room.getHostProfileImg());
     }
+
 
     public List<Room> getRooms() {
         List<Room> rooms = new ArrayList<>();
@@ -158,6 +162,9 @@ public class RoomService extends OpenVidu {
             s3FileLoader.deleteFile(room.getVideoImg());
             log.info("방 삭제됨: " + sessionId);
         } else {
+            String[] hostInfos = selectCaptain(people);
+            room.setHostInfo(hostInfos[0], hostInfos[1]);  // room 객체에 호스트 정보 저장
+
             // 남아 있는 사람 수 업데이트 후 다시 저장
             Room newRoom = new Room(sessionId, room.getTitle(), people.size(), room.getCapacity(),
                     room.getVideoImg(), room.getHostNickname(), room.getHostProfileImg(), people);
@@ -170,6 +177,26 @@ public class RoomService extends OpenVidu {
             return false;
         }
         return true;
+    }
+
+    private String[] selectCaptain(List<Long> people) {
+        String[] captains = new String[2];
+
+        String captainNickname = null;
+        String captainProfileImg = null;
+
+        Long presentCaptainId = people.get(0).longValue();
+        Optional<User> captain = userRepository.findById(presentCaptainId);
+
+        if(captain.isPresent()) {
+            captainNickname = captain.get().getNickname();
+            captainProfileImg = s3FileLoader.getFileUrl(captain.get().getProfileId());
+        }
+
+        captains[0] = captainNickname;
+        captains[1] = captainProfileImg;
+
+        return captains;
     }
 
 }
