@@ -34,15 +34,6 @@ SSAFY 12기 공통 프로젝트 최우수상 🥇
 |![seoro](https://github.com/user-attachments/assets/887e8223-0650-484e-b1b0-38734a81fd3c)|![junha](https://github.com/user-attachments/assets/2b6f971b-fbf4-4d0c-8fe6-917de3a2782a)|![dongwook](https://github.com/user-attachments/assets/e8420210-fb7a-4423-8080-eaf773d07238)|![junseo](https://github.com/user-attachments/assets/a784dd5d-9f48-4006-b9a0-ee1853151de3)|![seongmoon](https://github.com/user-attachments/assets/b79d28a2-98c3-46b5-8b15-98e1d5bf7a58)|![kangmin](https://github.com/user-attachments/assets/4b47c3c5-1984-49de-bbfd-a6e9f987cc34)|
 |[GitHub](https://github.com/okxooxoo)|[GitHub](https://github.com/junhakjh)|[GitHub]()|[GitHub](https://github.com/Junseo-tech)|[GitHub](https://github.com/tjdansw)|[GitHub](https://github.com/KMsLOG)|
 
-
-## 🎲 Ground Rule
-
-- 매일 오전 9시 스크럼 진행
-
-- 코드, 커밋 컨벤션 지키기
-- 이슈 생기면 즉시 공유하기
-- 한명 이상은 리뷰해야 병합 가능
-
 ## 🛠️ Tech Stack
 ### Cooperation
 ![Jira](https://img.shields.io/badge/Jira-%230A0FFF.svg?style=flat&logo=jira&logoColor=white)
@@ -77,3 +68,8 @@ SSAFY 12기 공통 프로젝트 최우수상 🥇
 ![ComfyUI](https://img.shields.io/badge/ComfyUI-13AFF3.svg?style=flat&logo=ComfyUI&logoColor=white)
 ![FLUX.1](https://img.shields.io/badge/FLUX.1-6CA8AF.svg?style=flat&logo=FLUX.1&logoColor=white)
 
+## 🎲 Ground Rule
+- 매일 오전 9시 스크럼 진행
+- 코드, 커밋 컨벤션 지키기
+- 이슈 생기면 즉시 공유하기
+- 한명 이상은 리뷰해야 병합 가능
