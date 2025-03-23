@@ -31,7 +31,7 @@ SSAFY 12기 공통 프로젝트 최우수상 🥇
 |FE|FE|BE|BE|BE|AI|
 |:--:|:--:|:--:|:--:|:--:|:--:|
 |김서로|김준하|김동욱|박준서|우성문|조강민|
-|![IMG_7180 1](https://github.com/user-attachments/assets/887e8223-0650-484e-b1b0-38734a81fd3c)|![Rectangle 46](https://github.com/user-attachments/assets/65b418d4-41d8-43d8-b435-da01b7714e53)|![Rectangle 46](https://github.com/user-attachments/assets/65b418d4-41d8-43d8-b435-da01b7714e53)|![Rectangle 46](https://github.com/user-attachments/assets/65b418d4-41d8-43d8-b435-da01b7714e53)|![Rectangle 46](https://github.com/user-attachments/assets/65b418d4-41d8-43d8-b435-da01b7714e53)|![Rectangle 46](https://github.com/user-attachments/assets/65b418d4-41d8-43d8-b435-da01b7714e53)|![Rectangle 46](https://github.com/user-attachments/assets/65b418d4-41d8-43d8-b435-da01b7714e53)|
+|![seoro](https://github.com/user-attachments/assets/887e8223-0650-484e-b1b0-38734a81fd3c)|![junha](https://github.com/user-attachments/assets/2b6f971b-fbf4-4d0c-8fe6-917de3a2782a)|![dongwook](https://github.com/user-attachments/assets/e8420210-fb7a-4423-8080-eaf773d07238)|![junseo](https://github.com/user-attachments/assets/a784dd5d-9f48-4006-b9a0-ee1853151de3)|![seongmoon](https://github.com/user-attachments/assets/b79d28a2-98c3-46b5-8b15-98e1d5bf7a58)|![kangmin](https://github.com/user-attachments/assets/4b47c3c5-1984-49de-bbfd-a6e9f987cc34)|
 |[GitHub](https://github.com/okxooxoo)|[GitHub](https://github.com/junhakjh)|[GitHub]()|[GitHub](https://github.com/Junseo-tech)|[GitHub](https://github.com/tjdansw)|[GitHub](https://github.com/KMsLOG)|
 
 
