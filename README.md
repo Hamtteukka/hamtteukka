@@ -7,15 +7,28 @@ SSAFY 12기 공통 프로젝트 최우수상 🥇
 - 도안에 대한 예상 작품 결과 이미지 확인
 - 특정 이미지를 도트 도안으로 변환
 
+|Dot Pattern Page|Text Pattern Page|
+|:--:|:--:|
+|![dot](https://github.com/user-attachments/assets/c5e91e54-6b76-4c2d-aa2d-69ca02013b49)|![text](https://github.com/user-attachments/assets/346455c1-1575-4698-940a-52a89b48ab7d)|
+
 ### ➋ OpenVidu 기반 화상 미팅 🎥
 - 화상 미팅을 통해 타인과 실시간 소통
 - 카메라, 마이크 온오프 기능
+
+|Create Knitogether Dialog|Knitogether Page|
+|:--:|:--:|
+|![Create Knitogether Room Dialog](https://github.com/user-attachments/assets/6966a8e4-7e71-4d92-9d72-47c58dbb804d)|![Knitogether Page](https://github.com/user-attachments/assets/88daba1b-1f99-4534-b2c9-f24f7bf85214)|
 
 ### ➌ SNS 🪽
 - 자신의 작품과 AI 도안 공유
 - 구독, 검색 기능을 통해 소셜 네트워크 구축
 
+|Home Page|Detail Page|
+|:--:|:--:|
+|![Home](https://github.com/user-attachments/assets/d4934e69-b721-47ea-9bde-38d665a0c47a)|![Detail](https://github.com/user-attachments/assets/c04f16fa-3806-49c3-9514-e939811965a5)|
+
 ## 🎲 Ground Rule
+
 - 매일 오전 9시 스크럼 진행
 - 코드, 커밋 컨벤션 지키기
 - 이슈 생기면 즉시 공유하기
@@ -51,7 +64,7 @@ SSAFY 12기 공통 프로젝트 최우수상 🥇
 ![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=flat&logo=numpy&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)
 ![nVIDIA](https://img.shields.io/badge/cuda-000000.svg?style=flat&logo=nVIDIA&logoColor=green)
+![OpenAI](https://img.shields.io/badge/openai-412991.svg?style=flat&logo=openai&logoColor=white)
+![ComfyUI](https://img.shields.io/badge/ComfyUI-13AFF3.svg?style=flat&logo=ComfyUI&logoColor=white)
+![FLUX.1](https://img.shields.io/badge/FLUX.1-6CA8AF.svg?style=flat&logo=FLUX.1&logoColor=white)
 
-|LLM|Text To Image
-|:--:|:--:|
-|![OpenAI](https://img.shields.io/badge/openai-412991.svg?style=flat&logo=openai&logoColor=white)|![ComfyUI](https://img.shields.io/badge/ComfyUI-13AFF3.svg?style=flat&logo=ComfyUI&logoColor=white) ![FLUX.1](https://img.shields.io/badge/FLUX.1-6CA8AF.svg?style=flat&logo=FLUX.1&logoColor=white)|
