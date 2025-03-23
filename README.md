@@ -27,9 +27,18 @@ SSAFY 12기 공통 프로젝트 최우수상 🥇
 |:--:|:--:|
 |![Home](https://github.com/user-attachments/assets/d4934e69-b721-47ea-9bde-38d665a0c47a)|![Detail](https://github.com/user-attachments/assets/c04f16fa-3806-49c3-9514-e939811965a5)|
 
+## 😎 팀원 소개
+|FE|FE|BE|BE|BE|AI|
+|:--:|:--:|:--:|:--:|:--:|:--:|
+|김서로|김준하|김동욱|박준서|우성문|조강민|
+|![IMG_7180 1](https://github.com/user-attachments/assets/887e8223-0650-484e-b1b0-38734a81fd3c)|![Rectangle 46](https://github.com/user-attachments/assets/65b418d4-41d8-43d8-b435-da01b7714e53)|![Rectangle 46](https://github.com/user-attachments/assets/65b418d4-41d8-43d8-b435-da01b7714e53)|![Rectangle 46](https://github.com/user-attachments/assets/65b418d4-41d8-43d8-b435-da01b7714e53)|![Rectangle 46](https://github.com/user-attachments/assets/65b418d4-41d8-43d8-b435-da01b7714e53)|![Rectangle 46](https://github.com/user-attachments/assets/65b418d4-41d8-43d8-b435-da01b7714e53)|![Rectangle 46](https://github.com/user-attachments/assets/65b418d4-41d8-43d8-b435-da01b7714e53)|
+|[GitHub](https://github.com/okxooxoo)|[GitHub](https://github.com/junhakjh)|[GitHub]()|[GitHub](https://github.com/Junseo-tech)|[GitHub](https://github.com/tjdansw)|[GitHub](https://github.com/KMsLOG)|
+
+
 ## 🎲 Ground Rule
 
 - 매일 오전 9시 스크럼 진행
+
 - 코드, 커밋 컨벤션 지키기
 - 이슈 생기면 즉시 공유하기
 - 한명 이상은 리뷰해야 병합 가능
